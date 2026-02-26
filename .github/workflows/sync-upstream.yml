@@ -22,20 +22,20 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config --global user.name 'hyunsik2000'
-          git config --global user.email 'hyunsik2000@ozcoding.com'
+          git config --global user.name 'yunssu8428-hash'
+          git config --global user.email 'yunssu8428-hash@ozcoding.com'
 
-      - name: Add Upstream Remote (Public)
-        # Public이므로 토큰 없이 https 주소만 있으면 됩니다. (조직 레포)
+      - name: Add Upstream Remote
+        # 개인 fork → GechuProject 메인 레포에서 동기화
         run: |
-          git remote add upstream https://github.com/OZ-Coding-School/oz_externship_fe_06_team1.git
+          git remote add upstream https://github.com/GechuProject/gechu-frontend.git || true
           git fetch upstream
 
       - name: Sync Upstream to Local
         # Upstream의 main을 내 main으로 병합
         run: |
-          git merge upstream/main --allow-unrelated-histories -m "chore: sync with upstream organization repo"
+          git merge upstream/main --allow-unrelated-histories -m "[chore] sync with upstream organization repo"
 
-      - name: Push to Personal Repo
+      - name: Push to Origin
         run: |
           git push origin main

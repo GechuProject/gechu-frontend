@@ -69,14 +69,14 @@ jobs:
                 "JaneWon0904")
                   MENTIONS="$MENTIONS <@1419497006753124382>"
                   ;;
-                "hyunsik2000")
-                  MENTIONS="$MENTIONS <@546736075784060929>"
-                  ;;
                 "hkwon936")
-                 MENTIONS="$MENTIONS <@1418794163478073377>"
-                 ;;
-                "hana880922")
-                  MENTIONS="$MENTIONS <@1241270475892719656>"
+                  MENTIONS="$MENTIONS <@1418794163478073377>"
+                  ;;
+                "ohjs91")
+                  MENTIONS="$MENTIONS <@432157889293975562>"
+                  ;;
+                "yunssu8428-hash")
+                  MENTIONS="$MENTIONS <@297769513187803137>"
                   ;;
                 *)
                   MENTIONS="$MENTIONS @$login"
@@ -87,11 +87,9 @@ jobs:
             # 만약 요청된 리뷰어가 없으면 현재 리뷰어로 대체
             if [ -z "$MENTIONS" ]; then
               case "$CURRENT_REVIEWER" in
-                "chen4023") MENTIONS="<@683563560063991848>" ;;
-                "JaneWon0904") MENTIONS="<@1419497006753124382>" ;;
-                "hyunsik2000") MENTIONS="<@546736075784060929>" ;;
                 "hkwon936") MENTIONS="<@1418794163478073377>" ;;
-                "hana880922") MENTIONS="<@1241270475892719656>" ;;
+                "ohjs91") MENTIONS="<@432157889293975562>" ;;
+                "yunssu8428-hash") MENTIONS="<@297769513187803137>" ;;
                 *) MENTIONS="@$CURRENT_REVIEWER" ;;
               esac
             fi
@@ -173,14 +171,14 @@ jobs:
             "JaneWon0904")
               AUTHOR_MENTION="<@1419497006753124382>"
               ;;
-            "hyunsik2000")
-              AUTHOR_MENTION="<@546736075784060929>"
-              ;;
             "hkwon936")
               AUTHOR_MENTION="<@1418794163478073377>"
               ;;
-            "hana880922")
-              AUTHOR_MENTION="<@1241270475892719656>"
+            "ohjs91")
+              AUTHOR_MENTION="<@432157889293975562>"
+              ;;
+            "yunssu8428-hash")
+              AUTHOR_MENTION="<@297769513187803137>"
               ;;
             *)
               AUTHOR_MENTION="@${{ github.event.pull_request.user.login }}"
@@ -226,14 +224,14 @@ jobs:
             "JaneWon0904")
               AUTHOR_MENTION="<@1419497006753124382>"
               ;;
-            "hyunsik2000")
-              AUTHOR_MENTION="<@546736075784060929>"
-              ;;
             "hkwon936")
               AUTHOR_MENTION="<@1418794163478073377>"
               ;;
-            "hana880922")
-              AUTHOR_MENTION="<@1241270475892719656>"
+            "ohjs91")
+              AUTHOR_MENTION="<@432157889293975562>"
+              ;;
+            "yunssu8428-hash")
+              AUTHOR_MENTION="<@297769513187803137>"
               ;;
             *)
               AUTHOR_MENTION="@${{ github.event.pull_request.user.login }}"
