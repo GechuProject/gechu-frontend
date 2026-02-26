@@ -4,7 +4,7 @@ npx --no -- commitlint --edit "$1"
 if [ $? -ne 0 ]; then
   echo "커밋 메시지가 규칙에 맞지 않습니다. 다시 작성해주세요"
   echo "형식 예시: [feat] 로그인 기능 추가"
-  echo "가능한 타입: feat | fix | style | refactor | chore | add"
+  echo "가능한 타입: feat | fix | style | refactor | chore | add | test"
   exit 1
 fi
 
