@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
-import { Navigation } from "@/app/components/Navigation";
-import { GameCard } from "@/app/components/GameCard";
+import { Header as Navigation } from "@/app/components/common/Header";
+import { GameCard } from "@/app/components/common/GameCard";
 import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight, Zap, Trophy } from "lucide-react";
 import { useState } from "react";
@@ -13,7 +13,7 @@ const actionGames = [
     title: "Cyber Nexus 2077",
     image:
       "https://images.unsplash.com/photo-1531113165519-5eb0816d7e02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjeWJlcnB1bmslMjBhY3Rpb24lMjBnYW1lfGVufDF8fHx8MTc3MTc5NzY1Nnww&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "₩39,900",
+    price: "₩9,900",
     rating: 8.0,
     genre: "액션",
   },
@@ -31,7 +31,7 @@ const actionGames = [
     title: "Dark Shadows",
     image:
       "https://images.unsplash.com/photo-1723388159368-53b9be8899e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3Jyb3IlMjBzdXJ2aXZhbCUyMGdhbWV8ZW58MXx8fHwxNzcxNzE1OTE1fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "₩44,900",
+    price: "₩4,900",
     rating: 7.0,
     genre: "액션",
   },
@@ -40,7 +40,7 @@ const actionGames = [
     title: "Speed Racer X",
     image:
       "https://images.unsplash.com/photo-1723360480597-d21deccaf3d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyYWNpbmclMjBjYXIlMjBnYW1lfGVufDF8fHx8MTc3MTgxNzc2NXww&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "₩29,900",
+    price: "₩9,900",
     rating: 8.5,
     discount: "-40%",
     genre: "액션",
@@ -62,7 +62,7 @@ const rpgGames = [
     title: "Fantasy Realm",
     image:
       "https://images.unsplash.com/photo-1759688168277-185a0c623968?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYW50YXN5JTIwUlBHJTIwZ2FtZSUyMGFydHxlbnwxfHx8fDE3NzE4Mjg4MDd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "₩49,900",
+    price: "₩9,900",
     rating: 9.0,
     discount: "-25%",
     genre: "RPG",
@@ -72,7 +72,7 @@ const rpgGames = [
     title: "Kingdom Strategy",
     image:
       "https://images.unsplash.com/photo-1613626318906-68be0aef3334?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWRpZXZhbCUyMHN0cmF0ZWd5JTIwZ2FtZXxlbnwxfHx8fDE3NzE4Mjg4MTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "₩39,900",
+    price: "₩9,900",
     rating: 8.0,
     genre: "RPG",
   },
@@ -81,7 +81,7 @@ const rpgGames = [
     title: "Open World Explorer",
     image:
       "https://images.unsplash.com/photo-1682384114890-f1caab8ab16c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxvcGVuJTIwd29ybGQlMjBleHBsb3JhdGlvbiUyMGdhbWV8ZW58MXx8fHwxNzcxODI4ODExfDA&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "₩59,900",
+    price: "₩9,900",
     rating: 9.5,
     genre: "RPG",
   },
@@ -99,7 +99,7 @@ const rpgGames = [
     title: "Fighter Champions",
     image:
       "https://images.unsplash.com/photo-1758521960348-90bc4203eb52?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmaWdodGluZyUyMGNvbWJhdCUyMGdhbWV8ZW58MXx8fHwxNzcxODI4ODExfDA&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "₩34,900",
+    price: "₩4,900",
     rating: 8.7,
     discount: "-30%",
     genre: "RPG",
@@ -130,7 +130,7 @@ function Icon3D({
 // Hero Section
 function HeroSection() {
   return (
-    <section className="relative mt-32 overflow-hidden">
+    <section className="relative overflow-hidden">
       <div className="mx-auto max-w-[1400px] px-6 py-16">
         <div className="text-center">
           <motion.h1

@@ -18,14 +18,13 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// Mock game data for search
 const allGames = [
   {
     id: 1,
     title: "Cyber Nexus 2077",
     image:
       "https://images.unsplash.com/photo-1531113165519-5eb0816d7e02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjeWJlcnB1bmslMjBhY3Rpb24lMjBnYW1lfGVufDF8fHx8MTc3MTc5NzY1Nnww&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "₩39,900",
+    price: "39,900",
     rating: 9.2,
     genre: "액션 RPG",
     category: "trending",
@@ -35,7 +34,7 @@ const allGames = [
     title: "Fantasy Realm",
     image:
       "https://images.unsplash.com/photo-1759688168277-185a0c623968?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYW50YXN5JTIwUlBHJTIwZ2FtZSUyMGFydHxlbnwxfHx8fDE3NzE4Mjg4MDd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "₩37,425",
+    price: "37,425",
     rating: 9.3,
     genre: "RPG",
     category: "popular",
@@ -55,7 +54,7 @@ const allGames = [
     title: "Open World Explorer",
     image:
       "https://images.unsplash.com/photo-1682384114890-f1caab8ab16c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxvcGVuJTIwd29ybGQlMjBleHBsb3JhdGlvbiUyMGdhbWV8ZW58MXx8fHwxNzcxODI4ODExfDA&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "₩59,900",
+    price: "59,900",
     rating: 9.1,
     genre: "오픈월드",
     category: "new",
@@ -65,7 +64,7 @@ const allGames = [
     title: "Dark Shadows",
     image:
       "https://images.unsplash.com/photo-1723388159368-53b9be8899e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3Jyb3IlMjBzdXJ2aXZhbCUyMGdhbWV8ZW58MXx8fHwxNzcxNzE1OTE1fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "₩44,900",
+    price: "44,900",
     rating: 9.0,
     genre: "호러",
     category: "popular",
@@ -75,7 +74,7 @@ const allGames = [
     title: "Speed Racer X",
     image:
       "https://images.unsplash.com/photo-1723360480597-d21deccaf3d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyYWNpbmclMjBjYXIlMjBnYW1lfGVufDF8fHx8MTc3MTgxNzc2NXww&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "₩17,940",
+    price: "17,940",
     rating: 8.8,
     genre: "레이싱",
     category: "trending",
@@ -85,7 +84,7 @@ const allGames = [
     title: "Mystery Island",
     image:
       "https://images.unsplash.com/photo-1682384114890-f1caab8ab16c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxvcGVuJTIwd29ybGQlMjBleHBsb3JhdGlvbiUyMGdhbWV8ZW58MXx8fHwxNzcxODI4ODExfDA&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "₩29,900",
+    price: "29,900",
     rating: 8.9,
     genre: "어드벤처",
     category: "new",
@@ -102,7 +101,6 @@ const allGames = [
   },
 ];
 
-// 3D Icon Component
 function Icon3D({
   children,
   className = "",
@@ -123,7 +121,7 @@ function Icon3D({
   );
 }
 
-export function Navigation() {
+export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
@@ -137,7 +135,6 @@ export function Navigation() {
     { path: "/recommend", label: "추천게임" },
   ];
 
-  // Close search results when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -153,12 +150,10 @@ export function Navigation() {
         setShowProfileMenu(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Filter games based on search query
   const filteredGames = searchQuery.trim()
     ? allGames.filter(
         (game) =>
@@ -167,7 +162,6 @@ export function Navigation() {
       )
     : [];
 
-  // Get recommended games when no search query
   const trendingGames = allGames
     .filter((g) => g.category === "trending")
     .slice(0, 4);
@@ -178,9 +172,7 @@ export function Navigation() {
   return (
     <nav className="fixed top-0 right-0 left-0 z-50 border-b border-white/10 bg-black/95 backdrop-blur-sm">
       <div className="mx-auto max-w-[1400px] px-6">
-        {/* Top Bar - Logo, Menu, Icons */}
         <div className="flex items-center justify-between py-4">
-          {/* Logo */}
           <Link
             href="/"
             className="flex items-center gap-3 transition-opacity hover:opacity-80"
@@ -191,7 +183,6 @@ export function Navigation() {
             <span className="text-2xl font-bold text-white">Gechu</span>
           </Link>
 
-          {/* Desktop Menu */}
           <div className="hidden items-center gap-8 lg:flex">
             {navLinks.map((link) => (
               <Link
@@ -206,7 +197,6 @@ export function Navigation() {
             ))}
           </div>
 
-          {/* Icons */}
           <div className="flex items-center gap-4">
             <div ref={profileRef} className="relative">
               <button
@@ -218,14 +208,13 @@ export function Navigation() {
                 </Icon3D>
               </button>
 
-              {/* Profile Dropdown Menu */}
               <AnimatePresence>
                 {showProfileMenu && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-full right-0 z-[100] mt-4 w-56 overflow-hidden rounded-xl border border-[#E4FF30]/20 bg-black/95 shadow-2xl backdrop-blur-xl"
+                    className="absolute top-full right-0 z-100 mt-4 w-56 overflow-hidden rounded-xl border border-[#E4FF30]/20 bg-black/95 shadow-2xl backdrop-blur-xl"
                     style={{
                       boxShadow:
                         "0 20px 60px rgba(228, 255, 48, 0.2), 0 0 40px rgba(228, 255, 48, 0.1)",
@@ -293,7 +282,6 @@ export function Navigation() {
           </div>
         </div>
 
-        {/* Search Bar - Full Width */}
         <div className="hidden pb-4 md:block" ref={searchRef}>
           <div className="relative">
             <div className="flex items-center rounded-xl border border-white/10 bg-white/5 px-5 py-3 transition-all hover:border-[#E4FF30]/30">
@@ -322,7 +310,6 @@ export function Navigation() {
               )}
             </div>
 
-            {/* Search Results Dropdown - Full Width */}
             <AnimatePresence>
               {showResults && (
                 <motion.div
@@ -336,7 +323,6 @@ export function Navigation() {
                   }}
                 >
                   {searchQuery.trim() ? (
-                    // Search Results
                     filteredGames.length > 0 ? (
                       <div className="max-h-[600px] overflow-y-auto">
                         <div className="border-b border-white/10 p-5">
@@ -367,9 +353,8 @@ export function Navigation() {
                                     alt={game.title}
                                     className="h-full w-full object-cover transition-transform group-hover:scale-110"
                                   />
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                                  <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
                                 </div>
-
                                 <div className="flex-1">
                                   <h4 className="mb-1 text-lg font-bold text-white transition-colors group-hover:text-[#E4FF30]">
                                     {game.title}
@@ -386,7 +371,6 @@ export function Navigation() {
                                     </span>
                                   </div>
                                 </div>
-
                                 <div className="text-right">
                                   <p className="text-lg font-bold text-[#E4FF30]">
                                     {game.price}
@@ -409,7 +393,6 @@ export function Navigation() {
                       </div>
                     )
                   ) : (
-                    // Recommended Games (when no search query)
                     <div className="max-h-[600px] overflow-y-auto">
                       <div className="border-b border-white/10 p-5">
                         <p className="flex items-center gap-2 text-lg font-bold text-white">
@@ -417,9 +400,7 @@ export function Navigation() {
                           추천 게임
                         </p>
                       </div>
-
                       <div className="grid grid-cols-1 gap-6 p-4 md:grid-cols-2">
-                        {/* Trending Section */}
                         <div>
                           <div className="mb-4 flex items-center gap-2 px-2">
                             <TrendingUp className="h-5 w-5 text-[#E4FF30]" />
@@ -465,7 +446,6 @@ export function Navigation() {
                           </div>
                         </div>
 
-                        {/* Popular Section */}
                         <div>
                           <div className="mb-4 flex items-center gap-2 px-2">
                             <Star className="h-5 w-5 fill-[#E4FF30] text-[#E4FF30]" />
@@ -522,7 +502,6 @@ export function Navigation() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
         {isMenuOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
@@ -547,3 +526,5 @@ export function Navigation() {
     </nav>
   );
 }
+
+export { Header as Navigation };
