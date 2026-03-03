@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import { Heart, Filter } from "lucide-react";
 import { Icon3D } from "@/app/components/common/Icon3D";
+import styles from "./WishlistHeader.module.scss";
 
 type FilterType = "all" | "discount" | "free";
 
@@ -12,11 +13,7 @@ interface WishlistHeaderProps {
   onFilterChange: (filter: FilterType) => void;
 }
 
-export function WishlistHeader({
-  gameCount,
-  filter,
-  onFilterChange,
-}: WishlistHeaderProps) {
+export function WishlistHeader({ gameCount, filter, onFilterChange }: WishlistHeaderProps) {
   const filters: { value: FilterType; label: string }[] = [
     { value: "all", label: "전체" },
     { value: "discount", label: "할인중" },
@@ -24,31 +21,27 @@ export function WishlistHeader({
   ];
 
   return (
-    <div className="mb-12 flex items-center justify-between">
-      <div className="flex items-center gap-4">
+    <div className={styles.header}>
+      <div className={styles.titleWrap}>
         <Icon3D>
-          <Heart className="h-10 w-10 fill-[#E4FF30] text-[#E4FF30]" />
+          <Heart style={{ width: "2.5rem", height: "2.5rem", fill: "#E4FF30", color: "#E4FF30" }} />
         </Icon3D>
         <div>
-          <h1 className="text-5xl font-bold text-white">위시리스트</h1>
-          <p className="mt-2 text-white/50">{gameCount}개의 게임</p>
+          <h1 className={styles.heading}>위시리스트</h1>
+          <p className={styles.count}>{gameCount}개의 게임</p>
         </div>
       </div>
 
-      <div className="flex gap-3">
+      <div className={styles.filters}>
         {filters.map(({ value, label }) => (
           <motion.button
             key={value}
             onClick={() => onFilterChange(value)}
-            className={`flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2 transition-all ${
-              filter === value
-                ? "bg-[#E4FF30] text-black"
-                : "border border-white/10 bg-white/5 text-white hover:bg-white/10"
-            }`}
+            className={filter === value ? styles.filterBtnActive : styles.filterBtnDefault}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            {value === "all" && <Filter className="h-4 w-4" />}
+            {value === "all" && <Filter style={{ width: "1rem", height: "1rem" }} />}
             {label}
           </motion.button>
         ))}

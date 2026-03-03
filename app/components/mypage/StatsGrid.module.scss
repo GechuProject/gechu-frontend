@@ -1,0 +1,29 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+.section {
+  margin-bottom: 2rem;
+}
+
+.card {
+  @include glass-card;
+  display: inline-block;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+
+.iconWrap {
+  margin-bottom: 0.75rem;
+}
+
+.count {
+  margin-bottom: 0.25rem;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: $white;
+}
+
+.label {
+  font-size: 0.875rem;
+  color: $white-50;
+}
+

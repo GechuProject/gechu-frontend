@@ -1,0 +1,39 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+.empty {
+  padding: 5rem 0;
+  text-align: center;
+}
+
+.icon {
+  margin: 0 auto 1rem;
+  color: $white-20;
+}
+
+.heading {
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $white;
+}
+
+.desc {
+  margin-bottom: 1.5rem;
+  color: $white-50;
+}
+
+.btn {
+  display: inline-block;
+  background: $accent;
+  color: $black;
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+

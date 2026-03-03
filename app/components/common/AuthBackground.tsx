@@ -1,33 +1,26 @@
 import Link from "next/link";
+import styles from "./AuthBackground.module.scss";
 
 export function AuthBackground() {
   return (
-    <div className="absolute inset-0 opacity-5">
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(228, 255, 48, 0.1) 2px, rgba(228, 255, 48, 0.1) 4px)`,
-        }}
-      />
+    <div className={styles.wrapper}>
+      <div className={styles.grid} />
     </div>
   );
 }
 
 export function AuthFooterLinks() {
   return (
-    <div className="mt-8 space-x-4 text-center text-sm">
-      <Link
-        href="/"
-        className="text-white/50 transition-colors hover:text-white"
-      >
+    <div className={styles.wrapper}>
+      <Link href="/" className={styles.link}>
         홈으로
       </Link>
-      <span className="text-white/30">•</span>
-      <a href="#" className="text-white/50 transition-colors hover:text-white">
+      <span className={styles.separator}>•</span>
+      <a href="#" className={styles.link}>
         고객지원
       </a>
-      <span className="text-white/30">•</span>
-      <a href="#" className="text-white/50 transition-colors hover:text-white">
+      <span className={styles.separator}>•</span>
+      <a href="#" className={styles.link}>
         이용약관
       </a>
     </div>

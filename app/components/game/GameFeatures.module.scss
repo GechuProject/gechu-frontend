@@ -1,0 +1,33 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+.section {
+  margin-bottom: 3rem;
+}
+
+.heading {
+  margin-bottom: 1.5rem;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: $white;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+
+  @include respond-sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.item {
+  @include flex-center(0.75rem);
+  @include glass-card;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.itemText {
+  color: $white;
+}
+

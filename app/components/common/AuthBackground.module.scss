@@ -1,0 +1,20 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+.wrapper {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+
+  .grid {
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(228, 255, 48, 0.1) 2px,
+      rgba(228, 255, 48, 0.1) 4px
+    );
+  }
+}
+

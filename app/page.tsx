@@ -5,8 +5,8 @@ import { GameCard } from "@/app/components/common/GameCard";
 import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight, Zap, Trophy } from "lucide-react";
 import { useState } from "react";
+import styles from "./page.module.scss";
 
-// Game data
 const actionGames = [
   {
     id: 1,
@@ -106,35 +106,79 @@ const rpgGames = [
   },
 ];
 
-// 3D Icon Component
-function Icon3D({
-  children,
-  className = "",
+function GameSection({
+  title,
+  games,
+  icon: Icon,
 }: {
-  children: React.ReactNode;
-  className?: string;
+  title: string;
+  games: typeof actionGames;
+  icon: typeof Zap;
 }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const itemsPerPage = 5;
+  const maxIndex = Math.max(0, games.length - itemsPerPage);
+
   return (
-    <div
-      className={`relative ${className}`}
-      style={{
-        filter: "drop-shadow(0 4px 8px rgba(228, 255, 48, 0.3))",
-        transform: "perspective(1000px) rotateX(10deg)",
-      }}
-    >
-      {children}
-    </div>
+    <section className={styles.section}>
+      <div className={styles.sectionHeader}>
+        <div className={styles.sectionTitleWrap}>
+          <Icon style={{ width: "2rem", height: "2rem", color: "#E4FF30" }} />
+          <h2 className={styles.sectionTitle}>{title}</h2>
+        </div>
+        <div className={styles.carouselControls}>
+          <motion.button
+            onClick={() => setCurrentIndex((p) => Math.max(0, p - 1))}
+            disabled={currentIndex === 0}
+            className={styles.carouselBtn}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <ChevronLeft
+              style={{ width: "1.5rem", height: "1.5rem", color: "#fff" }}
+            />
+          </motion.button>
+          <motion.button
+            onClick={() => setCurrentIndex((p) => Math.min(maxIndex, p + 1))}
+            disabled={currentIndex >= maxIndex}
+            className={styles.carouselBtn}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <ChevronRight
+              style={{ width: "1.5rem", height: "1.5rem", color: "#fff" }}
+            />
+          </motion.button>
+        </div>
+      </div>
+
+      <div className={styles.carouselTrack}>
+        <motion.div
+          className={styles.carouselInner}
+          animate={{ x: `${-currentIndex * (100 / itemsPerPage)}%` }}
+          transition={{ duration: 0.3 }}
+        >
+          {games.map((game, index) => (
+            <div key={game.id} className={styles.carouselItem}>
+              <GameCard game={game} index={index} />
+            </div>
+          ))}
+        </motion.div>
+      </div>
+
+      <div className={styles.sectionDivider} />
+    </section>
   );
 }
 
-// Hero Section
-function HeroSection() {
+export default function HomePage() {
   return (
-    <section className="relative overflow-hidden">
-      <div className="mx-auto max-w-[1400px] px-6 py-16">
-        <div className="text-center">
+    <div className={styles.page}>
+      <Navigation />
+      <section className={styles.hero}>
+        <div className={styles.heroInner}>
           <motion.h1
-            className="mb-6 text-5xl font-bold text-white md:text-6xl"
+            className={styles.heroTitle}
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -142,93 +186,8 @@ function HeroSection() {
             당신의 최애 게임을 찾아보세요
           </motion.h1>
         </div>
-      </div>
-
-      {/* Divider */}
-      <div className="border-t border-white/10"></div>
-    </section>
-  );
-}
-
-// Game Section with Carousel
-function GameSection({
-  title,
-  games,
-  icon: Icon,
-}: {
-  title: string;
-  games: any[];
-  icon: any;
-}) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const itemsPerPage = 5;
-  const maxIndex = Math.max(0, games.length - itemsPerPage);
-
-  const handlePrev = () => {
-    setCurrentIndex((prev) => Math.max(0, prev - 1));
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => Math.min(maxIndex, prev + 1));
-  };
-
-  return (
-    <section className="mx-auto max-w-[1400px] px-6 py-16">
-      <div className="mb-8 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Icon3D>
-            <Icon className="h-8 w-8 text-[#E4FF30]" />
-          </Icon3D>
-          <h2 className="text-4xl font-bold text-white">{title}</h2>
-        </div>
-
-        <div className="flex gap-2">
-          <motion.button
-            onClick={handlePrev}
-            disabled={currentIndex === 0}
-            className="cursor-pointer rounded-full border border-white/10 bg-white/5 p-2 transition-all hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <ChevronLeft className="h-6 w-6 text-white" />
-          </motion.button>
-          <motion.button
-            onClick={handleNext}
-            disabled={currentIndex >= maxIndex}
-            className="cursor-pointer rounded-full border border-white/10 bg-white/5 p-2 transition-all hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <ChevronRight className="h-6 w-6 text-white" />
-          </motion.button>
-        </div>
-      </div>
-
-      <div className="relative overflow-hidden">
-        <motion.div
-          className="flex gap-6"
-          animate={{ x: `${-currentIndex * (100 / itemsPerPage)}%` }}
-          transition={{ duration: 0.3 }}
-        >
-          {games.map((game, index) => (
-            <div key={game.id} className="min-w-[calc(20%-19.2px)]">
-              <GameCard game={game} index={index} />
-            </div>
-          ))}
-        </motion.div>
-      </div>
-
-      {/* Divider */}
-      <div className="mt-16 border-t border-white/10"></div>
-    </section>
-  );
-}
-
-export default function HomePage() {
-  return (
-    <div className="min-h-screen bg-black pt-40">
-      <Navigation />
-      <HeroSection />
+        <div className={styles.heroDivider} />
+      </section>
       <GameSection title="액션 Top 10" games={actionGames} icon={Zap} />
       <GameSection title="RPG Top 10" games={rpgGames} icon={Trophy} />
     </div>

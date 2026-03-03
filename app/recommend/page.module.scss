@@ -1,0 +1,84 @@
+@use "../styles/variables" as *;
+@use "../styles/mixins" as *;
+.page {
+  min-height: 100vh;
+  background: $black;
+  padding-top: $pt-header;
+}
+
+.inner {
+  @include container;
+  padding-bottom: 5rem;
+}
+
+.hero {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  text-align: center;
+}
+
+.heroTitle {
+  margin-bottom: 1rem;
+  font-size: 3.75rem;
+  font-weight: 700;
+  color: $white;
+}
+
+.heroTitle span {
+  color: $accent;
+}
+
+.heroSubtitle {
+  font-size: 1.25rem;
+  color: $white-50;
+}
+
+.section {
+  margin-bottom: 5rem;
+}
+
+.sectionHeader {
+  @include flex-center(0);
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.sectionMeta {
+  @include flex-center(1rem);
+}
+
+.iconAccent {
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.sectionTitle {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: $white;
+}
+
+.sectionDesc {
+  color: $white-50;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+
+  @include respond-sm {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include respond-md {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+

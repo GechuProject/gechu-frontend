@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AuthBackground } from "@/app/components/common/AuthBackground";
 import { SignupLogo } from "@/app/components/signup/SignupLogo";
 import { SignupForm } from "@/app/components/signup/SignupForm";
+import styles from "./page.module.scss";
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -28,16 +29,14 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black px-6 pt-40">
-      <AuthBackground />
+    <div className={styles.page}>
+      <div className={styles.bgPattern}>
+        <AuthBackground />
+      </div>
 
-      <div className="relative w-full max-w-md">
+      <div className={styles.inner}>
         <SignupLogo />
-        <SignupForm
-          formData={formData}
-          onChange={handleChange}
-          onSubmit={handleSubmit}
-        />
+        <SignupForm formData={formData} onChange={handleChange} onSubmit={handleSubmit} />
       </div>
     </div>
   );

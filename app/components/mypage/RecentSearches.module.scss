@@ -1,0 +1,54 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+.section {
+  // container for recent searches
+}
+
+.heading {
+  margin-bottom: 1.5rem;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: $white;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.item {
+  @include glass-card;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $white-10;
+  }
+}
+
+.row {
+  @include flex-center(0);
+  justify-content: space-between;
+}
+
+.left {
+  @include flex-center(0.75rem);
+}
+
+.query {
+  font-weight: 500;
+  color: $white;
+  transition: color 0.2s ease;
+
+  .item:hover & {
+    color: $accent;
+  }
+}
+
+.timestamp {
+  font-size: 0.875rem;
+  color: $white-50;
+}
+

@@ -1,0 +1,148 @@
+// =============================================================
+// Mixins — 재사용 스타일 패턴
+// =============================================================
+@use "variables" as *;
+
+// ─── 반투명 유리 카드 ─────────────────────────────────────────
+@mixin glass-card {
+  background: $white-5;
+  border: 1px solid $white-10;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+// ─── 형광 그림자 (accent glow) ─────────────────────────────────
+@mixin accent-glow {
+  box-shadow:
+    0 20px 60px $accent-20,
+    0 0 40px $accent-10;
+}
+
+// ─── 최대폭 컨테이너 ──────────────────────────────────────────
+@mixin container {
+  max-width: $max-width;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: $px-page;
+  padding-right: $px-page;
+}
+
+// ─── 수평 flex 정렬 ───────────────────────────────────────────
+@mixin flex-center($gap: 0) {
+  display: flex;
+  align-items: center;
+  @if $gap != 0 {
+    gap: $gap;
+  }
+}
+
+// ─── hover 시 accent 색 전환 ─────────────────────────────────
+@mixin hover-accent {
+  transition: color 0.2s ease;
+  &:hover {
+    color: $accent;
+  }
+}
+
+// ─── 둥근 아이콘 버튼 ─────────────────────────────────────────
+@mixin btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: $white-5;
+  border: 1px solid $white-10;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $white-10;
+  }
+}
+
+// ─── 한 줄 말줄임 ─────────────────────────────────────────────
+@mixin truncate-1 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+// ─── lg 브레이크포인트 (1024px) ────────────────────────────────
+@mixin respond-lg {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+
+// ─── md 브레이크포인트 (768px) ─────────────────────────────────
+@mixin respond-md {
+  @media (min-width: 768px) {
+    @content;
+  }
+}
+
+// ─── sm 브레이크포인트 (640px) ─────────────────────────────────
+@mixin respond-sm {
+  @media (min-width: 640px) {
+    @content;
+  }
+}
+
+// ─── accent 배지 ──────────────────────────────────────────────
+@mixin accent-badge {
+  display: inline-block;
+  background: $accent;
+  color: $black;
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+}
+
+// ─── 기본 입력 필드 ────────────────────────────────────────────
+@mixin input-base {
+  width: 100%;
+  background: $white-5;
+  border: 1px solid $white-10;
+  border-radius: 0.5rem;
+  color: $white;
+  transition: border-color 0.2s ease;
+  outline: none;
+
+  &::placeholder {
+    color: $white-30;
+  }
+
+  &:focus {
+    border-color: $accent;
+  }
+}
+
+// ─── 주요 버튼 (accent) ────────────────────────────────────────
+@mixin btn-primary {
+  width: 100%;
+  background: $accent;
+  color: $black;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $accent-dark;
+  }
+}
+
+// ─── 보조 버튼 (ghost) ─────────────────────────────────────────
+@mixin btn-ghost {
+  @include glass-card;
+  color: $white;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $white-10;
+  }
+}

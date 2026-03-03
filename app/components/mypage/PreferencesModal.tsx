@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "motion/react";
 import { X, Check, Gamepad2, Settings, Tag } from "lucide-react";
+import styles from "./PreferencesModal.module.scss";
 
 interface PreferencesModalProps {
   isOpen: boolean;
@@ -52,7 +53,6 @@ const availableThemes = [
   "SF",
 ];
 
-/** 게임 취향 수정 모달 */
 export function PreferencesModal({
   isOpen,
   onClose,
@@ -94,46 +94,50 @@ export function PreferencesModal({
       {isOpen && (
         <>
           <motion.div
-            className="fixed inset-0 z-50 bg-black/80"
+            className={styles.backdrop}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
           />
 
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className={styles.center}>
             <motion.div
-              className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg border-2 border-[#E4FF30] bg-black"
+              className={styles.modal}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header */}
-              <div className="sticky top-0 flex items-center justify-between border-b border-white/10 bg-black p-6">
-                <h2 className="text-2xl font-bold text-white">
-                  게임 취향 수정하기
-                </h2>
+              <div className={styles.modalHeader}>
+                <h2 className={styles.modalTitle}>게임 취향 수정하기</h2>
                 <motion.button
                   onClick={onClose}
-                  className="rounded-lg p-2 transition-colors hover:bg-white/10"
+                  className={styles.closeBtn}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  <X className="h-6 w-6 text-white" />
+                  <X
+                    style={{ width: "1.5rem", height: "1.5rem", color: "#fff" }}
+                  />
                 </motion.button>
               </div>
 
-              {/* Body */}
-              <div className="space-y-8 p-6">
+              <div className={styles.body}>
                 {sections.map(
                   ({ title, icon: Icon, items, selected, setSelected }) => (
                     <div key={title}>
-                      <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-white">
-                        <Icon className="h-5 w-5 text-[#E4FF30]" />
+                      <h3 className={styles.sectionTitle}>
+                        <Icon
+                          style={{
+                            width: "1.25rem",
+                            height: "1.25rem",
+                            color: "#E4FF30",
+                          }}
+                        />
                         {title}
                       </h3>
-                      <div className="flex flex-wrap gap-3">
+                      <div className={styles.tagWrap}>
                         {items.map((item) => {
                           const isSelected = selected.includes(item);
                           return (
@@ -142,16 +146,23 @@ export function PreferencesModal({
                               onClick={() =>
                                 onToggle(item, selected, setSelected)
                               }
-                              className={`cursor-pointer rounded-lg px-4 py-2 font-medium transition-all ${
+                              className={
                                 isSelected
-                                  ? "bg-[#E4FF30] text-black"
-                                  : "border border-white/10 bg-white/5 text-white hover:bg-white/10"
-                              }`}
+                                  ? styles.tagBtnSelected
+                                  : styles.tagBtnDefault
+                              }
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
                             >
                               {isSelected && (
-                                <Check className="mr-1 inline h-4 w-4" />
+                                <Check
+                                  style={{
+                                    display: "inline",
+                                    width: "1rem",
+                                    height: "1rem",
+                                    marginRight: "0.25rem",
+                                  }}
+                                />
                               )}
                               {item}
                             </motion.button>
@@ -163,11 +174,10 @@ export function PreferencesModal({
                 )}
               </div>
 
-              {/* Footer */}
-              <div className="sticky bottom-0 flex gap-3 border-t border-white/10 bg-black p-6">
+              <div className={styles.footer}>
                 <motion.button
                   onClick={onSave}
-                  className="flex-1 cursor-pointer rounded-lg bg-[#E4FF30] py-3 font-bold text-black transition-all hover:bg-[#d4ef20]"
+                  className={styles.saveBtn}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -175,7 +185,7 @@ export function PreferencesModal({
                 </motion.button>
                 <motion.button
                   onClick={onClose}
-                  className="flex-1 cursor-pointer rounded-lg border border-white/10 bg-white/5 py-3 text-white transition-all hover:bg-white/10"
+                  className={styles.cancelBtn}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >

@@ -3,6 +3,7 @@
 import { GameCard } from "@/app/components/common/GameCard";
 import { motion } from "motion/react";
 import { TrendingUp, Clock, Sparkles } from "lucide-react";
+import styles from "./page.module.scss";
 
 const top5Games = [
   {
@@ -89,7 +90,7 @@ const recentGames = [
     discount: undefined,
   },
   {
-    id: 1,
+    id: 9,
     title: "Cyber Nexus 2077",
     image:
       "https://images.unsplash.com/photo-1531113165519-5eb0816d7e02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjeWJlcnB1bmslMjBhY3Rpb24lMjBnYW1lfGVufDF8fHx8MTc3MTc5NzY1Nnww&ixlib=rb-4.1.0&q=80&w=1080",
@@ -172,18 +173,18 @@ const sections = [
 
 export default function RecommendPage() {
   return (
-    <div className="min-h-screen bg-black pt-40">
-      <div className="mx-auto max-w-[1400px] px-6 pb-20">
-        <div className="py-16 text-center">
+    <div className={styles.page}>
+      <div className={styles.inner}>
+        <div className={styles.hero}>
           <motion.h1
-            className="mb-4 text-6xl font-bold text-white"
+            className={styles.heroTitle}
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            게임 <span className="text-[#E4FF30]">추천</span>
+            게임 <span>추천</span>
           </motion.h1>
           <motion.p
-            className="text-xl text-white/50"
+            className={styles.heroSubtitle}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -195,29 +196,31 @@ export default function RecommendPage() {
         {sections.map((section, sectionIndex) => {
           const Icon = section.icon;
           return (
-            <section key={section.id} className="mb-20">
+            <section key={section.id} className={styles.section}>
               <motion.div
-                className="mb-8 flex items-center justify-between"
+                className={styles.sectionHeader}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: sectionIndex * 0.1 }}
               >
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`rounded-lg bg-linear-to-r ${section.accent} p-3`}
-                  >
-                    <Icon className="h-6 w-6 text-[#E4FF30]" />
+                <div className={styles.sectionMeta}>
+                  <div className={styles.iconAccent}>
+                    <Icon
+                      style={{
+                        width: "1.5rem",
+                        height: "1.5rem",
+                        color: "#E4FF30",
+                      }}
+                    />
                   </div>
                   <div>
-                    <h2 className="text-3xl font-bold text-white">
-                      {section.title}
-                    </h2>
-                    <p className="text-white/50">{section.description}</p>
+                    <h2 className={styles.sectionTitle}>{section.title}</h2>
+                    <p className={styles.sectionDesc}>{section.description}</p>
                   </div>
                 </div>
               </motion.div>
 
-              <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+              <div className={styles.grid}>
                 {section.games.map((game, index) => (
                   <GameCard
                     key={`${section.id}-${game.id}`}

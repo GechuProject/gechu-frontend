@@ -1,0 +1,116 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+.item {
+  @include glass-card;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $white-10;
+  }
+}
+
+.row {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.imageWrap {
+  flex-shrink: 0;
+  height: 8rem;
+  width: 12rem;
+  overflow: hidden;
+  border-radius: 0.5rem;
+
+  img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.title {
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $white;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $accent;
+  }
+}
+
+.meta {
+  @include flex-center(1rem);
+  margin-bottom: 0.75rem;
+}
+
+.rating {
+  @include flex-center(0.25rem);
+}
+
+.ratingText {
+  font-size: 0.875rem;
+  color: $white;
+}
+
+.genre {
+  font-size: 0.875rem;
+  color: $white-50;
+}
+
+.releaseDate {
+  font-size: 0.875rem;
+  color: $white-50;
+}
+
+.discountBadge {
+  @include accent-badge;
+}
+
+.priceCol {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.removeBtn {
+  border-radius: 9999px;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.2);
+  }
+}
+
+.priceWrap {
+  text-align: right;
+}
+
+.originalPrice {
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  color: $white-50;
+  text-decoration: line-through;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $accent;
+}
+

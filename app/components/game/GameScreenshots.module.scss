@@ -1,0 +1,32 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+.section {
+  // no extra bottom margin since it's the last item
+}
+
+.heading {
+  margin-bottom: 1.5rem;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: $white;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.thumb {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  @include glass-card;
+
+  img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+}
+

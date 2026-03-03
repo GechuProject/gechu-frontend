@@ -1,0 +1,30 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.card {
+  @include glass-card;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+
+.iconWrap {
+  margin-bottom: 0.75rem;
+}
+
+.label {
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  color: $white-50;
+}
+
+.value {
+  font-weight: 700;
+  color: $white;
+}
+
