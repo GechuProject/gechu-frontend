@@ -7,18 +7,14 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PasswordVerifyStep } from "@/app/components/edit-profile/PasswordVerifyStep";
 import { EditProfileForm } from "@/app/components/edit-profile/EditProfileForm";
+import { editProfileFormInitial } from "@/src/mocks/data";
 import styles from "./page.module.scss";
 
 export default function EditProfilePage() {
   const router = useRouter();
   const [step, setStep] = useState<"password" | "edit">("password");
   const [currentPassword, setCurrentPassword] = useState("");
-  const [formData, setFormData] = useState({
-    currentPasswordEdit: "",
-    newPassword: "",
-    confirmPassword: "",
-    nickname: "User123",
-  });
+  const [formData, setFormData] = useState(editProfileFormInitial);
 
   const handlePasswordVerify = (e: React.FormEvent) => {
     e.preventDefault();

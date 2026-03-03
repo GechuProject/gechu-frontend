@@ -1,5 +1,11 @@
 export default {
   extends: ['@commitlint/config-conventional'],
+  parserPreset: {
+    parserOpts: {
+      headerPattern: /^\[(feat|fix|chore|refactor|style|add)\]\s+(.+)$/,
+      headerCorrespondence: ['type', 'subject'],
+    },
+  },
   rules: {
     'type-enum': [
       2,
@@ -7,7 +13,6 @@ export default {
       ['feat', 'fix', 'chore', 'refactor', 'style', 'add'],
     ],
     'subject-case': [0],
-    'header-pattern': [2, 'always', /^\[([a-z]+)\] (.+)$/],
     'type-case': [2, 'always', 'lower-case'],
   },
 };
