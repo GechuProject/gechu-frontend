@@ -69,7 +69,7 @@ export function GameCard({ game, index }: GameCardProps) {
             <div className="flex items-center gap-2">
               <Star className="h-4 w-4 fill-[#E4FF30] text-[#E4FF30]" />
               <span className="text-sm text-white">{game.rating}</span>
-              <span className="text-sm text-white/50">• {game.genre}</span>
+              <span className="text-sm text-white/50">{game.genre}</span>
             </div>
           </motion.div>
         </div>

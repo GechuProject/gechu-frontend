@@ -1,10 +1,9 @@
 "use client";
-
-import { Navigation } from "@/app/components/Navigation";
-import { motion } from "motion/react";
-import { Heart, X, Filter, Star } from "lucide-react";
 import { useState } from "react";
-import Link from "next/link";
+import { WishlistHeader } from "@/app/components/wishlist/WishlistHeader";
+import { WishlistItem } from "@/app/components/wishlist/WishlistItem";
+import { WishlistEmpty } from "@/app/components/wishlist/WishlistEmpty";
+import { WishlistSummary } from "@/app/components/wishlist/WishlistSummary";
 
 const wishlistGames = [
   {
@@ -75,27 +74,6 @@ const wishlistGames = [
   },
 ];
 
-// 3D Icon Component
-function Icon3D({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`relative ${className}`}
-      style={{
-        filter: "drop-shadow(0 4px 8px rgba(228, 255, 48, 0.3))",
-        transform: "perspective(1000px) rotateX(10deg)",
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
 export default function WishlistPage() {
   const [games, setGames] = useState(wishlistGames);
   const [filter, setFilter] = useState<"all" | "discount" | "free">("all");
@@ -113,186 +91,33 @@ export default function WishlistPage() {
 
   return (
     <div className="min-h-screen bg-black pt-40">
-      <Navigation />
-
       <div className="mx-auto max-w-[1400px] px-6 py-16">
-        {/* Header */}
-        <div className="mb-12 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Icon3D>
-              <Heart className="h-10 w-10 fill-[#E4FF30] text-[#E4FF30]" />
-            </Icon3D>
-            <div>
-              <h1 className="text-5xl font-bold text-white">위시리스트</h1>
-              <p className="mt-2 text-white/50">
-                {filteredGames.length}개의 게임
-              </p>
-            </div>
-          </div>
+        <WishlistHeader
+          gameCount={filteredGames.length}
+          filter={filter}
+          onFilterChange={setFilter}
+        />
 
-          {/* Filter Buttons */}
-          <div className="flex gap-3">
-            <motion.button
-              onClick={() => setFilter("all")}
-              className={`flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2 transition-all ${
-                filter === "all"
-                  ? "bg-[#E4FF30] text-black"
-                  : "border border-white/10 bg-white/5 text-white hover:bg-white/10"
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Filter className="h-4 w-4" />
-              전체
-            </motion.button>
-
-            <motion.button
-              onClick={() => setFilter("discount")}
-              className={`cursor-pointer rounded-lg px-4 py-2 transition-all ${
-                filter === "discount"
-                  ? "bg-[#E4FF30] text-black"
-                  : "border border-white/10 bg-white/5 text-white hover:bg-white/10"
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              할인중
-            </motion.button>
-
-            <motion.button
-              onClick={() => setFilter("free")}
-              className={`cursor-pointer rounded-lg px-4 py-2 transition-all ${
-                filter === "free"
-                  ? "bg-[#E4FF30] text-black"
-                  : "border border-white/10 bg-white/5 text-white hover:bg-white/10"
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              무료
-            </motion.button>
-          </div>
-        </div>
-
-        {/* Games Grid */}
         {filteredGames.length === 0 ? (
-          <div className="py-20 text-center">
-            <Heart className="mx-auto mb-4 h-16 w-16 text-white/20" />
-            <h2 className="mb-2 text-2xl font-bold text-white">
-              위시리스트가 비어있습니다
-            </h2>
-            <p className="mb-6 text-white/50">
-              마음에 드는 게임을 위시리스트에 추가해보세요
-            </p>
-            <Link href="/">
-              <motion.button
-                className="rounded-lg bg-[#E4FF30] px-6 py-3 font-bold text-black"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                게임 둘러보기
-              </motion.button>
-            </Link>
-          </div>
+          <WishlistEmpty />
         ) : (
           <div className="space-y-4">
             {filteredGames.map((game, index) => (
-              <motion.div
+              <WishlistItem
                 key={game.id}
-                className="group overflow-hidden rounded-lg border border-white/10 bg-white/5 transition-all hover:bg-white/10"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-              >
-                <Link href={`/game/${game.id}`} className="block">
-                  <div className="flex gap-6 p-4">
-                    {/* Game Image */}
-                    <motion.div
-                      className="h-32 w-48 shrink-0 overflow-hidden rounded-lg"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <img
-                        src={game.image}
-                        alt={game.title}
-                        className="h-full w-full object-cover"
-                      />
-                    </motion.div>
-
-                    {/* Game Info */}
-                    <div className="flex flex-1 flex-col justify-between">
-                      <div>
-                        <h3 className="mb-2 text-2xl font-bold text-white transition-colors hover:text-[#E4FF30]">
-                          {game.title}
-                        </h3>
-
-                        <div className="mb-3 flex items-center gap-4">
-                          <div className="flex items-center gap-1">
-                            <Star className="h-4 w-4 fill-[#E4FF30] text-[#E4FF30]" />
-                            <span className="text-sm text-white">
-                              {game.rating}
-                            </span>
-                          </div>
-                          <span className="text-sm text-white/50">
-                            {game.genre}
-                          </span>
-                          <span className="text-sm text-white/50">
-                            {game.releaseDate}
-                          </span>
-                        </div>
-
-                        {game.discount && (
-                          <span className="inline-block rounded bg-[#E4FF30] px-2 py-1 text-sm font-bold text-black">
-                            {game.discount}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Price & Actions */}
-                    <div className="flex shrink-0 flex-col items-end justify-between">
-                      <motion.button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          removeFromWishlist(game.id);
-                        }}
-                        className="z-10 rounded-full p-2 transition-colors hover:bg-red-500/20"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                      >
-                        <X className="h-5 w-5 text-red-500" />
-                      </motion.button>
-
-                      <div className="text-right">
-                        {"originalPrice" in game && game.originalPrice && (
-                          <p className="mb-1 text-sm text-white/50 line-through">
-                            {game.originalPrice}
-                          </p>
-                        )}
-                        <p className="text-2xl font-bold text-[#E4FF30]">
-                          {game.price}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
+                game={game}
+                index={index}
+                onRemove={removeFromWishlist}
+              />
             ))}
           </div>
         )}
 
-        {/* Summary */}
         {filteredGames.length > 0 && (
-          <div className="mt-12 rounded-lg border border-white/10 bg-white/5 p-6">
-            <div>
-              <p className="mb-1 text-white/50">
-                총 {filteredGames.length}개 게임
-              </p>
-              <p className="text-sm text-white">
-                할인 중인 게임: {filteredGames.filter((g) => g.discount).length}
-                개
-              </p>
-            </div>
-          </div>
+          <WishlistSummary
+            totalCount={filteredGames.length}
+            discountCount={filteredGames.filter((g) => g.discount).length}
+          />
         )}
       </div>
     </div>
