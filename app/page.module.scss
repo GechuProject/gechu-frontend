@@ -1,0 +1,93 @@
+@use "./styles/variables" as *;
+@use "./styles/mixins" as *;
+
+.page {
+  min-height: 100vh;
+  background: $black;
+  padding-top: $pt-header;
+}
+
+/* ?�?�?� Hero Section ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?� */
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.heroInner {
+  @include container;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  text-align: center;
+}
+
+.heroTitle {
+  margin-bottom: 1.5rem;
+  font-size: 3rem;
+  font-weight: 700;
+  color: $white;
+
+  @include respond-md {
+    font-size: 3.75rem;
+  }
+}
+
+.heroDivider {
+  border-top: 1px solid $white-10;
+}
+
+/* ?�?�?� Game Section ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?� */
+.section {
+  @include container;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.sectionHeader {
+  @include flex-center(0);
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.sectionTitleWrap {
+  @include flex-center(0.75rem);
+}
+
+.sectionTitle {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: $white;
+}
+
+.carouselControls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.carouselBtn {
+  @include btn-icon;
+  border: 1px solid $white-10;
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+.carouselTrack {
+  position: relative;
+  overflow: hidden;
+}
+
+.carouselInner {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.carouselItem {
+  min-width: calc(20% - 19.2px);
+}
+
+.sectionDivider {
+  margin-top: 4rem;
+  border-top: 1px solid $white-10;
+}

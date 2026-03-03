@@ -1,0 +1,52 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+.header {
+  margin-bottom: 3rem;
+  @include flex-center(0);
+  justify-content: space-between;
+}
+
+.titleWrap {
+  @include flex-center(1rem);
+}
+
+.heading {
+  font-size: 3rem;
+  font-weight: 700;
+  color: $white;
+}
+
+.count {
+  margin-top: 0.5rem;
+  color: $white-50;
+}
+
+.filters {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.filterBtn {
+  @include flex-center(0.5rem);
+  cursor: pointer;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.filterBtnActive {
+  @extend .filterBtn;
+  background: $accent;
+  color: $black;
+}
+
+.filterBtnDefault {
+  @extend .filterBtn;
+  @include glass-card;
+  color: $white;
+
+  &:hover {
+    background: $white-10;
+  }
+}
+

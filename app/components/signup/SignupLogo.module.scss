@@ -1,0 +1,24 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+// SignupLogo??LoginLogo?� ?�일??구조
+.logoWrap {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.iconWrap {
+  margin-bottom: 1.5rem;
+  display: inline-block;
+}
+
+.title {
+  margin-bottom: 0.5rem;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: $white;
+}
+
+.subtitle {
+  color: $white-50;
+}
+

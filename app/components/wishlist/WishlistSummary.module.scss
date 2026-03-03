@@ -1,0 +1,19 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+.summary {
+  @include glass-card;
+  margin-top: 3rem;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+
+.total {
+  margin-bottom: 0.25rem;
+  color: $white-50;
+}
+
+.discount {
+  font-size: 0.875rem;
+  color: $white;
+}
+

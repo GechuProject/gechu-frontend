@@ -1,0 +1,13 @@
+@use "../styles/variables" as *;
+@use "../styles/mixins" as *;
+.page {
+  min-height: 100vh;
+  background: $black;
+  padding-top: $pt-header;
+  padding-bottom: 5rem;
+}
+
+.inner {
+  @include container;
+}
+

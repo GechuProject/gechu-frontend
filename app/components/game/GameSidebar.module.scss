@@ -1,0 +1,58 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+.sidebar {
+  @include glass-card;
+  position: sticky;
+  top: 6rem;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+
+.heading {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $white;
+}
+
+.specs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.specItem {
+  // spacing handled by parent gap
+}
+
+.specLabel {
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  color: $white-50;
+}
+
+.specValue {
+  color: $white;
+}
+
+.divider {
+  margin-top: 1.5rem;
+  border-top: 1px solid $white-10;
+  padding-top: 1.5rem;
+}
+
+.priceRow {
+  @include flex-center(0);
+  justify-content: space-between;
+}
+
+.priceLabel {
+  color: $white-50;
+}
+
+.priceValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $accent;
+}
+

@@ -1,0 +1,89 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+.hero {
+  position: relative;
+  height: 500px;
+  overflow: hidden;
+}
+
+.bgImage {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0.7), transparent);
+}
+
+.content {
+  position: relative;
+  @include container;
+  display: flex;
+  height: 100%;
+  align-items: flex-end;
+  padding-bottom: 3rem;
+}
+
+.inner {
+  width: 100%;
+}
+
+.meta {
+  @include flex-center(0.75rem);
+  margin-bottom: 1rem;
+}
+
+.genreBadge {
+  @include accent-badge;
+}
+
+.ratingWrap {
+  @include flex-center(0.25rem);
+}
+
+.ratingText {
+  font-weight: 700;
+  color: $white;
+}
+
+.title {
+  margin-bottom: 0.75rem;
+  font-size: 3.75rem;
+  font-weight: 700;
+  color: $white;
+}
+
+.subtitle {
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  color: $white-80;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.actionBtn {
+  cursor: pointer;
+  border-radius: 0.5rem;
+  border: 1px solid $white-20;
+  background: $white-10;
+  padding: 1rem 1.5rem;
+  color: $white;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: $white-20;
+  }
+}
+

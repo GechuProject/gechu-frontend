@@ -1,12 +1,13 @@
 "use client";
+
 import { GameHero } from "@/app/components/game/GameHero";
 import { GameInfoCards } from "@/app/components/game/GameInfoCards";
 import { GameDescription } from "@/app/components/game/GameDescription";
 import { GameFeatures } from "@/app/components/game/GameFeatures";
 import { GameScreenshots } from "@/app/components/game/GameScreenshots";
 import { GameSidebar } from "@/app/components/game/GameSidebar";
+import styles from "./page.module.scss";
 
-// Mock game data
 const gameDetails: Record<
   number,
   {
@@ -70,37 +71,34 @@ export default async function GameDetailPage({
   const game = gameDetails[Number(id)] || gameDetails[1];
 
   return (
-    <div className="min-h-screen bg-black pt-40">
-      <div className="">
-        <GameHero
-          image={game.image}
-          title={game.title}
-          subtitle={game.subtitle}
-          genre={game.genre}
-          rating={game.rating}
-        />
+    <div className={styles.page}>
+      <GameHero
+        image={game.image}
+        title={game.title}
+        subtitle={game.subtitle}
+        genre={game.genre}
+        rating={game.rating}
+      />
 
-        <div className="mx-auto max-w-[1400px] px-6 py-16">
-          <div className="grid gap-12 lg:grid-cols-3">
-            {/* Main Content */}
-            <div className="lg:col-span-2">
-              <GameInfoCards
-                releaseDate={game.releaseDate}
-                players={game.players}
-                developer={game.developer}
-              />
-              <GameDescription description={game.description} />
-              <GameFeatures features={game.features} />
-              <GameScreenshots image={game.image} title={game.title} />
-            </div>
-
-            {/* Sidebar */}
-            <div className="lg:col-span-1">
-              <GameSidebar
-                price={game.price}
-                systemRequirements={game.systemRequirements}
-              />
-            </div>
+      <div className={styles.inner}>
+        <div className={styles.layout}>
+          {/* Main Content */}
+          <div>
+            <GameInfoCards
+              releaseDate={game.releaseDate}
+              players={game.players}
+              developer={game.developer}
+            />
+            <GameDescription description={game.description} />
+            <GameFeatures features={game.features} />
+            <GameScreenshots image={game.image} title={game.title} />
+          </div>
+          {/* Sidebar */}
+          <div>
+            <GameSidebar
+              price={game.price}
+              systemRequirements={game.systemRequirements}
+            />
           </div>
         </div>
       </div>

@@ -1,0 +1,75 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+.footer {
+  border-top: 1px solid $white-10;
+  background: $black;
+}
+
+.inner {
+  @include container;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+
+  @include respond-sm {
+    flex-direction: row;
+  }
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.logoIcon {
+  color: $accent;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.logoText {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: $white;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.link {
+  color: $white-50;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $white;
+  }
+}
+
+.separator {
+  color: $white-20;
+}
+
+.copy {
+  font-size: 0.875rem;
+  color: $white-30;
+}
+

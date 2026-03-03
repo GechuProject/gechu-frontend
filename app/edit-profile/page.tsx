@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PasswordVerifyStep } from "@/app/components/edit-profile/PasswordVerifyStep";
 import { EditProfileForm } from "@/app/components/edit-profile/EditProfileForm";
+import styles from "./page.module.scss";
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -21,9 +22,7 @@ export default function EditProfilePage() {
 
   const handlePasswordVerify = (e: React.FormEvent) => {
     e.preventDefault();
-    if (currentPassword) {
-      setStep("edit");
-    }
+    if (currentPassword) setStep("edit");
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,31 +37,22 @@ export default function EditProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-black pt-40">
-      <div className="mx-auto max-w-[800px] px-6 py-16">
-        {/* Back Button */}
+    <div className={styles.page}>
+      <div className={styles.inner}>
         <Link href="/mypage">
           <motion.button
-            className="mb-8 flex items-center gap-2 text-white/70 transition-colors hover:text-[#E4FF30]"
+            style={{ marginBottom: "2rem", display: "flex", alignItems: "center", gap: "0.5rem", color: "rgba(255,255,255,0.7)", background: "none", border: "none", cursor: "pointer", transition: "color 0.2s" }}
             whileHover={{ x: -5 }}
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft style={{ width: "1.25rem", height: "1.25rem" }} />
             마이페이지로 돌아가기
           </motion.button>
         </Link>
 
         {step === "password" ? (
-          <PasswordVerifyStep
-            currentPassword={currentPassword}
-            onChange={setCurrentPassword}
-            onSubmit={handlePasswordVerify}
-          />
+          <PasswordVerifyStep currentPassword={currentPassword} onChange={setCurrentPassword} onSubmit={handlePasswordVerify} />
         ) : (
-          <EditProfileForm
-            formData={formData}
-            onChange={handleChange}
-            onSubmit={handleSubmit}
-          />
+          <EditProfileForm formData={formData} onChange={handleChange} onSubmit={handleSubmit} />
         )}
       </div>
     </div>

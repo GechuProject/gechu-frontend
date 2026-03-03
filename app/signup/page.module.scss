@@ -1,0 +1,29 @@
+@use "../styles/variables" as *;
+@use "../styles/mixins" as *;
+.page {
+  position: relative;
+  min-height: 100vh;
+  background: $black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+.bgPattern {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 28rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+

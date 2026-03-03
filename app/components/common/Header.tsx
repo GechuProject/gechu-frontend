@@ -17,6 +17,8 @@ import { motion, AnimatePresence } from "motion/react";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Icon3D } from "./Icon3D";
+import styles from "./Header.module.scss";
 
 const allGames = [
   {
@@ -101,26 +103,6 @@ const allGames = [
   },
 ];
 
-function Icon3D({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`relative ${className}`}
-      style={{
-        filter: "drop-shadow(0 4px 8px rgba(228, 255, 48, 0.3))",
-        transform: "perspective(1000px) rotateX(10deg)",
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -170,69 +152,79 @@ export function Header() {
     .slice(0, 4);
 
   return (
-    <nav className="fixed top-0 right-0 left-0 z-50 border-b border-white/10 bg-black/95 backdrop-blur-sm">
-      <div className="mx-auto max-w-[1400px] px-6">
-        <div className="flex items-center justify-between py-4">
-          <Link
-            href="/"
-            className="flex items-center gap-3 transition-opacity hover:opacity-80"
-          >
+    <nav className={styles.nav}>
+      <div className={styles.inner}>
+        {/* 상단 행: 로고 / 데스크탑 메뉴 / 아이콘 */}
+        <div className={styles.topRow}>
+          <Link href="/" className={styles.logo}>
             <Icon3D>
-              <Gamepad2 className="h-8 w-8 text-[#E4FF30]" />
+              <Gamepad2
+                style={{ width: "2rem", height: "2rem", color: "#E4FF30" }}
+              />
             </Icon3D>
-            <span className="text-2xl font-bold text-white">Gechu</span>
+            <span className={styles.logoText}>Gechu</span>
           </Link>
 
-          <div className="hidden items-center gap-8 lg:flex">
+          {/* 데스크탑 네비게이션 */}
+          <div className={styles.desktopNav}>
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 href={link.path}
-                className={`text-white transition-colors hover:text-[#E4FF30] ${
-                  pathname === link.path ? "text-[#E4FF30]" : ""
-                }`}
+                className={
+                  pathname === link.path ? styles.navLinkActive : styles.navLink
+                }
               >
                 {link.label}
               </Link>
             ))}
           </div>
 
-          <div className="flex items-center gap-4">
-            <div ref={profileRef} className="relative">
+          {/* 우측 아이콘 */}
+          <div className={styles.actions}>
+            {/* 프로필 드롭다운 */}
+            <div ref={profileRef} className={styles.profileWrap}>
               <button
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="cursor-pointer"
+                className={styles.profileBtn}
               >
                 <Icon3D>
-                  <User className="h-6 w-6 text-white transition-colors hover:text-[#E4FF30]" />
+                  <User
+                    style={{
+                      width: "1.5rem",
+                      height: "1.5rem",
+                      color: "#fff",
+                      transition: "color 0.2s",
+                    }}
+                  />
                 </Icon3D>
               </button>
 
               <AnimatePresence>
                 {showProfileMenu && (
                   <motion.div
+                    className={styles.profileDropdown}
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-full right-0 z-100 mt-4 w-56 overflow-hidden rounded-xl border border-[#E4FF30]/20 bg-black/95 shadow-2xl backdrop-blur-xl"
-                    style={{
-                      boxShadow:
-                        "0 20px 60px rgba(228, 255, 48, 0.2), 0 0 40px rgba(228, 255, 48, 0.1)",
-                    }}
                   >
-                    <div className="p-2">
+                    <div className={styles.dropdownBody}>
                       <Link
                         href="/wishlist"
                         onClick={() => setShowProfileMenu(false)}
                       >
                         <motion.div
-                          className="group flex cursor-pointer items-center gap-3 rounded-lg px-4 py-3 transition-all hover:bg-[#E4FF30]/10"
+                          className={styles.dropdownItem}
                           whileHover={{ x: 4 }}
                         >
-                          <Heart className="h-5 w-5 text-[#E4FF30]" />
-                          <span className="text-white transition-colors group-hover:text-[#E4FF30]">
-                            위시리스트
-                          </span>
+                          <Heart
+                            style={{
+                              width: "1.25rem",
+                              height: "1.25rem",
+                              color: "#E4FF30",
+                            }}
+                          />
+                          <span>위시리스트</span>
                         </motion.div>
                       </Link>
 
@@ -241,30 +233,38 @@ export function Header() {
                         onClick={() => setShowProfileMenu(false)}
                       >
                         <motion.div
-                          className="group flex cursor-pointer items-center gap-3 rounded-lg px-4 py-3 transition-all hover:bg-[#E4FF30]/10"
+                          className={styles.dropdownItem}
                           whileHover={{ x: 4 }}
                         >
-                          <UserCircle className="h-5 w-5 text-[#E4FF30]" />
-                          <span className="text-white transition-colors group-hover:text-[#E4FF30]">
-                            마이페이지
-                          </span>
+                          <UserCircle
+                            style={{
+                              width: "1.25rem",
+                              height: "1.25rem",
+                              color: "#E4FF30",
+                            }}
+                          />
+                          <span>마이페이지</span>
                         </motion.div>
                       </Link>
 
-                      <div className="my-2 h-px bg-white/10" />
+                      <div className={styles.dropdownDivider} />
 
                       <Link
                         href="/login"
                         onClick={() => setShowProfileMenu(false)}
                       >
                         <motion.div
-                          className="group flex cursor-pointer items-center gap-3 rounded-lg px-4 py-3 transition-all hover:bg-red-500/10"
+                          className={styles.dropdownItemDanger}
                           whileHover={{ x: 4 }}
                         >
-                          <LogOut className="h-5 w-5 text-red-400" />
-                          <span className="text-white transition-colors group-hover:text-red-400">
-                            로그아웃
-                          </span>
+                          <LogOut
+                            style={{
+                              width: "1.25rem",
+                              height: "1.25rem",
+                              color: "rgb(248,113,113)",
+                            }}
+                          />
+                          <span>로그아웃</span>
                         </motion.div>
                       </Link>
                     </div>
@@ -273,19 +273,26 @@ export function Header() {
               </AnimatePresence>
             </div>
 
+            {/* 모바일 햄버거 버튼 */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="cursor-pointer lg:hidden"
+              className={styles.mobileMenuBtn}
             >
-              <Menu className="h-6 w-6 text-white" />
+              <Menu
+                style={{ width: "1.5rem", height: "1.5rem", color: "#fff" }}
+              />
             </button>
           </div>
         </div>
 
-        <div className="hidden pb-4 md:block" ref={searchRef}>
-          <div className="relative">
-            <div className="flex items-center rounded-xl border border-white/10 bg-white/5 px-5 py-3 transition-all hover:border-[#E4FF30]/30">
-              <Search className="mr-3 h-5 w-5 text-white/50" />
+        {/* 검색창 (md 이상) */}
+        <div className={styles.searchRow} ref={searchRef}>
+          <div className={styles.searchWrap}>
+            <div className={styles.searchBox}>
+              <Search
+                className={styles.searchIcon}
+                style={{ width: "1.25rem", height: "1.25rem" }}
+              />
               <input
                 type="text"
                 placeholder="게임 검색 (제목, 장르)..."
@@ -295,7 +302,7 @@ export function Header() {
                   setShowResults(true);
                 }}
                 onFocus={() => setShowResults(true)}
-                className="w-full border-none bg-transparent text-lg text-white placeholder-white/50 outline-none"
+                className={styles.searchInput}
               />
               {searchQuery && (
                 <button
@@ -303,34 +310,31 @@ export function Header() {
                     setSearchQuery("");
                     setShowResults(false);
                   }}
-                  className="ml-2 cursor-pointer"
+                  className={styles.searchClearBtn}
                 >
-                  <X className="h-5 w-5 text-white/50 transition-colors hover:text-white" />
+                  <X style={{ width: "1.25rem", height: "1.25rem" }} />
                 </button>
               )}
             </div>
 
+            {/* 검색 결과 드롭다운 */}
             <AnimatePresence>
               {showResults && (
                 <motion.div
+                  className={styles.resultDropdown}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="absolute top-full right-0 left-0 mt-2 overflow-hidden rounded-2xl border border-[#E4FF30]/20 bg-black/95 shadow-2xl backdrop-blur-xl"
-                  style={{
-                    boxShadow:
-                      "0 20px 60px rgba(228, 255, 48, 0.2), 0 0 40px rgba(228, 255, 48, 0.1)",
-                  }}
                 >
                   {searchQuery.trim() ? (
                     filteredGames.length > 0 ? (
-                      <div className="max-h-[600px] overflow-y-auto">
-                        <div className="border-b border-white/10 p-5">
-                          <p className="text-sm text-white/50">
+                      <div className={styles.resultScroll}>
+                        <div className={styles.resultHeader}>
+                          <p className={styles.resultCount}>
                             {filteredGames.length}개의 검색 결과
                           </p>
                         </div>
-                        <div className="grid grid-cols-1 gap-3 p-4 md:grid-cols-2">
+                        <div className={styles.resultGrid}>
                           {filteredGames.map((game, index) => (
                             <Link
                               key={game.id}
@@ -341,74 +345,94 @@ export function Header() {
                               }}
                             >
                               <motion.div
+                                className={styles.resultItem}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05 }}
-                                className="group flex cursor-pointer items-center gap-4 rounded-xl border border-white/5 p-4 transition-all hover:border-[#E4FF30]/30 hover:bg-white/5"
                                 whileHover={{ scale: 1.02, x: 4 }}
                               >
-                                <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-lg">
-                                  <img
-                                    src={game.image}
-                                    alt={game.title}
-                                    className="h-full w-full object-cover transition-transform group-hover:scale-110"
-                                  />
-                                  <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
+                                <div className={styles.resultImg}>
+                                  <img src={game.image} alt={game.title} />
+                                  <div className={styles.resultImgOverlay} />
                                 </div>
-                                <div className="flex-1">
-                                  <h4 className="mb-1 text-lg font-bold text-white transition-colors group-hover:text-[#E4FF30]">
+                                <div className={styles.resultInfo}>
+                                  <h4 className={styles.resultTitle}>
                                     {game.title}
                                   </h4>
-                                  <div className="flex items-center gap-3">
-                                    <div className="flex items-center gap-1">
-                                      <Star className="h-4 w-4 fill-[#E4FF30] text-[#E4FF30]" />
-                                      <span className="text-sm text-white/70">
+                                  <div className={styles.resultMeta}>
+                                    <div className={styles.resultRating}>
+                                      <Star
+                                        style={{
+                                          width: "1rem",
+                                          height: "1rem",
+                                          fill: "#E4FF30",
+                                          color: "#E4FF30",
+                                        }}
+                                      />
+                                      <span className={styles.resultRatingText}>
                                         {game.rating}
                                       </span>
                                     </div>
-                                    <span className="text-sm text-white/50">
+                                    <span className={styles.resultGenre}>
                                       {game.genre}
                                     </span>
                                   </div>
                                 </div>
-                                <div className="text-right">
-                                  <p className="text-lg font-bold text-[#E4FF30]">
-                                    {game.price}
-                                  </p>
-                                </div>
+                                <p className={styles.resultPrice}>
+                                  {game.price}
+                                </p>
                               </motion.div>
                             </Link>
                           ))}
                         </div>
                       </div>
                     ) : (
-                      <div className="p-12 text-center">
-                        <Search className="mx-auto mb-4 h-16 w-16 text-white/20" />
-                        <p className="text-lg text-white/50">
+                      <div className={styles.noResult}>
+                        <Search
+                          style={{
+                            display: "block",
+                            margin: "0 auto 1rem",
+                            width: "4rem",
+                            height: "4rem",
+                            color: "rgba(255,255,255,0.2)",
+                          }}
+                        />
+                        <p className={styles.noResultText}>
                           검색 결과가 없습니다
                         </p>
-                        <p className="mt-2 text-sm text-white/30">
+                        <p className={styles.noResultSub}>
                           다른 키워드로 검색해보세요
                         </p>
                       </div>
                     )
                   ) : (
-                    <div className="max-h-[600px] overflow-y-auto">
-                      <div className="border-b border-white/10 p-5">
-                        <p className="flex items-center gap-2 text-lg font-bold text-white">
-                          <Sparkles className="h-5 w-5 text-[#E4FF30]" />
+                    <div className={styles.resultScroll}>
+                      <div className={styles.suggestHeader}>
+                        <p className={styles.suggestTitle}>
+                          <Sparkles
+                            style={{
+                              width: "1.25rem",
+                              height: "1.25rem",
+                              color: "#E4FF30",
+                            }}
+                          />
                           추천 게임
                         </p>
                       </div>
-                      <div className="grid grid-cols-1 gap-6 p-4 md:grid-cols-2">
-                        <div>
-                          <div className="mb-4 flex items-center gap-2 px-2">
-                            <TrendingUp className="h-5 w-5 text-[#E4FF30]" />
-                            <h3 className="font-bold text-white/70">
-                              인기 급상승
-                            </h3>
+                      <div className={styles.suggestGrid}>
+                        {/* 인기 급상승 */}
+                        <div className={styles.suggestCategory}>
+                          <div className={styles.suggestCategoryTitle}>
+                            <TrendingUp
+                              style={{
+                                width: "1.25rem",
+                                height: "1.25rem",
+                                color: "#E4FF30",
+                              }}
+                            />
+                            인기 급상승
                           </div>
-                          <div className="space-y-2">
+                          <div className={styles.suggestList}>
                             {trendingGames.map((game, index) => (
                               <Link
                                 key={game.id}
@@ -416,28 +440,24 @@ export function Header() {
                                 onClick={() => setShowResults(false)}
                               >
                                 <motion.div
+                                  className={styles.suggestItem}
                                   initial={{ opacity: 0, x: -20 }}
                                   animate={{ opacity: 1, x: 0 }}
                                   transition={{ delay: index * 0.05 }}
-                                  className="group flex cursor-pointer items-center gap-3 rounded-lg border border-white/5 p-3 transition-all hover:border-[#E4FF30]/30 hover:bg-white/5"
                                   whileHover={{ scale: 1.02, x: 4 }}
                                 >
-                                  <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded">
-                                    <img
-                                      src={game.image}
-                                      alt={game.title}
-                                      className="h-full w-full object-cover transition-transform group-hover:scale-110"
-                                    />
+                                  <div className={styles.suggestImg}>
+                                    <img src={game.image} alt={game.title} />
                                   </div>
-                                  <div className="min-w-0 flex-1">
-                                    <h4 className="truncate font-bold text-white transition-colors group-hover:text-[#E4FF30]">
+                                  <div className={styles.suggestInfo}>
+                                    <h4 className={styles.suggestTitle2}>
                                       {game.title}
                                     </h4>
-                                    <p className="text-sm text-white/50">
+                                    <p className={styles.suggestGenre}>
                                       {game.genre}
                                     </p>
                                   </div>
-                                  <p className="font-bold text-[#E4FF30]">
+                                  <p className={styles.suggestPrice}>
                                     {game.price}
                                   </p>
                                 </motion.div>
@@ -446,14 +466,20 @@ export function Header() {
                           </div>
                         </div>
 
-                        <div>
-                          <div className="mb-4 flex items-center gap-2 px-2">
-                            <Star className="h-5 w-5 fill-[#E4FF30] text-[#E4FF30]" />
-                            <h3 className="font-bold text-white/70">
-                              인기 게임
-                            </h3>
+                        {/* 인기 게임 */}
+                        <div className={styles.suggestCategory}>
+                          <div className={styles.suggestCategoryTitle}>
+                            <Star
+                              style={{
+                                width: "1.25rem",
+                                height: "1.25rem",
+                                fill: "#E4FF30",
+                                color: "#E4FF30",
+                              }}
+                            />
+                            인기 게임
                           </div>
-                          <div className="space-y-2">
+                          <div className={styles.suggestList}>
                             {popularGames.map((game, index) => (
                               <Link
                                 key={game.id}
@@ -461,31 +487,27 @@ export function Header() {
                                 onClick={() => setShowResults(false)}
                               >
                                 <motion.div
+                                  className={styles.suggestItem}
                                   initial={{ opacity: 0, x: -20 }}
                                   animate={{ opacity: 1, x: 0 }}
                                   transition={{
                                     delay:
                                       (trendingGames.length + index) * 0.05,
                                   }}
-                                  className="group flex cursor-pointer items-center gap-3 rounded-lg border border-white/5 p-3 transition-all hover:border-[#E4FF30]/30 hover:bg-white/5"
                                   whileHover={{ scale: 1.02, x: 4 }}
                                 >
-                                  <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded">
-                                    <img
-                                      src={game.image}
-                                      alt={game.title}
-                                      className="h-full w-full object-cover transition-transform group-hover:scale-110"
-                                    />
+                                  <div className={styles.suggestImg}>
+                                    <img src={game.image} alt={game.title} />
                                   </div>
-                                  <div className="min-w-0 flex-1">
-                                    <h4 className="truncate font-bold text-white transition-colors group-hover:text-[#E4FF30]">
+                                  <div className={styles.suggestInfo}>
+                                    <h4 className={styles.suggestTitle2}>
                                       {game.title}
                                     </h4>
-                                    <p className="text-sm text-white/50">
+                                    <p className={styles.suggestGenre}>
                                       {game.genre}
                                     </p>
                                   </div>
-                                  <p className="font-bold text-[#E4FF30]">
+                                  <p className={styles.suggestPrice}>
                                     {game.price}
                                   </p>
                                 </motion.div>
@@ -502,19 +524,22 @@ export function Header() {
           </div>
         </div>
 
+        {/* 모바일 메뉴 */}
         {isMenuOpen && (
           <motion.div
+            className={styles.mobileMenu}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
-            className="border-t border-white/10 pt-4 pb-4 lg:hidden"
           >
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 href={link.path}
-                className={`block py-2 text-white transition-colors hover:text-[#E4FF30] ${
-                  pathname === link.path ? "text-[#E4FF30]" : ""
-                }`}
+                className={
+                  pathname === link.path
+                    ? styles.mobileNavLinkActive
+                    : styles.mobileNavLink
+                }
                 onClick={() => setIsMenuOpen(false)}
               >
                 {link.label}
