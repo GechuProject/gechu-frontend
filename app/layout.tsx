@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/app/components/common/Header";
 import { Footer } from "@/app/components/common/Footer";
+import { MSWProvider } from "@/src/mocks/MSWProvider";
 
 export const metadata: Metadata = {
   title: "Gechu - 게임 추천 플랫폼",
@@ -23,9 +24,11 @@ export default function RootLayout({
           backgroundColor: "#000",
         }}
       >
-        <Header />
-        <main style={{ flex: 1 }}>{children}</main>
-        <Footer />
+        <MSWProvider>
+          <Header />
+          <main style={{ flex: 1 }}>{children}</main>
+          <Footer />
+        </MSWProvider>
       </body>
     </html>
   );

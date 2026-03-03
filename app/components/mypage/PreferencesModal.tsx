@@ -2,6 +2,11 @@
 
 import { motion, AnimatePresence } from "motion/react";
 import { X, Check, Gamepad2, Settings, Tag } from "lucide-react";
+import {
+  availableGenres,
+  availablePlatforms,
+  availableThemes,
+} from "@/src/mocks/data";
 import styles from "./PreferencesModal.module.scss";
 
 interface PreferencesModalProps {
@@ -20,38 +25,6 @@ interface PreferencesModalProps {
   setSelectedPlatforms: (l: string[]) => void;
   setSelectedThemes: (l: string[]) => void;
 }
-
-const availableGenres = [
-  "RPG",
-  "액션",
-  "어드벤처",
-  "FPS",
-  "전략",
-  "시뮬레이션",
-  "스포츠",
-  "레이싱",
-  "퍼즐",
-  "MMORPG",
-];
-const availablePlatforms = [
-  "PC",
-  "PlayStation",
-  "Xbox",
-  "Nintendo Switch",
-  "Mobile",
-];
-const availableThemes = [
-  "오픈월드",
-  "스토리 중심",
-  "Co-op",
-  "PvP",
-  "싱글플레이",
-  "멀티플레이",
-  "생존",
-  "공포",
-  "판타지",
-  "SF",
-];
 
 export function PreferencesModal({
   isOpen,

@@ -6,23 +6,13 @@ import { StatsGrid } from "@/app/components/mypage/StatsGrid";
 import { GamePreferences } from "@/app/components/mypage/GamePreferences";
 import { RecentSearches } from "@/app/components/mypage/RecentSearches";
 import { PreferencesModal } from "@/app/components/mypage/PreferencesModal";
+import {
+  userStats,
+  userProfile,
+  gamePreferences,
+  recentSearches,
+} from "@/src/mocks/data";
 import styles from "./page.module.scss";
-
-const userStats = { wishlistCount: 6 };
-
-const gamePreferences = {
-  favoriteGenres: ["RPG", "액션", "어드벤처"],
-  favoritePlatforms: ["PC", "PlayStation"],
-  favoriteThemes: ["오픈월드", "스토리 중심", "Co-op"],
-};
-
-const recentSearches = [
-  { id: 1, query: "Cyber Nexus 2077", timestamp: "5분 전" },
-  { id: 2, query: "RPG 추천", timestamp: "1시간 전" },
-  { id: 3, query: "Battle Royale", timestamp: "3시간 전" },
-  { id: 4, query: "무료 게임", timestamp: "어제" },
-  { id: 5, query: "Fantasy Realm", timestamp: "2일 전" },
-];
 
 export default function MyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,9 +37,9 @@ export default function MyPage() {
     <div className={styles.page}>
       <div className={styles.inner}>
         <ProfileHeader
-          nickname="User123"
-          email="user123@email.com"
-          bio="게임을 사랑하는 열정적인 게이머입니다. 특히 RPG와 액션 게임을 즐깁니다."
+          nickname={userProfile.nickname}
+          email={userProfile.email}
+          bio={userProfile.bio}
         />
         <StatsGrid wishlistCount={userStats.wishlistCount} />
         <GamePreferences preferences={gamePreferences} onEditClick={() => setIsModalOpen(true)} />
