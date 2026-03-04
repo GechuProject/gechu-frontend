@@ -7,20 +7,30 @@ import { GamePreferences } from "@/app/components/mypage/GamePreferences";
 import { RecentSearches } from "@/app/components/mypage/RecentSearches";
 import { PreferencesModal } from "@/app/components/mypage/PreferencesModal";
 import {
-  userStats,
+  userWishlist,
   userProfile,
-  gamePreferences,
+  userPreferences,
   recentSearches,
 } from "@/src/mocks/data";
 import styles from "./page.module.scss";
 
 export default function MyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedGenres, setSelectedGenres] = useState<string[]>(gamePreferences.favoriteGenres);
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(gamePreferences.favoritePlatforms);
-  const [selectedThemes, setSelectedThemes] = useState<string[]>(gamePreferences.favoriteThemes);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>(
+    userPreferences.genres.map((g) => g.name)
+  );
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(
+    userPreferences.platforms.map((p) => p.name)
+  );
+  const [selectedThemes, setSelectedThemes] = useState<string[]>(
+    userPreferences.tags.map((t) => t.name)
+  );
 
-  const toggleSelection = (item: string, list: string[], setList: (list: string[]) => void) => {
+  const toggleSelection = (
+    item: string,
+    list: string[],
+    setList: (list: string[]) => void
+  ) => {
     if (list.includes(item)) {
       setList(list.filter((i) => i !== item));
     } else {
@@ -29,7 +39,11 @@ export default function MyPage() {
   };
 
   const handleSave = () => {
-    console.log("Saved preferences:", { selectedGenres, selectedPlatforms, selectedThemes });
+    console.log("Saved preferences:", {
+      selectedGenres,
+      selectedPlatforms,
+      selectedThemes,
+    });
     setIsModalOpen(false);
   };
 
@@ -39,10 +53,16 @@ export default function MyPage() {
         <ProfileHeader
           nickname={userProfile.nickname}
           email={userProfile.email}
-          bio={userProfile.bio}
+          bio=""
         />
-        <StatsGrid wishlistCount={userStats.wishlistCount} />
-        <GamePreferences preferences={gamePreferences} onEditClick={() => setIsModalOpen(true)} />
+        <StatsGrid
+          wishlistCount={userWishlist.count}
+          wishlistItems={userWishlist.results}
+        />
+        <GamePreferences
+          preferences={userPreferences}
+          onEditClick={() => setIsModalOpen(true)}
+        />
         <RecentSearches searches={recentSearches} />
       </div>
 
