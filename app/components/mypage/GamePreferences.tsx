@@ -4,10 +4,15 @@ import { motion } from "motion/react";
 import { Gamepad2, Settings, Tag } from "lucide-react";
 import styles from "./GamePreferences.module.scss";
 
+interface PreferenceItem {
+  id: number;
+  name: string;
+}
+
 interface GamePreferencesData {
-  favoriteGenres: string[];
-  favoritePlatforms: string[];
-  favoriteThemes: string[];
+  genres: PreferenceItem[];
+  platforms: PreferenceItem[];
+  tags: PreferenceItem[];
 }
 
 interface GamePreferencesProps {
@@ -17,18 +22,18 @@ interface GamePreferencesProps {
 
 const preferenceCards = [
   {
-    key: "favoriteGenres" as const,
+    key: "genres" as const,
     icon: Gamepad2,
     label: "선호 장르",
     delay: 0.2,
   },
   {
-    key: "favoritePlatforms" as const,
+    key: "platforms" as const,
     icon: Settings,
     label: "선호 플랫폼",
     delay: 0.3,
   },
-  { key: "favoriteThemes" as const, icon: Tag, label: "선호 테마", delay: 0.4 },
+  { key: "tags" as const, icon: Tag, label: "선호 테마", delay: 0.4 },
 ];
 
 export function GamePreferences({
@@ -70,8 +75,8 @@ export function GamePreferences({
             </h3>
             <div className={styles.tags}>
               {preferences[key].map((item) => (
-                <span key={item} className={styles.tag}>
-                  {item}
+                <span key={item.id} className={styles.tag}>
+                  {item.name}
                 </span>
               ))}
             </div>

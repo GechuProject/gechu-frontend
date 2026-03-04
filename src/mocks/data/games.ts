@@ -92,7 +92,7 @@ export const actionGames: GameCardItem[] = [
     rating: 9.5,
     genre: "액션",
   },
-]
+];
 
 export const rpgGames: GameCardItem[] = [
   {
@@ -137,7 +137,7 @@ export const rpgGames: GameCardItem[] = [
     discount: "-30%",
     genre: "RPG",
   },
-]
+];
 
 export const gameDetails: Record<number, GameDetailItem> = {
   1: {
@@ -167,7 +167,7 @@ export const gameDetails: Record<number, GameDetailItem> = {
       storage: "70 GB available space",
     },
   },
-}
+};
 
 export const wishlistGames: WishlistGameItem[] = [
   {
@@ -230,7 +230,7 @@ export const wishlistGames: WishlistGameItem[] = [
     genre: "레이싱",
     releaseDate: "출시됨",
   },
-]
+];
 
 export const top5Games: GameCardItem[] = [
   {
@@ -278,7 +278,7 @@ export const top5Games: GameCardItem[] = [
     genre: "호러",
     discount: "-20%",
   },
-]
+];
 
 export const recentGames: GameCardItem[] = [
   {
@@ -317,7 +317,7 @@ export const recentGames: GameCardItem[] = [
     genre: "액션 RPG",
     discount: "-33%",
   },
-]
+];
 
 export const aiPickGames: GameCardItem[] = [
   {
@@ -356,4 +356,4 @@ export const aiPickGames: GameCardItem[] = [
     genre: "배틀로얄",
     discount: undefined,
   },
-]
+];
