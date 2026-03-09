@@ -11,9 +11,19 @@ interface LoginFormProps {
   onEmailChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
+  error?: string;
+  isLoading?: boolean;
 }
 
-export function LoginForm({ email, password, onEmailChange, onPasswordChange, onSubmit }: LoginFormProps) {
+export function LoginForm({
+  email,
+  password,
+  onEmailChange,
+  onPasswordChange,
+  onSubmit,
+  error,
+  isLoading = false,
+}: LoginFormProps) {
   return (
     <motion.div
       className={styles.form}
@@ -63,16 +73,31 @@ export function LoginForm({ email, password, onEmailChange, onPasswordChange, on
             <input type="checkbox" className={styles.checkbox} />
             로그인 상태 유지
           </label>
-          <a href="#" className={styles.forgotLink}>비밀번호 찾기</a>
+          <a href="#" className={styles.forgotLink}>
+            비밀번호 찾기
+          </a>
         </div>
+
+        {error && (
+          <p
+            style={{
+              color: "rgb(239, 68, 68)",
+              fontSize: "0.875rem",
+              marginBottom: "0.5rem",
+            }}
+          >
+            {error}
+          </p>
+        )}
 
         <motion.button
           type="submit"
           className={styles.submitBtn}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          disabled={isLoading}
+          whileHover={!isLoading ? { scale: 1.02 } : undefined}
+          whileTap={!isLoading ? { scale: 0.98 } : undefined}
         >
-          Log In
+          {isLoading ? "로그인 중..." : "Log In"}
         </motion.button>
 
         <div className={styles.divider}>
@@ -83,10 +108,20 @@ export function LoginForm({ email, password, onEmailChange, onPasswordChange, on
         </div>
 
         <div className={styles.fields}>
-          <motion.button type="button" className={styles.socialBtn} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <motion.button
+            type="button"
+            className={styles.socialBtn}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
             Google로 계속하기
           </motion.button>
-          <motion.button type="button" className={styles.socialBtn} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <motion.button
+            type="button"
+            className={styles.socialBtn}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
             Steam으로 계속하기
           </motion.button>
         </div>
@@ -95,7 +130,9 @@ export function LoginForm({ email, password, onEmailChange, onPasswordChange, on
       <div className={styles.signupRow}>
         <p className={styles.signupText}>
           아직 계정이 없으신가요?{" "}
-          <Link href="/signup" className={styles.signupLink}>회원가입</Link>
+          <Link href="/signup" className={styles.signupLink}>
+            회원가입
+          </Link>
         </p>
       </div>
     </motion.div>
