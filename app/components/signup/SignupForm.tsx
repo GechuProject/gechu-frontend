@@ -21,10 +21,34 @@ interface SignupFormProps {
 
 export function SignupForm({ formData, onChange, onSubmit }: SignupFormProps) {
   const textFields = [
-    { label: "사용자 이름", name: "username" as const, type: "text", placeholder: "User123", Icon: User },
-    { label: "이메일", name: "email" as const, type: "email", placeholder: "your@email.com", Icon: Mail },
-    { label: "비밀번호", name: "password" as const, type: "password", placeholder: "••••••••", Icon: Lock },
-    { label: "비밀번호 확인", name: "confirmPassword" as const, type: "password", placeholder: "••••••••", Icon: Lock },
+    {
+      label: "사용자 이름",
+      name: "username" as const,
+      type: "text",
+      placeholder: "User123",
+      Icon: User,
+    },
+    {
+      label: "이메일",
+      name: "email" as const,
+      type: "email",
+      placeholder: "your@email.com",
+      Icon: Mail,
+    },
+    {
+      label: "비밀번호",
+      name: "password" as const,
+      type: "password",
+      placeholder: "••••••••",
+      Icon: Lock,
+    },
+    {
+      label: "비밀번호 확인",
+      name: "confirmPassword" as const,
+      type: "password",
+      placeholder: "••••••••",
+      Icon: Lock,
+    },
   ];
 
   return (
@@ -68,13 +92,24 @@ export function SignupForm({ formData, onChange, onSubmit }: SignupFormProps) {
               required
             />
             <span className={styles.termsText}>
-              <a href="#" className={styles.termsLink}>이용약관</a>과{" "}
-              <a href="#" className={styles.termsLink}>개인정보 처리방침</a>에 동의합니다
+              <a href="#" className={styles.termsLink}>
+                이용약관
+              </a>
+              과{" "}
+              <a href="#" className={styles.termsLink}>
+                개인정보 처리방침
+              </a>
+              에 동의합니다
             </span>
           </label>
         </div>
 
-        <motion.button type="submit" className={styles.submitBtn} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+        <motion.button
+          type="submit"
+          className={styles.submitBtn}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
           회원가입
         </motion.button>
 
@@ -86,10 +121,20 @@ export function SignupForm({ formData, onChange, onSubmit }: SignupFormProps) {
         </div>
 
         <div className={styles.fields}>
-          <motion.button type="button" className={styles.socialBtn} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <motion.button
+            type="button"
+            className={styles.socialBtn}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
             Google로 가입하기
           </motion.button>
-          <motion.button type="button" className={styles.socialBtn} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <motion.button
+            type="button"
+            className={styles.socialBtn}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
             Steam으로 가입하기
           </motion.button>
         </div>
@@ -98,7 +143,9 @@ export function SignupForm({ formData, onChange, onSubmit }: SignupFormProps) {
       <div className={styles.loginRow}>
         <p className={styles.loginText}>
           이미 계정이 있으신가요?{" "}
-          <Link href="/login" className={styles.loginLink}>로그인</Link>
+          <Link href="/login" className={styles.loginLink}>
+            로그인
+          </Link>
         </p>
       </div>
     </motion.div>
