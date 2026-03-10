@@ -22,7 +22,7 @@ export async function login(
   password: string
 ): Promise<LoginSuccessResponse> {
   const { data } = await apiClient.post<LoginSuccessResponse>(
-    "/api/v1/auth/login",
+    "/api/v1/auth/login/",
     { email, password }
   );
   return data;
