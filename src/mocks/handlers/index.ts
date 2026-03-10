@@ -1,6 +1,6 @@
 import { delay, http, HttpResponse } from "msw";
-import { userPreferences } from "../data/user";
-import { actionGames, rpgGames } from "../data/games";
+import { userPreferences, userWishlist } from "../data/user";
+import { actionGames, rpgGames, wishlistGames } from "../data/games";
 
 // MSW 메모리 store - 취향 수정 시 여기에 저장됨
 const preferencesStore = {
@@ -8,6 +8,17 @@ const preferencesStore = {
   platforms: [...userPreferences.platforms],
   tags: [...userPreferences.tags],
 };
+
+// MSW 메모리 store - 위시리스트 (마이페이지용)
+const wishlistStore = {
+  count: userWishlist.count,
+  next: userWishlist.next,
+  previous: userWishlist.previous,
+  results: [...userWishlist.results],
+};
+
+// MSW 메모리 store - 위시리스트 게임 목록 (위시리스트 페이지용)
+const wishlistGamesStore = [...wishlistGames];
 
 export const handlers = [
   http.all("*", async () => {
@@ -74,5 +85,29 @@ export const handlers = [
       platforms: preferencesStore.platforms,
       tags: preferencesStore.tags,
     });
+  }),
+
+  // 위시리스트 조회 (마이페이지용)
+  http.get("/api/mypage/wishlist", () => {
+    return HttpResponse.json(wishlistStore);
+  }),
+
+  // 위시리스트 게임 목록 조회 (위시리스트 페이지용)
+  http.get("/api/wishlist", () => {
+    return HttpResponse.json(wishlistGamesStore);
+  }),
+
+  // 위시리스트에서 게임 삭제
+  http.delete("/api/wishlist/:id", ({ params }) => {
+    const id = Number(params.id);
+    const index = wishlistGamesStore.findIndex((g) => g.id === id);
+    if (index === -1) {
+      return HttpResponse.json(
+        { message: "게임을 찾을 수 없습니다." },
+        { status: 404 }
+      );
+    }
+    wishlistGamesStore.splice(index, 1);
+    return HttpResponse.json({ success: true });
   }),
 ];

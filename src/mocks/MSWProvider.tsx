@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 function shouldEnableMocking(): boolean {
   return (
@@ -11,24 +11,16 @@ function shouldEnableMocking(): boolean {
 }
 
 export function MSWProvider({ children }: { children: React.ReactNode }) {
-  const [isMswReady, setIsMswReady] = useState(!shouldEnableMocking());
-
   useEffect(() => {
     if (!shouldEnableMocking()) return;
 
     void import("./browser").then(({ worker }) => {
-      void worker
-        .start({
-          onUnhandledRequest: "bypass",
-          quiet: false,
-        })
-        .then(() => {
-          setIsMswReady(true);
-        });
+      void worker.start({
+        onUnhandledRequest: "bypass",
+        quiet: false,
+      });
     });
   }, []);
-
-  if (!isMswReady) return null;
 
   return <>{children}</>;
 }
