@@ -91,3 +91,13 @@
   margin-top: 4rem;
   border-top: 1px solid $white-10;
 }
+
+.loading {
+  @include container;
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+  text-align: center;
+  color: $white;
+  font-size: 1.25rem;
+  opacity: 0.5;
+}
