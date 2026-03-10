@@ -26,6 +26,7 @@ export default function SignupPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Signup attempt:", formData);
+    // TODO: API 연동
   };
 
   return (
@@ -36,7 +37,11 @@ export default function SignupPage() {
 
       <div className={styles.inner}>
         <SignupLogo />
-        <SignupForm formData={formData} onChange={handleChange} onSubmit={handleSubmit} />
+        <SignupForm
+          formData={formData}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+        />
       </div>
     </div>
   );
