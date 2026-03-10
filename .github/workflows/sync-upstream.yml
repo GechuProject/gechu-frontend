@@ -17,13 +17,13 @@ jobs:
       - name: Checkout Personal Repo
         uses: actions/checkout@v4
         with:
-          ref: main  # 본인 레포의 기본 브랜치 (master면 수정 필요)
+          ref: develop  # 본인 레포의 기본 브랜치 (master면 수정 필요)
           fetch-depth: 0
 
       - name: Configure Git
         run: |
           git config --global user.name 'yunssu8428-hash'
-          git config --global user.email 'yunssu8428-hash@ozcoding.com'
+          git config --global user.email 'yunssu8428@gmail.com'
 
       - name: Add Upstream Remote
         # 개인 fork → GechuProject 메인 레포에서 동기화
@@ -32,10 +32,10 @@ jobs:
           git fetch upstream
 
       - name: Sync Upstream to Local
-        # Upstream의 main을 내 main으로 병합
+        # Upstream의 develop을 내 develop으로 병합
         run: |
-          git merge upstream/main --allow-unrelated-histories -m "[chore] sync with upstream organization repo"
+          git merge upstream/develop --allow-unrelated-histories -m "[chore] sync with upstream organization repo"
 
-      - name: Push to Origin
+      - name: Push to develop
         run: |
-          git push origin main
+          git push origin develop
