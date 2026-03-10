@@ -15,7 +15,7 @@ export const userProfile = {
 export const userPreferences = {
   genres: [{ id: 1, name: "RPG" }],
   platforms: [{ id: 1, name: "PC" }],
-  tags: [{ id: 1, name: "Open World" }],
+  tags: [{ id: 1, name: "오픈월드" }],
 };
 
 // 위시리스트
