@@ -11,11 +11,27 @@ import {
   userProfile,
   userPreferences,
   recentSearches,
+  availableGenres,
+  availablePlatforms,
+  availableThemes,
 } from "@/src/mocks/data";
 import styles from "./page.module.scss";
 
+interface PreferenceItem {
+  id: number;
+  name: string;
+}
+
+interface Preferences {
+  genres: PreferenceItem[];
+  platforms: PreferenceItem[];
+  tags: PreferenceItem[];
+}
+
 export default function MyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [preferences, setPreferences] = useState<Preferences>(userPreferences);
+
   const [selectedGenres, setSelectedGenres] = useState<string[]>(
     userPreferences.genres.map((g) => g.name)
   );
@@ -38,13 +54,33 @@ export default function MyPage() {
     }
   };
 
-  const handleSave = () => {
-    console.log("Saved preferences:", {
-      selectedGenres,
-      selectedPlatforms,
-      selectedThemes,
-    });
-    setIsModalOpen(false);
+  // 이름 → {id, name} 변환: available 목록에서 인덱스+1로 id 부여
+  const toItems = (names: string[], availableList: string[]) =>
+    names.map((name) => ({
+      id: availableList.indexOf(name) + 1,
+      name,
+    }));
+
+  const handleSave = async () => {
+    try {
+      const res = await fetch("/api/mypage/preferences", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          genres: toItems(selectedGenres, availableGenres),
+          platforms: toItems(selectedPlatforms, availablePlatforms),
+          tags: toItems(selectedThemes, availableThemes),
+        }),
+      });
+
+      if (!res.ok) throw new Error("저장 실패");
+
+      const updated: Preferences = await res.json();
+      setPreferences(updated);
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("취향 저장 오류:", err);
+    }
   };
 
   return (
@@ -60,7 +96,7 @@ export default function MyPage() {
           wishlistItems={userWishlist.results}
         />
         <GamePreferences
-          preferences={userPreferences}
+          preferences={preferences}
           onEditClick={() => setIsModalOpen(true)}
         />
         <RecentSearches searches={recentSearches} />
