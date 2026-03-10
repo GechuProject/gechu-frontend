@@ -1,5 +1,6 @@
 import { delay, http, HttpResponse } from "msw";
 import { userPreferences } from "../data/user";
+import { actionGames, rpgGames } from "../data/games";
 
 // MSW 메모리 store - 취향 수정 시 여기에 저장됨
 const preferencesStore = {
@@ -35,6 +36,16 @@ export const handlers = [
       token_type: "bearer",
       expires_in: 3600,
     });
+  }),
+
+  // 홈화면 - 액션 Top 10
+  http.get("/api/home/action-games", () => {
+    return HttpResponse.json(actionGames);
+  }),
+
+  // 홈화면 - RPG Top 10
+  http.get("/api/home/rpg-games", () => {
+    return HttpResponse.json(rpgGames);
   }),
 
   // 게임 취향 조회

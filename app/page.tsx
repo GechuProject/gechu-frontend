@@ -4,8 +4,8 @@ import { Header as Navigation } from "@/app/components/common/Header";
 import { GameCard } from "@/app/components/common/GameCard";
 import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight, Zap, Trophy } from "lucide-react";
-import { useState } from "react";
-import { actionGames, rpgGames } from "@/src/mocks/data";
+import { useState, useEffect } from "react";
+import { fetchActionGames, fetchRpgGames } from "@/src/api/home";
 import type { GameCardItem } from "@/src/mocks/data";
 import styles from "./page.module.scss";
 
@@ -75,6 +75,28 @@ function GameSection({
 }
 
 export default function HomePage() {
+  const [actionGames, setActionGames] = useState<GameCardItem[]>([]);
+  const [rpgGames, setRpgGames] = useState<GameCardItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadGames() {
+      try {
+        const [action, rpg] = await Promise.all([
+          fetchActionGames(),
+          fetchRpgGames(),
+        ]);
+        setActionGames(action);
+        setRpgGames(rpg);
+      } catch (error) {
+        console.error("게임 데이터를 불러오는데 실패했습니다:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadGames();
+  }, []);
+
   return (
     <div className={styles.page}>
       <Navigation />
@@ -91,8 +113,14 @@ export default function HomePage() {
         </div>
         <div className={styles.heroDivider} />
       </section>
-      <GameSection title="액션 Top 10" games={actionGames} icon={Zap} />
-      <GameSection title="RPG Top 10" games={rpgGames} icon={Trophy} />
+      {isLoading ? (
+        <div className={styles.loading}>게임 데이터를 불러오는 중...</div>
+      ) : (
+        <>
+          <GameSection title="액션 Top 10" games={actionGames} icon={Zap} />
+          <GameSection title="RPG Top 10" games={rpgGames} icon={Trophy} />
+        </>
+      )}
     </div>
   );
 }
