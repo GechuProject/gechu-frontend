@@ -28,7 +28,7 @@ export default function LoginPage() {
       if (typeof window !== "undefined") {
         localStorage.setItem(ACCESS_TOKEN_KEY, access_token);
       }
-      router.push("/mypage");
+      router.push("/");
     } catch (err) {
       const axiosError = err as AxiosError<{ message?: string }>;
       const message =

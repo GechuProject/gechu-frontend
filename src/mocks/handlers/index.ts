@@ -1,4 +1,4 @@
-import { delay, http, HttpResponse } from "msw";
+import { http, HttpResponse } from "msw";
 import { userPreferences, userWishlist } from "../data/user";
 import { actionGames, rpgGames, wishlistGames } from "../data/games";
 
@@ -20,33 +20,10 @@ const wishlistStore = {
 // MSW 메모리 store - 위시리스트 게임 목록 (위시리스트 페이지용)
 const wishlistGamesStore = [...wishlistGames];
 
+// 로그인은 핸들러 없음 → 실제 API로 bypass (onUnhandledRequest: 'bypass')
 export const handlers = [
-  http.all("*", async () => {
-    await delay(300);
-  }),
   http.get("/api/health", () => {
     return HttpResponse.json({ ok: true });
-  }),
-  http.post("/api/v1/auth/login", async ({ request }) => {
-    const body = (await request.json()) as {
-      email?: string;
-      password?: string;
-    };
-    if (!body.email || !body.password) {
-      return HttpResponse.json(
-        {
-          status_code: "401",
-          code: "INVALID_CREDENTIALS",
-          message: "이메일 또는 비밀번호가 올바르지 않습니다.",
-        },
-        { status: 401 }
-      );
-    }
-    return HttpResponse.json({
-      access_token: "mock-access-token",
-      token_type: "bearer",
-      expires_in: 3600,
-    });
   }),
 
   // 홈화면 - 액션 Top 10
