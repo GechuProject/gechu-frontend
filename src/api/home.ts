@@ -1,5 +1,5 @@
 import { apiClient } from "@/src/lib/api";
-import type { GameCardItem } from "@/src/mocks/data";
+import type { GameCardItem } from "@/src/mocks/data/games";
 
 export async function fetchActionGames(): Promise<GameCardItem[]> {
   const { data } = await apiClient.get<GameCardItem[]>(

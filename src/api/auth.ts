@@ -1,4 +1,4 @@
-import { apiClient } from "@/src/lib/api";
+import { authApiClient } from "@/src/lib/api";
 
 export interface LoginRequest {
   email: string;
@@ -21,7 +21,7 @@ export async function login(
   email: string,
   password: string
 ): Promise<LoginSuccessResponse> {
-  const { data } = await apiClient.post<LoginSuccessResponse>(
+  const { data } = await authApiClient.post<LoginSuccessResponse>(
     "/api/v1/auth/login/",
     { email, password }
   );
