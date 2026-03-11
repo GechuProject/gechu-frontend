@@ -6,17 +6,16 @@ import { StatsGrid } from "@/app/components/mypage/StatsGrid";
 import { GamePreferences } from "@/app/components/mypage/GamePreferences";
 import { RecentSearches } from "@/app/components/mypage/RecentSearches";
 import { PreferencesModal } from "@/app/components/mypage/PreferencesModal";
-import { putPreferences, fetchUserProfile } from "@/src/api/mypage";
 import {
-  userWishlist,
-  userProfile as mockProfile,
-  userPreferences,
-} from "@/src/mocks/data/user";
+  putPreferences,
+  fetchUserProfile,
+  UserProfile,
+} from "@/src/api/mypage";
 import {
+  recentSearches,
   availableGenres,
   availablePlatforms,
   availableThemes,
-  recentSearches,
 } from "@/src/mocks/data/preferences";
 import styles from "./page.module.scss";
 
@@ -31,22 +30,40 @@ interface Preferences {
   tags: PreferenceItem[];
 }
 
-interface UserProfile {
+interface WishlistItem {
   id: number;
-  email: string;
-  nickname: string;
-  birth_date: string;
-  profile_img_url: string;
-  is_adult_verified: boolean;
-  adult_verified_at: string;
-  is_active: boolean;
-  created_at: string;
+  name: string;
+  slug: string;
+  thumbnail_img_url: string;
+  rawg_rating: number;
+  saved_at: string;
+}
+
+interface Wishlist {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: WishlistItem[];
 }
 
 export default function MyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [preferences, setPreferences] = useState<Preferences>(userPreferences);
-  const [profile, setProfile] = useState<UserProfile>(mockProfile);
+  const [preferences, setPreferences] = useState<Preferences>({
+    genres: [],
+    platforms: [],
+    tags: [],
+  });
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [wishlist, setWishlist] = useState<Wishlist>({
+    count: 0,
+    next: null,
+    previous: null,
+    results: [],
+  });
+
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
 
   useEffect(() => {
     fetchUserProfile().then((data) => {
@@ -54,15 +71,30 @@ export default function MyPage() {
     });
   }, []);
 
-  const [selectedGenres, setSelectedGenres] = useState<string[]>(
-    userPreferences.genres.map((g) => g.name)
-  );
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(
-    userPreferences.platforms.map((p) => p.name)
-  );
-  const [selectedThemes, setSelectedThemes] = useState<string[]>(
-    userPreferences.tags.map((t) => t.name)
-  );
+  // 게임 취향 fetch
+  useEffect(() => {
+    fetch("/api/mypage/preferences")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: Preferences | null) => {
+        if (data) {
+          setPreferences(data);
+          setSelectedGenres(data.genres.map((g) => g.name));
+          setSelectedPlatforms(data.platforms.map((p) => p.name));
+          setSelectedThemes(data.tags.map((t) => t.name));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // 위시리스트 fetch
+  useEffect(() => {
+    fetch("/api/mypage/wishlist")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: Wishlist | null) => {
+        if (data) setWishlist(data);
+      })
+      .catch(() => {});
+  }, []);
 
   const toggleSelection = (
     item: string,
@@ -101,13 +133,13 @@ export default function MyPage() {
     <div className={styles.page}>
       <div className={styles.inner}>
         <ProfileHeader
-          nickname={profile.nickname}
-          email={profile.email}
+          nickname={profile?.nickname ?? ""}
+          email={profile?.email ?? ""}
           bio=""
         />
         <StatsGrid
-          wishlistCount={userWishlist.count}
-          wishlistItems={userWishlist.results}
+          wishlistCount={wishlist.count}
+          wishlistItems={wishlist.results}
         />
         <GamePreferences
           preferences={preferences}
