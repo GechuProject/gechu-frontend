@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import Image from "next/image";
 import { Heart, Star } from "lucide-react";
 import { Icon3D } from "@/app/components/common/Icon3D";
 import styles from "./StatsGrid.module.scss";
@@ -40,7 +41,7 @@ export function StatsGrid({ wishlistCount, wishlistItems }: StatsGridProps) {
 
       {/* 위시리스트 아이템 목록 */}
       <div className={styles.wishlistGrid}>
-        {wishlistItems.map((item, index) => (
+        {wishlistItems.map((item) => (
           <motion.div
             key={item.id}
             className={styles.wishlistCard}
@@ -50,9 +51,11 @@ export function StatsGrid({ wishlistCount, wishlistItems }: StatsGridProps) {
             whileHover={{ y: -2 }}
           >
             <div className={styles.wishlistThumb}>
-              <img
+              <Image
                 src={item.thumbnail_img_url}
                 alt={item.name}
+                fill
+                sizes="40px"
                 className={styles.thumbImg}
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).style.display = "none";

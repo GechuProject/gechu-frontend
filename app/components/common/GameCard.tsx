@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { Star, Heart } from "lucide-react";
@@ -33,13 +34,19 @@ export function GameCard({ game, index }: GameCardProps) {
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className={styles.imageWrap}>
-          <motion.img
-            src={game.image}
-            alt={game.title}
-            className={styles.image}
+          <motion.div
+            className={styles.imageMotion}
             animate={{ scale: isHovered ? 1.1 : 1 }}
             transition={{ duration: 0.3 }}
-          />
+          >
+            <Image
+              src={game.image}
+              alt={game.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 20vw"
+              className={styles.image}
+            />
+          </motion.div>
           <div className={styles.hoverOverlay} />
 
           {game.discount && (

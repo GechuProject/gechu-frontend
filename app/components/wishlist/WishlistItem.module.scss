@@ -18,13 +18,15 @@
 }
 
 .imageWrap {
+  position: relative;
   flex-shrink: 0;
   height: 8rem;
   width: 12rem;
   overflow: hidden;
   border-radius: 0.5rem;
 
-  img {
+  img,
+  .image {
     height: 100%;
     width: 100%;
     object-fit: cover;
