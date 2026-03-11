@@ -1,7 +1,7 @@
 @use "../../styles/variables" as *;
 @use "../../styles/mixins" as *;
 .section {
-  // container for recent searches
+  margin-bottom: 0; /* 최근 검색 섹션 */
 }
 
 .heading {
