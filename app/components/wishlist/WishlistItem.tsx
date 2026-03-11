@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import Image from "next/image";
 import { Star, X } from "lucide-react";
 import Link from "next/link";
 import styles from "./WishlistItem.module.scss";
@@ -28,12 +29,15 @@ export function WishlistItem({ game, index, onRemove }: WishlistItemProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
     >
-      <Link href={`/game/${game.slug}`} style={{ display: "block" }}>
+      <Link href={`/game/${game.id}`} style={{ display: "block" }}>
         <div className={styles.row}>
           <motion.div className={styles.imageWrap} whileHover={{ scale: 1.05 }}>
-            <img
+            <Image
               src={game.thumbnail_img_url}
               alt={game.name}
+              fill
+              sizes="192px"
+              className={styles.image}
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).style.display = "none";
               }}

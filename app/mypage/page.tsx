@@ -6,15 +6,18 @@ import { StatsGrid } from "@/app/components/mypage/StatsGrid";
 import { GamePreferences } from "@/app/components/mypage/GamePreferences";
 import { RecentSearches } from "@/app/components/mypage/RecentSearches";
 import { PreferencesModal } from "@/app/components/mypage/PreferencesModal";
+import { putPreferences, fetchUserProfile } from "@/src/api/mypage";
 import {
   userWishlist,
   userProfile as mockProfile,
   userPreferences,
-  recentSearches,
+} from "@/src/mocks/data/user";
+import {
   availableGenres,
   availablePlatforms,
   availableThemes,
-} from "@/src/mocks/data";
+  recentSearches,
+} from "@/src/mocks/data/preferences";
 import styles from "./page.module.scss";
 
 interface PreferenceItem {
@@ -45,14 +48,10 @@ export default function MyPage() {
   const [preferences, setPreferences] = useState<Preferences>(userPreferences);
   const [profile, setProfile] = useState<UserProfile>(mockProfile);
 
-  // 프로필 fetch
   useEffect(() => {
-    fetch("/api/v1/users/me/")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data) setProfile(data);
-      })
-      .catch(() => {});
+    fetchUserProfile().then((data) => {
+      if (data) setProfile(data);
+    });
   }, []);
 
   const [selectedGenres, setSelectedGenres] = useState<string[]>(
@@ -86,19 +85,11 @@ export default function MyPage() {
 
   const handleSave = async () => {
     try {
-      const res = await fetch("/api/mypage/preferences", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          genres: toItems(selectedGenres, availableGenres),
-          platforms: toItems(selectedPlatforms, availablePlatforms),
-          tags: toItems(selectedThemes, availableThemes),
-        }),
+      const updated = await putPreferences({
+        genres: toItems(selectedGenres, availableGenres),
+        platforms: toItems(selectedPlatforms, availablePlatforms),
+        tags: toItems(selectedThemes, availableThemes),
       });
-
-      if (!res.ok) throw new Error("저장 실패");
-
-      const updated: Preferences = await res.json();
       setPreferences(updated);
       setIsModalOpen(false);
     } catch (err) {

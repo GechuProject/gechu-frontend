@@ -6,7 +6,7 @@ import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight, Zap, Trophy } from "lucide-react";
 import { useState, useEffect } from "react";
 import { fetchActionGames, fetchRpgGames } from "@/src/api/home";
-import type { GameCardItem } from "@/src/mocks/data";
+import type { GameCardItem } from "@/src/mocks/data/games";
 import styles from "./page.module.scss";
 
 function GameSection({

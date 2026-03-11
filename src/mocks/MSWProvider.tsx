@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function shouldEnableMocking(): boolean {
   return (
@@ -11,16 +11,38 @@ function shouldEnableMocking(): boolean {
 }
 
 export function MSWProvider({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    if (!shouldEnableMocking()) return;
+  // 서버/클라이언트 모두 초기에 loading → Hydration 일치
+  const [isReady, setIsReady] = useState(false);
 
-    void import("./browser").then(({ worker }) => {
-      void worker.start({
-        onUnhandledRequest: "bypass",
-        quiet: false,
-      });
-    });
+  useEffect(() => {
+    if (!shouldEnableMocking()) {
+      setIsReady(true);
+      return;
+    }
+
+    import("./browser").then(({ worker }) =>
+      worker
+        .start({ onUnhandledRequest: "bypass", quiet: false })
+        .then(() => setIsReady(true))
+    );
   }, []);
+
+  if (!isReady) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          minHeight: "100vh",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#000",
+          color: "#fff",
+        }}
+      >
+        로딩 중...
+      </div>
+    );
+  }
 
   return <>{children}</>;
 }

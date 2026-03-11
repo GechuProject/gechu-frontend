@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# agent skills (로컬 전용, GitHub 제외)
+.agents
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

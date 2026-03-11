@@ -1,4 +1,4 @@
-/** 로그인 Mock 사용자 (MSW 개발용) */
+/** 로그인 Mock 사용자 (MSW 개발용, 현재 로그인은 실제 API 사용) */
 export const mockUsers = [
   {
     email: "user@example.com",

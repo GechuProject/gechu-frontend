@@ -15,93 +15,14 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon3D } from "./Icon3D";
+import { headerSearchGames } from "@/src/mocks/data/games";
 import styles from "./Header.module.scss";
 
-const allGames = [
-  {
-    id: 1,
-    title: "Cyber Nexus 2077",
-    image:
-      "https://images.unsplash.com/photo-1531113165519-5eb0816d7e02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjeWJlcnB1bmslMjBhY3Rpb24lMjBnYW1lfGVufDF8fHx8MTc3MTc5NzY1Nnww&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "39,900",
-    rating: 9.2,
-    genre: "액션 RPG",
-    category: "trending",
-  },
-  {
-    id: 2,
-    title: "Fantasy Realm",
-    image:
-      "https://images.unsplash.com/photo-1759688168277-185a0c623968?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYW50YXN5JTIwUlBHJTIwZ2FtZSUyMGFydHxlbnwxfHx8fDE3NzE4Mjg4MDd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "37,425",
-    rating: 9.3,
-    genre: "RPG",
-    category: "popular",
-  },
-  {
-    id: 3,
-    title: "Battle Royale Pro",
-    image:
-      "https://images.unsplash.com/photo-1764011643213-1f3b3691f678?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYXR0bGUlMjByb3lhbGUlMjBzaG9vdGVyJTIwZ2FtZXxlbnwxfHx8fDE3NzE4MDAzNjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "무료",
-    rating: 9.2,
-    genre: "배틀로얄",
-    category: "trending",
-  },
-  {
-    id: 4,
-    title: "Open World Explorer",
-    image:
-      "https://images.unsplash.com/photo-1682384114890-f1caab8ab16c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxvcGVuJTIwd29ybGQlMjBleHBsb3JhdGlvbiUyMGdhbWV8ZW58MXx8fHwxNzcxODI4ODExfDA&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "59,900",
-    rating: 9.1,
-    genre: "오픈월드",
-    category: "new",
-  },
-  {
-    id: 5,
-    title: "Dark Shadows",
-    image:
-      "https://images.unsplash.com/photo-1723388159368-53b9be8899e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3Jyb3IlMjBzdXJ2aXZhbCUyMGdhbWV8ZW58MXx8fHwxNzcxNzE1OTE1fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "44,900",
-    rating: 9.0,
-    genre: "호러",
-    category: "popular",
-  },
-  {
-    id: 6,
-    title: "Speed Racer X",
-    image:
-      "https://images.unsplash.com/photo-1723360480597-d21deccaf3d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyYWNpbmclMjBjYXIlMjBnYW1lfGVufDF8fHx8MTc3MTgxNzc2NXww&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "17,940",
-    rating: 8.8,
-    genre: "레이싱",
-    category: "trending",
-  },
-  {
-    id: 7,
-    title: "Mystery Island",
-    image:
-      "https://images.unsplash.com/photo-1682384114890-f1caab8ab16c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxvcGVuJTIwd29ybGQlMjBleHBsb3JhdGlvbiUyMGdhbWV8ZW58MXx8fHwxNzcxODI4ODExfDA&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "29,900",
-    rating: 8.9,
-    genre: "어드벤처",
-    category: "new",
-  },
-  {
-    id: 8,
-    title: "Space Warriors",
-    image:
-      "https://images.unsplash.com/photo-1531113165519-5eb0816d7e02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjeWJlcnB1bmslMjBhY3Rpb24lMjBnYW1lfGVufDF8fHx8MTc3MTc5NzY1Nnww&ixlib=rb-4.1.0&q=80&w=1080",
-    price: "무료",
-    rating: 9.4,
-    genre: "슈팅",
-    category: "popular",
-  },
-];
+const allGames = headerSearchGames;
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -352,7 +273,12 @@ export function Header() {
                                 whileHover={{ scale: 1.02, x: 4 }}
                               >
                                 <div className={styles.resultImg}>
-                                  <img src={game.image} alt={game.title} />
+                                  <Image
+                                    src={game.image}
+                                    alt={game.title}
+                                    fill
+                                    sizes="128px"
+                                  />
                                   <div className={styles.resultImgOverlay} />
                                 </div>
                                 <div className={styles.resultInfo}>
@@ -447,7 +373,12 @@ export function Header() {
                                   whileHover={{ scale: 1.02, x: 4 }}
                                 >
                                   <div className={styles.suggestImg}>
-                                    <img src={game.image} alt={game.title} />
+                                    <Image
+                                      src={game.image}
+                                      alt={game.title}
+                                      fill
+                                      sizes="96px"
+                                    />
                                   </div>
                                   <div className={styles.suggestInfo}>
                                     <h4 className={styles.suggestTitle2}>
@@ -497,7 +428,12 @@ export function Header() {
                                   whileHover={{ scale: 1.02, x: 4 }}
                                 >
                                   <div className={styles.suggestImg}>
-                                    <img src={game.image} alt={game.title} />
+                                    <Image
+                                      src={game.image}
+                                      alt={game.title}
+                                      fill
+                                      sizes="96px"
+                                    />
                                   </div>
                                   <div className={styles.suggestInfo}>
                                     <h4 className={styles.suggestTitle2}>
