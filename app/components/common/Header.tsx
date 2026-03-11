@@ -20,6 +20,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon3D } from "./Icon3D";
 import { logout, ACCESS_TOKEN_KEY } from "@/src/api/auth";
+import { fetchUserProfile } from "@/src/api/mypage";
+import type { UserProfile } from "@/src/api/mypage";
 import { headerSearchGames } from "@/src/mocks/data/games";
 import styles from "./Header.module.scss";
 
@@ -31,6 +33,8 @@ export function Header() {
   const [showResults, setShowResults] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [profileImgError, setProfileImgError] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
@@ -42,10 +46,26 @@ export function Header() {
   ];
 
   useEffect(() => {
-    const hasToken =
-      typeof window !== "undefined" && !!localStorage.getItem(ACCESS_TOKEN_KEY);
+    if (typeof window === "undefined") return;
+    // 개발 시 ?logout=1 쿼리로 로그아웃 상태 강제 (localStorage 정리)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("logout") === "1") {
+      localStorage.removeItem(ACCESS_TOKEN_KEY);
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+    const hasToken = !!localStorage.getItem(ACCESS_TOKEN_KEY);
     queueMicrotask(() => setIsLoggedIn(hasToken));
   }, [pathname]);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setUserProfile(null);
+      setProfileImgError(false);
+      return;
+    }
+    setProfileImgError(false);
+    fetchUserProfile().then((profile) => setUserProfile(profile));
+  }, [isLoggedIn]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -137,16 +157,29 @@ export function Header() {
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
                   className={styles.profileBtn}
                 >
-                  <Icon3D>
-                    <User
-                      style={{
-                        width: "1.5rem",
-                        height: "1.5rem",
-                        color: "#fff",
-                        transition: "color 0.2s",
-                      }}
+                  {userProfile?.profile_img_url && !profileImgError ? (
+                    <Image
+                      src={userProfile.profile_img_url}
+                      alt={userProfile.nickname}
+                      width={32}
+                      height={32}
+                      className={styles.profileAvatar}
+                      onError={() => setProfileImgError(true)}
                     />
-                  </Icon3D>
+                  ) : (
+                    <Icon3D>
+                      <User
+                        style={{
+                          width: "1.5rem",
+                          height: "1.5rem",
+                          color: "#fff",
+                        }}
+                      />
+                    </Icon3D>
+                  )}
+                  <span className={styles.profileNickname}>
+                    {userProfile?.nickname ?? "..."}
+                  </span>
                 </button>
 
                 <AnimatePresence>
@@ -223,19 +256,17 @@ export function Header() {
                 </AnimatePresence>
               </div>
             ) : (
-              <Link href="/login" className={styles.loginLink}>
-                <Icon3D>
-                  <User
-                    style={{
-                      width: "1.5rem",
-                      height: "1.5rem",
-                      color: "#fff",
-                      transition: "color 0.2s",
-                    }}
-                  />
-                </Icon3D>
-                <span>로그인</span>
-              </Link>
+              <div className={styles.authButtons}>
+                <Link
+                  href="/login"
+                  className={`${styles.authBtn} ${styles.authBtnPrimary}`}
+                >
+                  로그인
+                </Link>
+                <Link href="/signup" className={styles.authBtn}>
+                  회원가입
+                </Link>
+              </div>
             )}
 
             {/* 모바일 햄버거 버튼 */}

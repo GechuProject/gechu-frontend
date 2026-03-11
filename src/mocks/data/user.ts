@@ -1,10 +1,10 @@
-// 내 프로필 조회
+// 내 프로필 조회 (홈페이지 헤더 Mock)
 export const userProfile = {
   id: 1,
   email: "user@example.com",
-  nickname: "쭐",
+  nickname: "최강001Team",
   birth_date: "1995-06-15",
-  profile_img_url: "https://cdn.example.com/img/1.jpg",
+  profile_img_url: "/images/profile-mock.png",
   is_adult_verified: true,
   adult_verified_at: "2025-01-10T12:00:00Z",
   is_active: true,
