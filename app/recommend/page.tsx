@@ -43,7 +43,7 @@ export default function RecommendPage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            게임 <span>추천</span>
+            게임 추천
           </motion.h1>
           <motion.p
             className={styles.heroSubtitle}

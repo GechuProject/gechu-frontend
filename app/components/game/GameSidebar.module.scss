@@ -22,7 +22,7 @@
 }
 
 .specItem {
-  // spacing handled by parent gap
+  min-width: 0; /* 부모 gap으로 spacing */
 }
 
 .specLabel {

@@ -16,6 +16,9 @@ html {
 }
 
 body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
   background-color: #000000;
   color: #ffffff;
   font-family:
@@ -29,6 +32,10 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body > main {
+  flex: 1;
 }
 
 /* ─── Links ─────────────────────────────────────────────────── */

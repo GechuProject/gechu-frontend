@@ -53,6 +53,8 @@
 }
 
 .navLink {
+  font-size: 1.2rem;
+  font-weight: 700;
   color: $white;
   text-decoration: none;
   transition: color 0.2s ease;
@@ -77,10 +79,67 @@
 }
 
 .profileBtn {
+  @include flex-center(0.5rem);
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
+}
+
+.profileAvatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.profileNickname {
+  font-weight: 700;
+  color: $white;
+  transition: color 0.2s ease;
+
+  .profileBtn:hover & {
+    color: $accent;
+  }
+}
+
+.authButtons {
+  @include flex-center(0.5rem);
+}
+
+.authBtn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background: #3a3a3a;
+  color: $white;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #4a4a4a;
+  }
+}
+
+.authBtnPrimary {
+  background: $accent;
+  color: $black;
+  box-shadow: 0 2px 8px rgba(228, 255, 48, 0.3);
+
+  &:hover {
+    background: $accent-dark;
+  }
+}
+
+.logoutBtn {
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
 }
 
 /* ─── 프로필 드롭다운 ────────────────────────────────────────── */
@@ -384,7 +443,7 @@
 }
 
 .suggestCategory {
-  // category column
+  min-width: 0; /* grid 자식 overflow 방지 */
 }
 
 .suggestCategoryTitle {
@@ -477,6 +536,7 @@
 .mobileNavLink {
   display: block;
   padding: 0.5rem 0;
+  font-weight: 700;
   color: $white;
   text-decoration: none;
   transition: color 0.2s ease;

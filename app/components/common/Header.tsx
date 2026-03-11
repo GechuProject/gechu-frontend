@@ -17,8 +17,11 @@ import { motion, AnimatePresence } from "motion/react";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Icon3D } from "./Icon3D";
+import { logout, ACCESS_TOKEN_KEY } from "@/src/api/auth";
+import { fetchUserProfile } from "@/src/api/mypage";
+import type { UserProfile } from "@/src/api/mypage";
 import { headerSearchGames } from "@/src/mocks/data/games";
 import styles from "./Header.module.scss";
 
@@ -29,7 +32,11 @@ export function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [profileImgError, setProfileImgError] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -37,6 +44,28 @@ export function Header() {
     { path: "/", label: "홈" },
     { path: "/recommend", label: "추천게임" },
   ];
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    // 개발 시 ?logout=1 쿼리로 로그아웃 상태 강제 (localStorage 정리)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("logout") === "1") {
+      localStorage.removeItem(ACCESS_TOKEN_KEY);
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+    const hasToken = !!localStorage.getItem(ACCESS_TOKEN_KEY);
+    queueMicrotask(() => setIsLoggedIn(hasToken));
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setUserProfile(null);
+      setProfileImgError(false);
+      return;
+    }
+    setProfileImgError(false);
+    fetchUserProfile().then((profile) => setUserProfile(profile));
+  }, [isLoggedIn]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -56,6 +85,24 @@ export function Header() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleLogout = async () => {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem(ACCESS_TOKEN_KEY)
+        : null;
+    try {
+      if (token) await logout(token);
+    } catch {
+      // API 실패해도 로컬 로그아웃 진행
+    } finally {
+      if (typeof window !== "undefined")
+        localStorage.removeItem(ACCESS_TOKEN_KEY);
+      setIsLoggedIn(false);
+      setShowProfileMenu(false);
+      router.push("/");
+    }
+  };
 
   const filteredGames = searchQuery.trim()
     ? allGames.filter(
@@ -103,96 +150,124 @@ export function Header() {
 
           {/* 우측 아이콘 */}
           <div className={styles.actions}>
-            {/* 프로필 드롭다운 */}
-            <div ref={profileRef} className={styles.profileWrap}>
-              <button
-                onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className={styles.profileBtn}
-              >
-                <Icon3D>
-                  <User
-                    style={{
-                      width: "1.5rem",
-                      height: "1.5rem",
-                      color: "#fff",
-                      transition: "color 0.2s",
-                    }}
-                  />
-                </Icon3D>
-              </button>
+            {isLoggedIn ? (
+              /* 프로필 드롭다운 */
+              <div ref={profileRef} className={styles.profileWrap}>
+                <button
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                  className={styles.profileBtn}
+                >
+                  {userProfile?.profile_img_url && !profileImgError ? (
+                    <Image
+                      src={userProfile.profile_img_url}
+                      alt={userProfile.nickname}
+                      width={32}
+                      height={32}
+                      className={styles.profileAvatar}
+                      onError={() => setProfileImgError(true)}
+                    />
+                  ) : (
+                    <Icon3D>
+                      <User
+                        style={{
+                          width: "1.5rem",
+                          height: "1.5rem",
+                          color: "#fff",
+                        }}
+                      />
+                    </Icon3D>
+                  )}
+                  <span className={styles.profileNickname}>
+                    {userProfile?.nickname ?? "..."}
+                  </span>
+                </button>
 
-              <AnimatePresence>
-                {showProfileMenu && (
-                  <motion.div
-                    className={styles.profileDropdown}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                  >
-                    <div className={styles.dropdownBody}>
-                      <Link
-                        href="/wishlist"
-                        onClick={() => setShowProfileMenu(false)}
-                      >
-                        <motion.div
-                          className={styles.dropdownItem}
-                          whileHover={{ x: 4 }}
+                <AnimatePresence>
+                  {showProfileMenu && (
+                    <motion.div
+                      className={styles.profileDropdown}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                    >
+                      <div className={styles.dropdownBody}>
+                        <Link
+                          href="/wishlist"
+                          onClick={() => setShowProfileMenu(false)}
                         >
-                          <Heart
-                            style={{
-                              width: "1.25rem",
-                              height: "1.25rem",
-                              color: "#E4FF30",
-                            }}
-                          />
-                          <span>위시리스트</span>
-                        </motion.div>
-                      </Link>
+                          <motion.div
+                            className={styles.dropdownItem}
+                            whileHover={{ x: 4 }}
+                          >
+                            <Heart
+                              style={{
+                                width: "1.25rem",
+                                height: "1.25rem",
+                                color: "#E4FF30",
+                              }}
+                            />
+                            <span>위시리스트</span>
+                          </motion.div>
+                        </Link>
 
-                      <Link
-                        href="/mypage"
-                        onClick={() => setShowProfileMenu(false)}
-                      >
-                        <motion.div
-                          className={styles.dropdownItem}
-                          whileHover={{ x: 4 }}
+                        <Link
+                          href="/mypage"
+                          onClick={() => setShowProfileMenu(false)}
                         >
-                          <UserCircle
-                            style={{
-                              width: "1.25rem",
-                              height: "1.25rem",
-                              color: "#E4FF30",
-                            }}
-                          />
-                          <span>마이페이지</span>
-                        </motion.div>
-                      </Link>
+                          <motion.div
+                            className={styles.dropdownItem}
+                            whileHover={{ x: 4 }}
+                          >
+                            <UserCircle
+                              style={{
+                                width: "1.25rem",
+                                height: "1.25rem",
+                                color: "#E4FF30",
+                              }}
+                            />
+                            <span>마이페이지</span>
+                          </motion.div>
+                        </Link>
 
-                      <div className={styles.dropdownDivider} />
+                        <div className={styles.dropdownDivider} />
 
-                      <Link
-                        href="/login"
-                        onClick={() => setShowProfileMenu(false)}
-                      >
-                        <motion.div
-                          className={styles.dropdownItemDanger}
-                          whileHover={{ x: 4 }}
+                        <button
+                          type="button"
+                          onClick={handleLogout}
+                          className={styles.logoutBtn}
                         >
-                          <LogOut
-                            style={{
-                              width: "1.25rem",
-                              height: "1.25rem",
-                              color: "rgb(248,113,113)",
-                            }}
-                          />
-                          <span>로그아웃</span>
-                        </motion.div>
-                      </Link>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+                          <motion.div
+                            className={styles.dropdownItemDanger}
+                            whileHover={{ x: 4 }}
+                          >
+                            <LogOut
+                              style={{
+                                width: "1.25rem",
+                                height: "1.25rem",
+                                color: "rgb(248,113,113)",
+                              }}
+                            />
+                            <span>로그아웃</span>
+                          </motion.div>
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <div className={styles.authButtons}>
+                <Link
+                  href="/login"
+                  className={`${styles.authBtn} ${styles.authBtnPrimary}`}
+                >
+                  로그인
+                </Link>
+                <Link href="/signup" className={styles.authBtn}>
+                  회원가입
+                </Link>
+              </div>
+            )}
 
             {/* 모바일 햄버거 버튼 */}
             <button

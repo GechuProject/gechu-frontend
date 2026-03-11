@@ -16,17 +16,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body
-        style={{
-          display: "flex",
-          minHeight: "100vh",
-          flexDirection: "column",
-          backgroundColor: "#000",
-        }}
-      >
+      <body>
         <MSWProvider>
           <Header />
-          <main style={{ flex: 1 }}>{children}</main>
+          <main>{children}</main>
           <Footer />
         </MSWProvider>
       </body>
