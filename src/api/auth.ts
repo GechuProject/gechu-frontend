@@ -1,7 +1,12 @@
 import { authApiClient } from "@/src/lib/api";
-import { ACCESS_TOKEN_KEY } from "@/src/constants/auth";
+import {
+  ACCESS_TOKEN_KEY,
+  getAccessToken,
+  removeAccessToken,
+  setAccessToken,
+} from "@/src/constants/auth";
 
-export { ACCESS_TOKEN_KEY };
+export { ACCESS_TOKEN_KEY, getAccessToken, removeAccessToken, setAccessToken };
 
 export interface LoginRequest {
   email: string;
