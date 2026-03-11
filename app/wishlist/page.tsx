@@ -5,7 +5,8 @@ import { WishlistHeader } from "@/app/components/wishlist/WishlistHeader";
 import { WishlistItem } from "@/app/components/wishlist/WishlistItem";
 import { WishlistEmpty } from "@/app/components/wishlist/WishlistEmpty";
 import { WishlistSummary } from "@/app/components/wishlist/WishlistSummary";
-import { userWishlist } from "@/src/mocks/data";
+import { deleteWishlistItem } from "@/src/api/mypage";
+import { userWishlist } from "@/src/mocks/data/user";
 import styles from "./page.module.scss";
 
 type SortType = "all" | "rating_high" | "rating_low";
@@ -16,11 +17,11 @@ export default function WishlistPage() {
 
   const removeFromWishlist = async (id: number) => {
     try {
-      await fetch(`/api/wishlist/${id}`, { method: "DELETE" });
+      await deleteWishlistItem(id);
+      setGames((prev) => prev.filter((game) => game.id !== id));
     } catch (err) {
       console.error("위시리스트 삭제 오류:", err);
     }
-    setGames(games.filter((game) => game.id !== id));
   };
 
   const sortedGames = [...games].sort((a, b) => {

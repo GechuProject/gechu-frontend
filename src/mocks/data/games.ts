@@ -139,6 +139,20 @@ export const rpgGames: GameCardItem[] = [
   },
 ];
 
+/** Header 검색/추천용 (actionGames + rpgGames 병합, category 추가) */
+export const headerSearchGames: (GameCardItem & {
+  category: "trending" | "popular" | "new";
+})[] = [
+  ...actionGames.slice(0, 4).map((g, i) => ({
+    ...g,
+    category: (["trending", "popular", "trending", "new"] as const)[i],
+  })),
+  ...rpgGames.slice(0, 4).map((g, i) => ({
+    ...g,
+    category: (["new", "popular", "trending", "popular"] as const)[i],
+  })),
+];
+
 export const gameDetails: Record<number, GameDetailItem> = {
   1: {
     id: 1,

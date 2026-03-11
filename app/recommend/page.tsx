@@ -3,7 +3,7 @@
 import { GameCard } from "@/app/components/common/GameCard";
 import { motion } from "motion/react";
 import { TrendingUp, Clock, Sparkles } from "lucide-react";
-import { top5Games, recentGames, aiPickGames } from "@/src/mocks/data";
+import { top5Games, recentGames, aiPickGames } from "@/src/mocks/data/games";
 import styles from "./page.module.scss";
 
 const sections = [

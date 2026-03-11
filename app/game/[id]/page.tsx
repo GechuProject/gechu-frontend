@@ -4,7 +4,7 @@ import { GameDescription } from "@/app/components/game/GameDescription";
 import { GameFeatures } from "@/app/components/game/GameFeatures";
 import { GameScreenshots } from "@/app/components/game/GameScreenshots";
 import { GameSidebar } from "@/app/components/game/GameSidebar";
-import { gameDetails } from "@/src/mocks/data";
+import { gameDetails } from "@/src/mocks/data/games";
 import styles from "./page.module.scss";
 
 export default async function GameDetailPage({

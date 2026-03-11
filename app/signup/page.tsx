@@ -25,7 +25,6 @@ export default function SignupPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Signup attempt:", formData);
     // TODO: API 연동
   };
 

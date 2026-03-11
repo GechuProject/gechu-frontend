@@ -6,7 +6,7 @@ import {
   availableGenres,
   availablePlatforms,
   availableThemes,
-} from "@/src/mocks/data";
+} from "@/src/mocks/data/preferences";
 import styles from "./PreferencesModal.module.scss";
 
 interface PreferencesModalProps {
