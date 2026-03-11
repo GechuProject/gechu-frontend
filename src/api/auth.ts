@@ -1,4 +1,7 @@
 import { authApiClient } from "@/src/lib/api";
+import { ACCESS_TOKEN_KEY } from "@/src/constants/auth";
+
+export { ACCESS_TOKEN_KEY };
 
 export interface LoginRequest {
   email: string;
@@ -17,6 +20,16 @@ export interface LoginErrorResponse {
   message: string;
 }
 
+export interface LogoutResponse {
+  message: string;
+}
+
+export interface RefreshResponse {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+}
+
 export async function login(
   email: string,
   password: string
@@ -24,6 +37,26 @@ export async function login(
   const { data } = await authApiClient.post<LoginSuccessResponse>(
     "/api/v1/auth/login/",
     { email, password }
+  );
+  return data;
+}
+
+export async function logout(accessToken: string): Promise<LogoutResponse> {
+  const { data } = await authApiClient.post<LogoutResponse>(
+    "/api/v1/auth/logout/",
+    undefined,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+  return data;
+}
+
+export async function refreshToken(): Promise<RefreshResponse> {
+  const { data } = await authApiClient.post<RefreshResponse>(
+    "/api/v1/auth/refresh/"
   );
   return data;
 }

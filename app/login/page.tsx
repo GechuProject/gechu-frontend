@@ -5,11 +5,9 @@ import { useRouter } from "next/navigation";
 import { AuthBackground } from "@/app/components/common/AuthBackground";
 import { LoginLogo } from "@/app/components/login/LoginLogo";
 import { LoginForm } from "@/app/components/login/LoginForm";
-import { login } from "@/src/api/auth";
+import { login, ACCESS_TOKEN_KEY } from "@/src/api/auth";
 import { AxiosError } from "axios";
 import styles from "./page.module.scss";
-
-const ACCESS_TOKEN_KEY = "access_token";
 
 export default function LoginPage() {
   const router = useRouter();
