@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ProfileHeader } from "@/app/components/mypage/ProfileHeader";
 import { StatsGrid } from "@/app/components/mypage/StatsGrid";
 import { GamePreferences } from "@/app/components/mypage/GamePreferences";
@@ -8,7 +8,7 @@ import { RecentSearches } from "@/app/components/mypage/RecentSearches";
 import { PreferencesModal } from "@/app/components/mypage/PreferencesModal";
 import {
   userWishlist,
-  userProfile,
+  userProfile as mockProfile,
   userPreferences,
   recentSearches,
   availableGenres,
@@ -28,9 +28,32 @@ interface Preferences {
   tags: PreferenceItem[];
 }
 
+interface UserProfile {
+  id: number;
+  email: string;
+  nickname: string;
+  birth_date: string;
+  profile_img_url: string;
+  is_adult_verified: boolean;
+  adult_verified_at: string;
+  is_active: boolean;
+  created_at: string;
+}
+
 export default function MyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [preferences, setPreferences] = useState<Preferences>(userPreferences);
+  const [profile, setProfile] = useState<UserProfile>(mockProfile);
+
+  // 프로필 fetch
+  useEffect(() => {
+    fetch("/api/v1/users/me/")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) setProfile(data);
+      })
+      .catch(() => {});
+  }, []);
 
   const [selectedGenres, setSelectedGenres] = useState<string[]>(
     userPreferences.genres.map((g) => g.name)
@@ -87,8 +110,8 @@ export default function MyPage() {
     <div className={styles.page}>
       <div className={styles.inner}>
         <ProfileHeader
-          nickname={userProfile.nickname}
-          email={userProfile.email}
+          nickname={profile.nickname}
+          email={profile.email}
           bio=""
         />
         <StatsGrid

@@ -2,7 +2,7 @@
 export const userProfile = {
   id: 1,
   email: "user@example.com",
-  nickname: "gamer123",
+  nickname: "쭐",
   birth_date: "1995-06-15",
   profile_img_url: "https://cdn.example.com/img/1.jpg",
   is_adult_verified: true,
