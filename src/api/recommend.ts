@@ -1,19 +1,23 @@
-import { GameCardItem } from "@/src/mocks/data/games";
+import { apiClient } from "@/src/lib/api";
+import type { GameCardItem } from "@/src/mocks/data/games";
 
 export async function fetchTop5Games(): Promise<GameCardItem[]> {
-  const res = await fetch("/api/recommend/top5");
-  if (!res.ok) throw new Error("Failed to fetch top 5 games");
-  return res.json();
+  const { data } = await apiClient.get<GameCardItem[]>(
+    "/api/recommend/top5-games"
+  );
+  return data;
 }
 
 export async function fetchRecentGames(): Promise<GameCardItem[]> {
-  const res = await fetch("/api/recommend/recent");
-  if (!res.ok) throw new Error("Failed to fetch recent games");
-  return res.json();
+  const { data } = await apiClient.get<GameCardItem[]>(
+    "/api/recommend/recent-games"
+  );
+  return data;
 }
 
 export async function fetchAiPickGames(): Promise<GameCardItem[]> {
-  const res = await fetch("/api/recommend/ai-pick");
-  if (!res.ok) throw new Error("Failed to fetch AI pick games");
-  return res.json();
+  const { data } = await apiClient.get<GameCardItem[]>(
+    "/api/recommend/ai-pick-games"
+  );
+  return data;
 }
