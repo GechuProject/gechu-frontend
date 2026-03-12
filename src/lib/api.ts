@@ -62,3 +62,12 @@ export const authApiClient = axios.create({
   },
   withCredentials: true, // refresh token 쿠키 전송
 });
+
+// authApiClient에도 Bearer 토큰 첨부 내정보 조회 할때 추가함
+authApiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  const token = getAccessToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});

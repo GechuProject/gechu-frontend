@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { userPreferences, userWishlist, userProfile } from "../data/user";
+import { userPreferences, userWishlist } from "../data/user";
 import { actionGames, rpgGames, wishlistGames } from "../data/games";
 
 // MSW 메모리 store - 취향 수정 시 여기에 저장됨
@@ -24,11 +24,6 @@ const wishlistGamesStore = [...wishlistGames];
 export const handlers = [
   http.get("/api/health", () => {
     return HttpResponse.json({ ok: true });
-  }),
-
-  // 내 프로필 조회
-  http.get("/api/v1/users/me/", () => {
-    return HttpResponse.json(userProfile);
   }),
 
   // 홈화면 - 액션 Top 10
