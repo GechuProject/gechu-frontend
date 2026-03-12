@@ -19,7 +19,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon3D } from "./Icon3D";
-import { logout, ACCESS_TOKEN_KEY } from "@/src/api/auth";
+import { logout, getAccessToken, removeAccessToken } from "@/src/api/auth";
 import { fetchUserProfile } from "@/src/api/mypage";
 import type { UserProfile } from "@/src/api/mypage";
 import { headerSearchGames } from "@/src/mocks/data/games";
@@ -47,13 +47,13 @@ export function Header() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    // 개발 시 ?logout=1 쿼리로 로그아웃 상태 강제 (localStorage 정리)
+    // 개발 시 ?logout=1 쿼리로 로그아웃 상태 강제 (토큰 정리)
     const params = new URLSearchParams(window.location.search);
     if (params.get("logout") === "1") {
-      localStorage.removeItem(ACCESS_TOKEN_KEY);
+      removeAccessToken();
       window.history.replaceState({}, "", window.location.pathname);
     }
-    const hasToken = !!localStorage.getItem(ACCESS_TOKEN_KEY);
+    const hasToken = !!getAccessToken();
     queueMicrotask(() => setIsLoggedIn(hasToken));
   }, [pathname]);
 
@@ -87,17 +87,13 @@ export function Header() {
   }, []);
 
   const handleLogout = async () => {
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem(ACCESS_TOKEN_KEY)
-        : null;
+    const token = getAccessToken();
     try {
       if (token) await logout(token);
     } catch {
       // API 실패해도 로컬 로그아웃 진행
     } finally {
-      if (typeof window !== "undefined")
-        localStorage.removeItem(ACCESS_TOKEN_KEY);
+      removeAccessToken();
       setIsLoggedIn(false);
       setShowProfileMenu(false);
       router.push("/");

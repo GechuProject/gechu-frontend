@@ -7,7 +7,11 @@ const apiBaseURL =
     ? ""
     : process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
-import { ACCESS_TOKEN_KEY } from "@/src/constants/auth";
+import {
+  getAccessToken,
+  removeAccessToken,
+  setAccessToken,
+} from "@/src/constants/auth";
 
 export const apiClient = axios.create({
   baseURL: apiBaseURL,
@@ -18,11 +22,9 @@ export const apiClient = axios.create({
 
 // 요청 시 토큰 첨부
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  if (typeof window !== "undefined") {
-    const token = localStorage.getItem(ACCESS_TOKEN_KEY);
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+  const token = getAccessToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
@@ -39,15 +41,11 @@ apiClient.interceptors.response.use(
       try {
         const { refreshToken } = await import("@/src/api/auth");
         const { access_token } = await refreshToken();
-        if (typeof window !== "undefined") {
-          localStorage.setItem(ACCESS_TOKEN_KEY, access_token);
-        }
+        setAccessToken(access_token);
         originalConfig.headers.Authorization = `Bearer ${access_token}`;
         return apiClient(originalConfig);
       } catch (refreshErr) {
-        if (typeof window !== "undefined") {
-          localStorage.removeItem(ACCESS_TOKEN_KEY);
-        }
+        removeAccessToken();
         return Promise.reject(refreshErr);
       }
     }

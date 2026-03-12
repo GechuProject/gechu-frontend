@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { AuthBackground } from "@/app/components/common/AuthBackground";
 import { LoginLogo } from "@/app/components/login/LoginLogo";
 import { LoginForm } from "@/app/components/login/LoginForm";
-import { login, ACCESS_TOKEN_KEY } from "@/src/api/auth";
+import { login, setAccessToken } from "@/src/api/auth";
 import { AxiosError } from "axios";
 import styles from "./page.module.scss";
 
@@ -23,9 +23,7 @@ export default function LoginPage() {
 
     try {
       const { access_token } = await login(email, password);
-      if (typeof window !== "undefined") {
-        localStorage.setItem(ACCESS_TOKEN_KEY, access_token);
-      }
+      setAccessToken(access_token);
       router.push("/");
     } catch (err) {
       const axiosError = err as AxiosError<{ message?: string }>;
