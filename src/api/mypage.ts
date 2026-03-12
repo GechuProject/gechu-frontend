@@ -1,4 +1,4 @@
-import { apiClient } from "@/src/lib/api";
+import { apiClient, authApiClient } from "@/src/lib/api";
 
 export interface UserProfile {
   id: number;
@@ -14,7 +14,7 @@ export interface UserProfile {
 
 export async function fetchUserProfile(): Promise<UserProfile | null> {
   try {
-    const { data } = await apiClient.get<UserProfile>("/api/v1/users/me/");
+    const { data } = await authApiClient.get<UserProfile>("/api/v1/users/me/");
     return data;
   } catch {
     return null;
