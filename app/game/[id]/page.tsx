@@ -1,19 +1,48 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { GameHero } from "@/app/components/game/GameHero";
 import { GameInfoCards } from "@/app/components/game/GameInfoCards";
 import { GameDescription } from "@/app/components/game/GameDescription";
 import { GameFeatures } from "@/app/components/game/GameFeatures";
 import { GameScreenshots } from "@/app/components/game/GameScreenshots";
 import { GameSidebar } from "@/app/components/game/GameSidebar";
-import { gameDetails } from "@/src/mocks/data/games";
+import { fetchGameDetail } from "@/src/api/game";
+import type { GameDetailItem } from "@/src/mocks/data/games";
 import styles from "./page.module.scss";
 
-export default async function GameDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const game = gameDetails[Number(id)] || gameDetails[1];
+export default function GameDetailPage() {
+  const params = useParams();
+  const id = Number(params.id);
+
+  const [game, setGame] = useState<GameDetailItem | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchGameDetail(id);
+        setGame(data);
+      } catch (err) {
+        console.error("게임 상세 데이터 로드 실패:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, [id]);
+
+  if (loading || !game) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.inner} style={{ padding: "4rem 0" }}>
+          <p style={{ color: "#fff", textAlign: "center" }}>로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>
