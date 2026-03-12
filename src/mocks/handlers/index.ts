@@ -1,6 +1,13 @@
 import { http, HttpResponse } from "msw";
 import { userPreferences, userWishlist, userProfile } from "../data/user";
-import { actionGames, rpgGames, wishlistGames } from "../data/games";
+import {
+  actionGames,
+  rpgGames,
+  wishlistGames,
+  top5Games,
+  recentGames,
+  aiPickGames,
+} from "../data/games";
 
 // MSW 메모리 store - 취향 수정 시 여기에 저장됨
 const preferencesStore = {
@@ -91,5 +98,20 @@ export const handlers = [
     }
     wishlistGamesStore.splice(index, 1);
     return HttpResponse.json({ success: true });
+  }),
+
+  // 추천 - 인기 급상승 Top 5
+  http.get("/api/recommend/top5-games", () => {
+    return HttpResponse.json(top5Games);
+  }),
+
+  // 추천 - 최근 출시
+  http.get("/api/recommend/recent-games", () => {
+    return HttpResponse.json(recentGames);
+  }),
+
+  // 추천 - AI 추천
+  http.get("/api/recommend/ai-pick-games", () => {
+    return HttpResponse.json(aiPickGames);
   }),
 ];
