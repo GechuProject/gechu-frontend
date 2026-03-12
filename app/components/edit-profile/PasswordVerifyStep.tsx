@@ -9,17 +9,31 @@ interface PasswordVerifyStepProps {
   currentPassword: string;
   onChange: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
+  error?: string;
+  isLoading?: boolean;
 }
 
-export function PasswordVerifyStep({ currentPassword, onChange, onSubmit }: PasswordVerifyStepProps) {
+export function PasswordVerifyStep({
+  currentPassword,
+  onChange,
+  onSubmit,
+  error,
+  isLoading,
+}: PasswordVerifyStepProps) {
   return (
-    <motion.div className={styles.card} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
+    <motion.div
+      className={styles.card}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
       <div className={styles.head}>
         <Icon3D className={styles.iconWrap}>
           <Shield style={{ width: "4rem", height: "4rem", color: "#E4FF30" }} />
         </Icon3D>
         <h1 className={styles.title}>보안 확인</h1>
-        <p className={styles.subtitle}>내정보를 수정하기 위해 현재 비밀번호를 입력해주세요</p>
+        <p className={styles.subtitle}>
+          내정보를 수정하기 위해 현재 비밀번호를 입력해주세요
+        </p>
       </div>
 
       <form onSubmit={onSubmit}>
@@ -38,9 +52,27 @@ export function PasswordVerifyStep({ currentPassword, onChange, onSubmit }: Pass
           />
         </div>
 
-        <motion.button type="submit" className={styles.submitBtn} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          확인
+        <motion.button
+          type="submit"
+          className={styles.submitBtn}
+          whileHover={{ scale: isLoading ? 1 : 1.02 }}
+          whileTap={{ scale: isLoading ? 1 : 0.98 }}
+          disabled={isLoading}
+        >
+          {isLoading ? "확인 중..." : "확인"}
         </motion.button>
+        {error && (
+          <p
+            style={{
+              color: "#ff6b6b",
+              marginTop: "0.75rem",
+              fontSize: "0.875rem",
+              textAlign: "center",
+            }}
+          >
+            {error}
+          </p>
+        )}
       </form>
     </motion.div>
   );

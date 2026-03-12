@@ -1,7 +1,7 @@
 // 내 프로필 조회 (홈페이지 헤더 Mock)
 export const userProfile = {
   id: 1,
-  email: "user@example.com",
+  email: "user@test.com",
   nickname: "최강001Team",
   birth_date: "1995-06-15",
   profile_img_url: "/images/profile-mock.png",

@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
 import { PasswordVerifyStep } from "@/app/components/edit-profile/PasswordVerifyStep";
 import { EditProfileForm } from "@/app/components/edit-profile/EditProfileForm";
+import { login } from "@/src/api/auth";
+import { fetchUserProfile } from "@/src/api/mypage";
 import { editProfileFormInitial } from "@/src/mocks/data/user";
 import styles from "./page.module.scss";
 
@@ -15,10 +18,33 @@ export default function EditProfilePage() {
   const [step, setStep] = useState<"password" | "edit">("password");
   const [currentPassword, setCurrentPassword] = useState("");
   const [formData, setFormData] = useState(editProfileFormInitial);
+  const [userEmail, setUserEmail] = useState("");
+  const [verifyError, setVerifyError] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
 
-  const handlePasswordVerify = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetchUserProfile().then((data) => {
+      if (data) setUserEmail(data.email);
+    });
+  }, []);
+
+  const handlePasswordVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (currentPassword) setStep("edit");
+    setVerifyError("");
+    setIsVerifying(true);
+
+    try {
+      await login(userEmail, currentPassword);
+      setStep("edit");
+    } catch (err) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      const message =
+        axiosError.response?.data?.message ??
+        "비밀번호가 올바르지 않습니다. 다시 시도해 주세요.";
+      setVerifyError(message);
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,6 +86,8 @@ export default function EditProfilePage() {
             currentPassword={currentPassword}
             onChange={setCurrentPassword}
             onSubmit={handlePasswordVerify}
+            error={verifyError}
+            isLoading={isVerifying}
           />
         ) : (
           <EditProfileForm
