@@ -1,15 +1,29 @@
 @use "../../styles/variables" as *;
 @use "../../styles/mixins" as *;
+
 .header {
   @include glass-card;
   margin-bottom: 2rem;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 0.5rem;
+
+  @include respond-md {
+    padding: 2rem;
+  }
 }
 
+/* 모바일: 세로 중앙 / 데스크탑: 가로 */
 .inner {
-  @include flex-center(2rem);
-  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+
+  @include respond-md {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2rem;
+  }
 }
 
 .avatar {
@@ -17,40 +31,68 @@
 }
 
 .avatarCircle {
-  width: 8rem;
-  height: 8rem;
+  width: 6rem;
+  height: 6rem;
   border-radius: 9999px;
   background: linear-gradient(135deg, #e4ff30, #b8cc26);
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @include respond-md {
+    width: 8rem;
+    height: 8rem;
+  }
 }
 
+/* 모바일: 텍스트 중앙 / 데스크탑: 좌측 */
 .userInfo {
   flex: 1;
+  width: 100%;
+  text-align: center;
+
+  @include respond-md {
+    text-align: left;
+  }
 }
 
 .nickname {
   margin-bottom: 0.5rem;
-  font-size: 2.25rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: $white;
+
+  @include respond-md {
+    font-size: 2.25rem;
+  }
 }
 
 .email {
+  justify-content: center;
   @include flex-center(0.5rem);
   margin-bottom: 1rem;
   color: $white-50;
+  font-size: 0.9rem;
+
+  @include respond-md {
+    justify-content: flex-start;
+  }
 }
 
 .bio {
   margin-bottom: 1.5rem;
   color: $white-70;
+  font-size: 0.9rem;
 }
 
 .actions {
   display: flex;
+  justify-content: center;
   gap: 0.75rem;
+
+  @include respond-md {
+    justify-content: flex-start;
+  }
 }
 
 .editBtn {
@@ -58,9 +100,10 @@
   background: $accent;
   color: $black;
   font-weight: 700;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1.25rem;
   border-radius: 0.5rem;
   cursor: pointer;
+  font-size: 0.875rem;
   transition: background 0.2s ease;
 
   &:hover {
@@ -72,13 +115,13 @@
   @include flex-center(0.5rem);
   @include glass-card;
   color: $white;
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1.25rem;
   border-radius: 0.5rem;
   cursor: pointer;
+  font-size: 0.875rem;
   transition: background 0.2s ease;
 
   &:hover {
     background: $white-10;
   }
 }
-

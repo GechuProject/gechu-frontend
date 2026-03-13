@@ -20,7 +20,7 @@ export const userPreferences = {
 
 // 위시리스트
 export const userWishlist = {
-  count: 5,
+  count: 11,
   next: null,
   previous: null,
   results: [
@@ -63,6 +63,54 @@ export const userWishlist = {
       thumbnail_img_url: "https://cdn.example.com/hk.jpg",
       rawg_rating: 4.42,
       saved_at: "2025-05-05T20:00:00Z",
+    },
+    {
+      id: 6,
+      name: "Baldur's Gate 3",
+      slug: "baldurs-gate-3",
+      thumbnail_img_url: "https://cdn.example.com/bg3.jpg",
+      rawg_rating: 4.91,
+      saved_at: "2025-05-01T11:00:00Z",
+    },
+    {
+      id: 7,
+      name: "Dark Souls III",
+      slug: "dark-souls-3",
+      thumbnail_img_url: "https://cdn.example.com/ds3.jpg",
+      rawg_rating: 4.53,
+      saved_at: "2025-04-28T16:00:00Z",
+    },
+    {
+      id: 8,
+      name: "Sekiro: Shadows Die Twice",
+      slug: "sekiro-shadows-die-twice",
+      thumbnail_img_url: "https://cdn.example.com/sekiro.jpg",
+      rawg_rating: 4.61,
+      saved_at: "2025-04-25T09:30:00Z",
+    },
+    {
+      id: 9,
+      name: "God of War",
+      slug: "god-of-war",
+      thumbnail_img_url: "https://cdn.example.com/gow.jpg",
+      rawg_rating: 4.77,
+      saved_at: "2025-04-20T14:00:00Z",
+    },
+    {
+      id: 10,
+      name: "Hades",
+      slug: "hades",
+      thumbnail_img_url: "https://cdn.example.com/hades.jpg",
+      rawg_rating: 4.69,
+      saved_at: "2025-04-15T18:00:00Z",
+    },
+    {
+      id: 11,
+      name: "Stardew Valley",
+      slug: "stardew-valley",
+      thumbnail_img_url: "https://cdn.example.com/stardew.jpg",
+      rawg_rating: 4.55,
+      saved_at: "2025-04-10T10:00:00Z",
     },
   ],
 };

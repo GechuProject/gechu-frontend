@@ -90,8 +90,8 @@
 
 .cancelBtn {
   flex: 1;
+  width: 100%;
   @include btn-ghost;
   padding: 0.75rem;
   text-align: center;
 }
-

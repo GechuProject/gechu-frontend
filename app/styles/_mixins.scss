@@ -88,6 +88,12 @@
     @content;
   }
 }
+// ─── sm 브레이크포인트 (480px) ─────────────────────────────────
+@mixin respond-xs {
+  @media (min-width: 480px) {
+    @content;
+  }
+}
 
 // ─── accent 배지 ──────────────────────────────────────────────
 @mixin accent-badge {
