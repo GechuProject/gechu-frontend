@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { userPreferences, userWishlist } from "../data/user";
+import { userWishlist } from "../data/user";
 import {
   actionGames,
   rpgGames,
@@ -8,13 +8,6 @@ import {
   recentGames,
   aiPickGames,
 } from "../data/games";
-
-// MSW 메모리 store - 취향 수정 시 여기에 저장됨
-const preferencesStore = {
-  genres: [...userPreferences.genres],
-  platforms: [...userPreferences.platforms],
-  tags: [...userPreferences.tags],
-};
 
 // MSW 메모리 store - 위시리스트 (마이페이지용)
 const wishlistStore = {
@@ -43,35 +36,6 @@ export const handlers = [
     return HttpResponse.json(rpgGames);
   }),
 
-  // 게임 취향 조회
-  http.get("/api/mypage/preferences", () => {
-    return HttpResponse.json({
-      genres: preferencesStore.genres,
-      platforms: preferencesStore.platforms,
-      tags: preferencesStore.tags,
-    });
-  }),
-
-  // 게임 취향 수정
-  http.put("/api/mypage/preferences", async ({ request }) => {
-    const body = (await request.json()) as {
-      genres: { id: number; name: string }[];
-      platforms: { id: number; name: string }[];
-      tags: { id: number; name: string }[];
-    };
-
-    preferencesStore.genres = body.genres;
-    preferencesStore.platforms = body.platforms;
-    preferencesStore.tags = body.tags;
-
-    return HttpResponse.json({
-      genres: preferencesStore.genres,
-      platforms: preferencesStore.platforms,
-      tags: preferencesStore.tags,
-    });
-  }),
-
-  // 위시리스트 조회 (마이페이지용)
   http.get("/api/mypage/wishlist", () => {
     return HttpResponse.json(wishlistStore);
   }),
