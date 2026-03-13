@@ -1,0 +1,123 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.section {
+  margin-bottom: 0;
+}
+
+.heading {
+  margin-bottom: 1.5rem;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: $white;
+}
+
+.empty {
+  color: $white-50;
+  font-size: 0.95rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+// 기본: 순위 + 게임명만 한 줄로 표시
+.item {
+  @include glass-card;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: 0.75rem;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $white-10;
+  }
+}
+
+.rank {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $accent;
+  min-width: 2rem;
+  flex-shrink: 0;
+}
+
+.name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: $white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// -------- 아래는 적합도·뱃지 활성화 시 사용 --------
+// .info {
+//   flex: 1;
+//   display: flex;
+//   flex-direction: column;
+//   gap: 0.35rem;
+//   min-width: 0;
+// }
+//
+// .scoreBar {
+//   height: 4px;
+//   border-radius: 2px;
+//   background: $white-10;
+//   overflow: hidden;
+// }
+//
+// .scoreFill {
+//   height: 100%;
+//   border-radius: 2px;
+//   background: linear-gradient(90deg, $accent 0%, #a8ff78 100%);
+//   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+// }
+//
+// .scoreText {
+//   display: flex;
+//   align-items: center;
+//   gap: 0.3rem;
+//   font-size: 0.8rem;
+//   color: $white-50;
+// }
+//
+// .badges {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 0.35rem;
+//   flex-shrink: 0;
+// }
+//
+// %badge-base {
+//   display: flex;
+//   align-items: center;
+//   gap: 0.25rem;
+//   padding: 0.2rem 0.6rem;
+//   border-radius: 999px;
+//   font-size: 0.75rem;
+//   font-weight: 600;
+// }
+//
+// .badgeSaved {
+//   @extend %badge-base;
+//   background: rgba(228, 255, 48, 0.15);
+//   color: $accent;
+// }
+//
+// .badgeLike {
+//   @extend %badge-base;
+//   background: rgba(255, 100, 130, 0.15);
+//   color: #ff6482;
+// }
+//
+// .badgeDislike {
+//   @extend %badge-base;
+//   background: rgba(255, 255, 255, 0.08);
+//   color: $white-50;
+// }
+
