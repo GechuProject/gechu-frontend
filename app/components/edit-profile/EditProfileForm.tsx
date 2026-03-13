@@ -19,17 +19,34 @@ interface EditProfileFormProps {
 }
 
 const passwordFields = [
-  { label: "현재 비밀번호", name: "currentPasswordEdit" as const, placeholder: "현재 비밀번호" },
-  { label: "새 비밀번호", name: "newPassword" as const, placeholder: "새 비밀번호 (8자 이상)" },
-  { label: "새 비밀번호 확인", name: "confirmPassword" as const, placeholder: "새 비밀번호 확인" },
+  {
+    label: "새 비밀번호",
+    name: "newPassword" as const,
+    placeholder: "새 비밀번호 (8자 이상)",
+  },
+  {
+    label: "새 비밀번호 확인",
+    name: "confirmPassword" as const,
+    placeholder: "새 비밀번호 확인",
+  },
 ];
 
-export function EditProfileForm({ formData, onChange, onSubmit }: EditProfileFormProps) {
+export function EditProfileForm({
+  formData,
+  onChange,
+  onSubmit,
+}: EditProfileFormProps) {
   return (
-    <motion.div className={styles.form} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
+    <motion.div
+      className={styles.form}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
       <div className={styles.header}>
         <h1 className={styles.title}>내정보 수정</h1>
-        <p className={styles.subtitle}>회원정보를 안전하게 변경할 수 있습니다</p>
+        <p className={styles.subtitle}>
+          회원정보를 안전하게 변경할 수 있습니다
+        </p>
       </div>
 
       <form onSubmit={onSubmit} className={styles.fields}>
@@ -55,7 +72,9 @@ export function EditProfileForm({ formData, onChange, onSubmit }: EditProfileFor
 
         <div className={styles.pwSection}>
           <h2 className={styles.sectionTitle}>비밀번호 변경</h2>
-          <p className={styles.hint}>비밀번호를 변경하지 않으려면 아래 필드를 비워두세요</p>
+          <p className={styles.hint}>
+            비밀번호를 변경하지 않으려면 아래 필드를 비워두세요
+          </p>
 
           {passwordFields.map(({ label, name, placeholder }) => (
             <div key={name}>
@@ -78,11 +97,21 @@ export function EditProfileForm({ formData, onChange, onSubmit }: EditProfileFor
         </div>
 
         <div className={styles.actions}>
-          <motion.button type="submit" className={styles.saveBtn} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <motion.button
+            type="submit"
+            className={styles.saveBtn}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
             저장하기
           </motion.button>
           <Link href="/mypage" style={{ flex: 1 }}>
-            <motion.button type="button" className={styles.cancelBtn} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <motion.button
+              type="button"
+              className={styles.cancelBtn}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
               취소
             </motion.button>
           </Link>
