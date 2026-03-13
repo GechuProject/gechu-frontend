@@ -1,4 +1,4 @@
-import { authApiClient } from "@/src/lib/api";
+import { authApiClient, apiClient } from "@/src/lib/api";
 
 export interface UserProfile {
   id: number;
@@ -56,4 +56,31 @@ export async function putPreferences(
 
 export async function deleteWishlistItem(id: number): Promise<void> {
   await authApiClient.delete(`/api/wishlist/${id}`);
+}
+
+export interface RecommendedGame {
+  id: number;
+  name: string;
+  is_saved: boolean;
+  like_state: number;
+  preference_score: number;
+  last_interacted_at: string;
+}
+
+export interface RecommendedGamesResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: RecommendedGame[];
+}
+
+export async function fetchRecommendedGames(): Promise<RecommendedGamesResponse | null> {
+  try {
+    const { data } = await apiClient.get<RecommendedGamesResponse>(
+      "/api/v1/preferences/me/recommendations/"
+    );
+    return data;
+  } catch {
+    return null;
+  }
 }

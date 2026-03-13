@@ -8,6 +8,7 @@ import {
   recentGames,
   aiPickGames,
 } from "../data/games";
+import { recommendedGames } from "../data/preferences";
 
 // MSW 메모리 store - 위시리스트 (마이페이지용)
 const wishlistStore = {
@@ -72,5 +73,10 @@ export const handlers = [
   // 추천 - AI 추천
   http.get("/api/recommend/ai-pick-games", () => {
     return HttpResponse.json(aiPickGames);
+  }),
+
+  // 마이페이지 - 취향 맞춤 게임 추천
+  http.get("/api/v1/preferences/me/recommendations/", () => {
+    return HttpResponse.json(recommendedGames);
   }),
 ];

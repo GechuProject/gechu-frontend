@@ -4,16 +4,17 @@ import { useState, useEffect } from "react";
 import { ProfileHeader } from "@/app/components/mypage/ProfileHeader";
 import { StatsGrid } from "@/app/components/mypage/StatsGrid";
 import { GamePreferences } from "@/app/components/mypage/GamePreferences";
-import { RecentSearches } from "@/app/components/mypage/RecentSearches";
+import { RecommendedGames } from "@/app/components/mypage/RecommendedGames";
 import { PreferencesModal } from "@/app/components/mypage/PreferencesModal";
 import {
   putPreferences,
   fetchUserProfile,
   fetchPreferences,
+  fetchRecommendedGames,
   UserProfile,
+  RecommendedGame,
 } from "@/src/api/mypage";
 import {
-  recentSearches,
   availableGenres,
   availablePlatforms,
   availableThemes,
@@ -61,6 +62,9 @@ export default function MyPage() {
     previous: null,
     results: [],
   });
+  const [recommendedGames, setRecommendedGames] = useState<RecommendedGame[]>(
+    []
+  );
 
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
@@ -92,6 +96,13 @@ export default function MyPage() {
         if (data) setWishlist(data);
       })
       .catch(() => {});
+  }, []);
+
+  // 취향 맞춤 게임 추천 fetch
+  useEffect(() => {
+    fetchRecommendedGames().then((data) => {
+      if (data) setRecommendedGames(data.results);
+    });
   }, []);
 
   const toggleSelection = (
@@ -143,7 +154,7 @@ export default function MyPage() {
           preferences={preferences}
           onEditClick={() => setIsModalOpen(true)}
         />
-        <RecentSearches searches={recentSearches} />
+        <RecommendedGames games={recommendedGames} />
       </div>
 
       <PreferencesModal
