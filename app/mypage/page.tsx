@@ -9,6 +9,7 @@ import { PreferencesModal } from "@/app/components/mypage/PreferencesModal";
 import {
   putPreferences,
   fetchUserProfile,
+  fetchPreferences,
   UserProfile,
 } from "@/src/api/mypage";
 import {
@@ -73,17 +74,14 @@ export default function MyPage() {
 
   // 게임 취향 fetch
   useEffect(() => {
-    fetch("/api/mypage/preferences")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data: Preferences | null) => {
-        if (data) {
-          setPreferences(data);
-          setSelectedGenres(data.genres.map((g) => g.name));
-          setSelectedPlatforms(data.platforms.map((p) => p.name));
-          setSelectedThemes(data.tags.map((t) => t.name));
-        }
-      })
-      .catch(() => {});
+    fetchPreferences().then((data) => {
+      if (data) {
+        setPreferences(data);
+        setSelectedGenres(data.genres.map((g) => g.name));
+        setSelectedPlatforms(data.platforms.map((p) => p.name));
+        setSelectedThemes(data.tags.map((t) => t.name));
+      }
+    });
   }, []);
 
   // 위시리스트 fetch
