@@ -74,11 +74,15 @@ export function GamePreferences({
               {label}
             </h3>
             <div className={styles.tags}>
-              {preferences[key].map((item) => (
-                <span key={item.id} className={styles.tag}>
-                  {item.name}
-                </span>
-              ))}
+              {preferences[key]?.length > 0 ? (
+                preferences[key].map((item) => (
+                  <span key={item.id} className={styles.tag}>
+                    {item.name}
+                  </span>
+                ))
+              ) : (
+                <span className={styles.emptyState}>내역이 없습니다</span>
+              )}
             </div>
           </motion.div>
         ))}

@@ -22,9 +22,9 @@ export async function fetchUserProfile(): Promise<UserProfile | null> {
 }
 
 export interface PreferencesBody {
-  genres: { id: number; name: string }[];
-  platforms: { id: number; name: string }[];
-  tags: { id: number; name: string }[];
+  genre_ids: number[];
+  platform_ids: number[];
+  tag_ids: number[];
 }
 
 export interface PreferencesResponse {
