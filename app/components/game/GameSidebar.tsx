@@ -1,46 +1,92 @@
 import styles from "./GameSidebar.module.scss";
 
 interface SystemRequirements {
-  os: string;
-  processor: string;
-  memory: string;
-  graphics: string;
-  storage: string;
+  minimum: string;
+  recommended: string;
 }
 
 interface GameSidebarProps {
-  price: string;
   systemRequirements: SystemRequirements;
+  stores: { name: string; url: string }[];
+  esrbRating: string;
 }
 
-export function GameSidebar({ price, systemRequirements }: GameSidebarProps) {
-  const specs = [
-    { label: "운영체제", value: systemRequirements.os },
-    { label: "프로세서", value: systemRequirements.processor },
-    { label: "메모리", value: systemRequirements.memory },
-    { label: "그래픽", value: systemRequirements.graphics },
-    { label: "저장공간", value: systemRequirements.storage },
-  ];
+export function GameSidebar({
+  systemRequirements,
+  stores,
+  esrbRating,
+}: GameSidebarProps) {
+  const hasRequirements =
+    systemRequirements.minimum || systemRequirements.recommended;
 
   return (
     <div className={styles.sidebar}>
-      <h3 className={styles.heading}>시스템 요구사항</h3>
-
-      <div className={styles.specs}>
-        {specs.map(({ label, value }) => (
-          <div key={label} className={styles.specItem}>
-            <p className={styles.specLabel}>{label}</p>
-            <p className={styles.specValue}>{value}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className={styles.divider}>
-        <div className={styles.priceRow}>
-          <span className={styles.priceLabel}>가격</span>
-          <span className={styles.priceValue}>{price}</span>
+      {/* 연령 등급 */}
+      {esrbRating && (
+        <div style={{ marginBottom: "1.5rem" }}>
+          <h3 className={styles.heading}>연령 등급</h3>
+          <p style={{ color: "#ccc", fontSize: "0.9rem", marginTop: "0.5rem" }}>
+            {esrbRating}
+          </p>
         </div>
-      </div>
+      )}
+
+      {/* 시스템 요구사항 */}
+      {hasRequirements && (
+        <>
+          <h3 className={styles.heading}>시스템 요구사항</h3>
+          <div className={styles.specs}>
+            {systemRequirements.minimum && (
+              <div className={styles.specItem}>
+                <p className={styles.specLabel}>최소 사양</p>
+                <p
+                  className={styles.specValue}
+                  style={{ whiteSpace: "pre-line", fontSize: "0.8rem" }}
+                >
+                  {systemRequirements.minimum}
+                </p>
+              </div>
+            )}
+            {systemRequirements.recommended && (
+              <div className={styles.specItem}>
+                <p className={styles.specLabel}>권장 사양</p>
+                <p
+                  className={styles.specValue}
+                  style={{ whiteSpace: "pre-line", fontSize: "0.8rem" }}
+                >
+                  {systemRequirements.recommended}
+                </p>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* 구매처 */}
+      {stores.length > 0 && (
+        <div className={styles.divider}>
+          <h3 className={styles.heading} style={{ marginBottom: "0.75rem" }}>
+            구매처
+          </h3>
+          {stores.map((store) => (
+            <a
+              key={store.name}
+              href={store.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "block",
+                color: "#E4FF30",
+                textDecoration: "none",
+                fontSize: "0.9rem",
+                marginBottom: "0.5rem",
+              }}
+            >
+              🛒 {store.name}
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

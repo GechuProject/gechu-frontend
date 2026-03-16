@@ -8,22 +8,32 @@ import { GameDescription } from "@/app/components/game/GameDescription";
 import { GameFeatures } from "@/app/components/game/GameFeatures";
 import { GameScreenshots } from "@/app/components/game/GameScreenshots";
 import { GameSidebar } from "@/app/components/game/GameSidebar";
-import { fetchGameDetail } from "@/src/api/game";
-import type { GameDetailItem } from "@/src/mocks/data/games";
+import { fetchGameDetail, fetchSimilarGames } from "@/src/api/game";
+import type { GameDetailData } from "@/src/api/game";
+import { recordGameView } from "@/src/api/interactions";
+import type { GameCardItem } from "@/src/mocks/data/games";
+import { GameCard } from "@/app/components/common/GameCard";
 import styles from "./page.module.scss";
 
 export default function GameDetailPage() {
   const params = useParams();
   const id = Number(params.id);
 
-  const [game, setGame] = useState<GameDetailItem | null>(null);
+  const [game, setGame] = useState<GameDetailData | null>(null);
+  const [similarGames, setSimilarGames] = useState<GameCardItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await fetchGameDetail(id);
-        setGame(data);
+        const [detailData, similarData] = await Promise.all([
+          fetchGameDetail(id),
+          fetchSimilarGames(id, 5), // 유사 게임 5개 조회
+        ]);
+        setGame(detailData);
+        setSimilarGames(similarData);
+        // 게임 조회 행동 기록 (비로그인 시 자동 무시)
+        recordGameView({ game_id: id, source: "direct" });
       } catch (err) {
         console.error("게임 상세 데이터 로드 실패:", err);
       } finally {
@@ -60,21 +70,53 @@ export default function GameDetailPage() {
           <div>
             <GameInfoCards
               releaseDate={game.releaseDate}
-              players={game.players}
-              developer={game.developer}
+              playtime={game.playtime}
+              platforms={game.platforms}
             />
             <GameDescription description={game.description} />
-            <GameFeatures features={game.features} />
-            <GameScreenshots image={game.image} title={game.title} />
+            {game.tags.length > 0 && <GameFeatures features={game.tags} />}
+            <GameScreenshots
+              screenshots={game.screenshots}
+              fallbackImage={game.image}
+              title={game.title}
+            />
           </div>
           {/* Sidebar */}
           <div>
             <GameSidebar
-              price={game.price}
               systemRequirements={game.systemRequirements}
+              stores={game.stores}
+              esrbRating={game.esrbRating}
             />
           </div>
         </div>
+
+        {/* 유사 게임 영역 */}
+        {similarGames.length > 0 && (
+          <div style={{ marginTop: "4rem" }}>
+            <h2
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+                color: "#E4FF30",
+                marginBottom: "1.5rem",
+              }}
+            >
+              이 게임과 비슷한 게임
+            </h2>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+                gap: "1.5rem",
+              }}
+            >
+              {similarGames.map((item, idx) => (
+                <GameCard key={item.id} game={item} index={idx} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

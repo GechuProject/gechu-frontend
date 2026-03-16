@@ -5,7 +5,7 @@ import { GameCard } from "@/app/components/common/GameCard";
 import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight, Zap, Trophy } from "lucide-react";
 import { useState, useEffect } from "react";
-import { fetchActionGames, fetchRpgGames } from "@/src/api/home";
+import { fetchGenres, fetchActionGames, fetchRpgGames } from "@/src/api/home";
 import type { GameCardItem } from "@/src/mocks/data/games";
 import styles from "./page.module.scss";
 
@@ -82,10 +82,24 @@ export default function HomePage() {
   useEffect(() => {
     async function loadGames() {
       try {
+        // 1. 장르 목록을 먼저 불러와 Action/RPG 장르 ID 탐색
+        const genres = await fetchGenres();
+
+        const actionGenre = genres.find((g) =>
+          g.name.toLowerCase().includes("action")
+        );
+        const rpgGenre = genres.find(
+          (g) =>
+            g.name.toLowerCase().includes("rpg") ||
+            g.name.toLowerCase().includes("role")
+        );
+
+        // 2. 장르 ID로 게임 목록 조회 (장르 없으면 id=0으로 전체 상위 게임)
         const [action, rpg] = await Promise.all([
-          fetchActionGames(),
-          fetchRpgGames(),
+          fetchActionGames(actionGenre?.id ?? 0),
+          fetchRpgGames(rpgGenre?.id ?? 0),
         ]);
+
         setActionGames(action);
         setRpgGames(rpg);
       } catch (error) {
