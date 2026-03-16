@@ -71,3 +71,10 @@
   font-size: 0.875rem;
   color: $accent;
 }
+
+.emptyState {
+  color: rgba($white, 0.5);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  font-style: italic;
+}

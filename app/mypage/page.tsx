@@ -117,19 +117,16 @@ export default function MyPage() {
     }
   };
 
-  // 이름 → {id, name} 변환: available 목록에서 인덱스+1로 id 부여
-  const toItems = (names: string[], availableList: string[]) =>
-    names.map((name) => ({
-      id: availableList.indexOf(name) + 1,
-      name,
-    }));
+  // 이름 → id 변환: available 목록에서 인덱스+1로 id 찾기
+  const toIds = (names: string[], availableList: string[]) =>
+    names.map((name) => availableList.indexOf(name) + 1).filter((id) => id > 0);
 
   const handleSave = async () => {
     try {
       const updated = await putPreferences({
-        genres: toItems(selectedGenres, availableGenres),
-        platforms: toItems(selectedPlatforms, availablePlatforms),
-        tags: toItems(selectedThemes, availableThemes),
+        genre_ids: toIds(selectedGenres, availableGenres),
+        platform_ids: toIds(selectedPlatforms, availablePlatforms),
+        tag_ids: toIds(selectedThemes, availableThemes),
       });
       setPreferences(updated);
       setIsModalOpen(false);
