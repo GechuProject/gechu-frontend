@@ -8,8 +8,7 @@ import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
 import { PasswordVerifyStep } from "@/app/components/edit-profile/PasswordVerifyStep";
 import { EditProfileForm } from "@/app/components/edit-profile/EditProfileForm";
-import { login } from "@/src/api/auth";
-import { fetchUserProfile } from "@/src/api/mypage";
+import { fetchUserProfile, verifyPassword } from "@/src/api/mypage";
 import { authApiClient } from "@/src/lib/api";
 import { editProfileFormInitial } from "@/src/mocks/data/user";
 import styles from "./page.module.scss";
@@ -35,14 +34,14 @@ export default function EditProfilePage() {
     setIsVerifying(true);
 
     try {
-      await login(userEmail, currentPassword);
-      setStep("edit");
+      const isValid = await verifyPassword(currentPassword);
+      if (isValid) {
+        setStep("edit");
+      } else {
+        setVerifyError("비밀번호가 올바르지 않습니다. 다시 시도해 주세요.");
+      }
     } catch (err) {
-      const axiosError = err as AxiosError<{ message?: string }>;
-      const message =
-        axiosError.response?.data?.message ??
-        "비밀번호가 올바르지 않습니다. 다시 시도해 주세요.";
-      setVerifyError(message);
+      setVerifyError("인증 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
     } finally {
       setIsVerifying(false);
     }
