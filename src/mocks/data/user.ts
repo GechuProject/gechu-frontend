@@ -121,4 +121,5 @@ export const editProfileFormInitial = {
   newPassword: "",
   confirmPassword: "",
   nickname: userProfile.nickname,
+  birth_date: userProfile.birth_date,
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Lock, User } from "lucide-react";
+import { Lock, User, Calendar } from "lucide-react";
 import Link from "next/link";
 import styles from "./EditProfileForm.module.scss";
 
@@ -10,6 +10,7 @@ interface EditFormData {
   newPassword: string;
   confirmPassword: string;
   nickname: string;
+  birth_date: string;
 }
 
 interface EditProfileFormProps {
@@ -62,6 +63,23 @@ export function EditProfileForm({
               value={formData.nickname}
               onChange={onChange}
               placeholder="닉네임을 입력하세요"
+              className={styles.input}
+              required
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className={styles.label}>생년월일</label>
+          <div className={styles.inputWrap}>
+            <div className={styles.inputIcon}>
+              <Calendar style={{ width: "1.25rem", height: "1.25rem" }} />
+            </div>
+            <input
+              type="date"
+              name="birth_date"
+              value={formData.birth_date || ""}
+              onChange={onChange}
               className={styles.input}
               required
             />

@@ -10,6 +10,7 @@ import { PasswordVerifyStep } from "@/app/components/edit-profile/PasswordVerify
 import { EditProfileForm } from "@/app/components/edit-profile/EditProfileForm";
 import { login } from "@/src/api/auth";
 import { fetchUserProfile } from "@/src/api/mypage";
+import { authApiClient } from "@/src/lib/api";
 import { editProfileFormInitial } from "@/src/mocks/data/user";
 import styles from "./page.module.scss";
 
@@ -52,10 +53,19 @@ export default function EditProfilePage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: API 연동
-    router.push("/mypage");
+    try {
+      await authApiClient.put("/api/v1/users/me/", {
+        nickname: formData.nickname,
+        birth_date: formData.birth_date,
+      });
+      // 성공 시 마이페이지로 이동
+      router.push("/mypage");
+    } catch (err) {
+      console.error("회원정보 수정 실패:", err);
+      alert("회원정보 수정에 실패했습니다. 다시 시도해 주세요.");
+    }
   };
 
   return (
