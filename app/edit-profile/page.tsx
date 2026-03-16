@@ -5,28 +5,32 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { AxiosError } from "axios";
 import { PasswordVerifyStep } from "@/app/components/edit-profile/PasswordVerifyStep";
 import { EditProfileForm } from "@/app/components/edit-profile/EditProfileForm";
-import { fetchUserProfile, verifyPassword } from "@/src/api/mypage";
+import { verifyPassword } from "@/src/api/mypage";
 import { authApiClient } from "@/src/lib/api";
+import { getAccessToken } from "@/src/constants/auth";
 import { editProfileFormInitial } from "@/src/mocks/data/user";
 import styles from "./page.module.scss";
 
 export default function EditProfilePage() {
   const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [step, setStep] = useState<"password" | "edit">("password");
   const [currentPassword, setCurrentPassword] = useState("");
   const [formData, setFormData] = useState(editProfileFormInitial);
-  const [userEmail, setUserEmail] = useState("");
   const [verifyError, setVerifyError] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
 
   useEffect(() => {
-    fetchUserProfile().then((data) => {
-      if (data) setUserEmail(data.email);
-    });
-  }, []);
+    // getAccessToken()은 클라이언트 실행
+    const token = getAccessToken();
+    if (!token) {
+      router.replace("/login");
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [router]);
 
   const handlePasswordVerify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +44,7 @@ export default function EditProfilePage() {
       } else {
         setVerifyError("비밀번호가 올바르지 않습니다. 다시 시도해 주세요.");
       }
-    } catch (err) {
+    } catch {
       setVerifyError("인증 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
     } finally {
       setIsVerifying(false);
@@ -66,6 +70,8 @@ export default function EditProfilePage() {
       alert("회원정보 수정에 실패했습니다. 다시 시도해 주세요.");
     }
   };
+
+  if (!isAuthenticated) return null;
 
   return (
     <div className={styles.page}>
