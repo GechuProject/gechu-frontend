@@ -7,10 +7,10 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PasswordVerifyStep } from "@/app/components/edit-profile/PasswordVerifyStep";
 import { EditProfileForm } from "@/app/components/edit-profile/EditProfileForm";
-import { verifyPassword } from "@/src/api/mypage";
 import { authApiClient } from "@/src/lib/api";
 import { getAccessToken } from "@/src/constants/auth";
 import { editProfileFormInitial } from "@/src/mocks/data/user";
+import { verifyPasswordAction } from "@/src/actions/mypage";
 import styles from "./page.module.scss";
 
 export default function EditProfilePage() {
@@ -38,7 +38,8 @@ export default function EditProfilePage() {
     setIsVerifying(true);
 
     try {
-      const isValid = await verifyPassword(currentPassword);
+      const token = getAccessToken() || "";
+      const isValid = await verifyPasswordAction(currentPassword, token);
       if (isValid) {
         setStep("edit");
       } else {
