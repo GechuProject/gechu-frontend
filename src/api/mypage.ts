@@ -21,18 +21,6 @@ export async function fetchUserProfile(): Promise<UserProfile | null> {
   }
 }
 
-export async function verifyPassword(password: string): Promise<boolean> {
-  try {
-    const { status } = await authApiClient.post(
-      "/api/v1/users/me/verify-password/",
-      { password }
-    );
-    return status === 200;
-  } catch {
-    return false;
-  }
-}
-
 export interface PreferencesBody {
   genre_ids: number[];
   platform_ids: number[];
