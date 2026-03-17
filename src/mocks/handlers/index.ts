@@ -1,14 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { userWishlist } from "../data/user";
-import {
-  actionGames,
-  rpgGames,
-  wishlistGames,
-  top5Games,
-  recentGames,
-  aiPickGames,
-} from "../data/games";
-import { recommendedGames } from "../data/preferences";
+import { wishlistGames } from "../data/games";
 
 // MSW 메모리 store - 위시리스트 (마이페이지용)
 const wishlistStore = {
@@ -22,19 +14,11 @@ const wishlistStore = {
 const wishlistGamesStore = [...wishlistGames];
 
 // 로그인은 핸들러 없음 → 실제 API로 bypass (onUnhandledRequest: 'bypass')
+// 홈 게임 목록 → /api/v1/games/ 백엔드 API 직접 사용 (bypass)
+// 추천 게임 목록 → /api/v1/recommendations/ 백엔드 API 직접 사용 (bypass)
 export const handlers = [
   http.get("/api/health", () => {
     return HttpResponse.json({ ok: true });
-  }),
-
-  // 홈화면 - 액션 Top 10
-  http.get("/api/home/action-games", () => {
-    return HttpResponse.json(actionGames);
-  }),
-
-  // 홈화면 - RPG Top 10
-  http.get("/api/home/rpg-games", () => {
-    return HttpResponse.json(rpgGames);
   }),
 
   http.get("/api/mypage/wishlist", () => {
@@ -58,25 +42,5 @@ export const handlers = [
     }
     wishlistGamesStore.splice(index, 1);
     return HttpResponse.json({ success: true });
-  }),
-
-  // 추천 - 인기 급상승 Top 5
-  http.get("/api/recommend/top5-games", () => {
-    return HttpResponse.json(top5Games);
-  }),
-
-  // 추천 - 최근 출시
-  http.get("/api/recommend/recent-games", () => {
-    return HttpResponse.json(recentGames);
-  }),
-
-  // 추천 - AI 추천
-  http.get("/api/recommend/ai-pick-games", () => {
-    return HttpResponse.json(aiPickGames);
-  }),
-
-  // 마이페이지 - 취향 맞춤 게임 추천
-  http.get("/api/v1/preferences/me/recommendations/", () => {
-    return HttpResponse.json(recommendedGames);
   }),
 ];

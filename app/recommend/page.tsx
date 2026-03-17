@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { GameCard } from "@/app/components/common/GameCard";
 import { motion } from "motion/react";
-import { TrendingUp, Clock, Sparkles } from "lucide-react";
+import { TrendingUp, Sparkles, Users } from "lucide-react";
 import {
-  fetchTop5Games,
-  fetchRecentGames,
   fetchAiPickGames,
+  fetchPreferenceGames,
+  fetchSimilarityGames,
 } from "@/src/api/recommend";
 import type { GameCardItem } from "@/src/mocks/data/games";
 import styles from "./page.module.scss";
@@ -18,50 +18,57 @@ interface Section {
   title: string;
   description: string;
   games: GameCardItem[];
-  accent: string;
 }
 
 export default function RecommendPage() {
   const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
+  const [notReady, setNotReady] = useState(false);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [top5, recent, aiPick] = await Promise.all([
-          fetchTop5Games(),
-          fetchRecentGames(),
+        const [hybrid, preference, similarity] = await Promise.all([
           fetchAiPickGames(),
+          fetchPreferenceGames(),
+          fetchSimilarityGames(),
         ]);
 
-        setSections([
-          {
-            id: "trending",
-            icon: TrendingUp,
-            title: "인기 급상승",
-            description: "지금 가장 많이 플레이되는 게임",
-            games: top5,
-            accent: "from-[#E4FF30]/20 to-transparent",
-          },
-          {
-            id: "recent",
-            icon: Clock,
-            title: "최근 출시",
-            description: "새롭게 출시된 따끈한 게임들",
-            games: recent,
-            accent: "from-blue-500/20 to-transparent",
-          },
-          {
-            id: "aiPick",
-            icon: Sparkles,
-            title: "AI 추천",
-            description: "당신의 취향에 맞는 게임",
-            games: aiPick,
-            accent: "from-purple-500/20 to-transparent",
-          },
-        ]);
+        // 세 가지 모두 빈 배열이면 데이터 준비 중
+        if (
+          hybrid.length === 0 &&
+          preference.length === 0 &&
+          similarity.length === 0
+        ) {
+          setNotReady(true);
+        } else {
+          setSections([
+            {
+              id: "hybrid",
+              icon: Sparkles,
+              title: "AI 추천",
+              description: "취향 분석 기반 하이브리드 추천",
+              games: hybrid,
+            },
+            {
+              id: "preference",
+              icon: TrendingUp,
+              title: "취향 기반 추천",
+              description: "선택한 장르·태그 기반 추천",
+              games: preference,
+            },
+            {
+              id: "similarity",
+              icon: Users,
+              title: "유사 유저 추천",
+              description: "비슷한 취향 유저들이 즐긴 게임",
+              games: similarity,
+            },
+          ]);
+        }
       } catch (err) {
         console.error("추천 데이터 로드 실패:", err);
+        setNotReady(true);
       } finally {
         setLoading(false);
       }
@@ -89,6 +96,32 @@ export default function RecommendPage() {
               transition={{ delay: 0.2 }}
             >
               로딩 중...
+            </motion.p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (notReady) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.inner}>
+          <div className={styles.hero}>
+            <motion.h1
+              className={styles.heroTitle}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              게임 추천
+            </motion.h1>
+            <motion.p
+              className={styles.heroSubtitle}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              추천 데이터를 준비 중입니다. 잠시 후 다시 시도해주세요.
             </motion.p>
           </div>
         </div>

@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com", pathname: "/**" },
       { protocol: "https", hostname: "cdn.example.com", pathname: "/**" },
+      { protocol: "https", hostname: "images.igdb.com", pathname: "/**" },
     ],
   },
   experimental: {
