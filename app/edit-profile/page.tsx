@@ -7,10 +7,14 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PasswordVerifyStep } from "@/app/components/edit-profile/PasswordVerifyStep";
 import { EditProfileForm } from "@/app/components/edit-profile/EditProfileForm";
-import { authApiClient } from "@/src/lib/api";
 import { getAccessToken } from "@/src/constants/auth";
 import { editProfileFormInitial } from "@/src/mocks/data/user";
-import { verifyPasswordAction } from "@/src/actions/mypage";
+import {
+  verifyPasswordAction,
+  updateProfileAction,
+  UpdateProfilePayload,
+} from "@/src/actions/mypage";
+import { fetchUserProfile } from "@/src/api/mypage";
 import styles from "./page.module.scss";
 
 export default function EditProfilePage() {
@@ -27,9 +31,20 @@ export default function EditProfilePage() {
     const token = getAccessToken();
     if (!token) {
       router.replace("/login");
-    } else {
-      setIsAuthenticated(true);
+      return;
     }
+
+    setIsAuthenticated(true);
+
+    fetchUserProfile().then((data) => {
+      if (data) {
+        setFormData((prev) => ({
+          ...prev,
+          nickname: data.nickname || "",
+          birth_date: data.birth_date || "",
+        }));
+      }
+    });
   }, [router]);
 
   const handlePasswordVerify = async (e: React.FormEvent) => {
@@ -59,16 +74,42 @@ export default function EditProfilePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 새비밀번호가 8자 미만인지 검사 (입력한 경우에만)
+    if (formData.newPassword && formData.newPassword.length < 8) {
+      alert("새 비밀번호는 8자 이상 입력해야 합니다.");
+      return;
+    }
+
+    // 새비밀번호와 새비밀번호 확인이 일치하는지 검사
+    if (formData.newPassword !== formData.confirmPassword) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
     try {
-      await authApiClient.put("/api/v1/users/me/", {
+      const token = getAccessToken() || "";
+      const payload: UpdateProfilePayload = {
         nickname: formData.nickname,
         birth_date: formData.birth_date,
-      });
-      // 성공 시 마이페이지로 이동
-      router.push("/mypage");
+      };
+
+      // 비밀번호를 입력한 경우에만 객체에 추가
+      if (formData.newPassword) {
+        payload.new_password = formData.newPassword;
+      }
+
+      const isSuccess = await updateProfileAction(payload, token);
+
+      if (isSuccess) {
+        alert("회원정보가 성공적으로 수정되었습니다.");
+        router.push("/mypage");
+      } else {
+        alert("회원정보 수정에 실패했습니다. 다시 시도해 주세요.");
+      }
     } catch (err) {
       console.error("회원정보 수정 실패:", err);
-      alert("회원정보 수정에 실패했습니다. 다시 시도해 주세요.");
+      alert("회원정보 수정 중 오류가 발생했습니다.");
     }
   };
 
