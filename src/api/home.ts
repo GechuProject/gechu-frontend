@@ -61,9 +61,7 @@ export interface GameListParams {
 }
 
 // 게임 목록 조회 (범용) - GameCardItem 배열 반환
-export async function fetchGames(
-  params: GameListParams
-): Promise<{
+export async function fetchGames(params: GameListParams): Promise<{
   next: string | null;
   previous: string | null;
   results: GameCardItem[];
@@ -130,9 +128,7 @@ export async function fetchPlatforms(): Promise<Platform[]> {
 export async function fetchActionGames(
   _actionGenreId: number
 ): Promise<GameCardItem[]> {
-  const { results } = await fetchGames({
-    page_size: 10,
-  });
+  const { results } = await fetchGames({ page_size: 10 });
   return results;
 }
 
@@ -141,8 +137,6 @@ export async function fetchActionGames(
 export async function fetchRpgGames(
   _rpgGenreId: number
 ): Promise<GameCardItem[]> {
-  const { results } = await fetchGames({
-    page_size: 10,
-  });
+  const { results } = await fetchGames({ page_size: 10 });
   return results;
 }
