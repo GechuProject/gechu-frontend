@@ -111,6 +111,10 @@ export default function MyPage() {
     });
   }, [router]);
 
+  // 이름 → id 변환: available 목록에서 인덱스+1로 id 찾기
+  const toIds = (names: string[], availableList: string[]) =>
+    names.map((name) => availableList.indexOf(name) + 1).filter((id) => id > 0);
+
   const toggleSelection = (
     item: string,
     list: string[],
@@ -122,10 +126,6 @@ export default function MyPage() {
       setList([...list, item]);
     }
   };
-
-  // 이름 → id 변환: available 목록에서 인덱스+1로 id 찾기
-  const toIds = (names: string[], availableList: string[]) =>
-    names.map((name) => availableList.indexOf(name) + 1).filter((id) => id > 0);
 
   const handleSave = async () => {
     try {
