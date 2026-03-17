@@ -27,3 +27,32 @@ export async function verifyPasswordAction(
     return false;
   }
 }
+
+export interface UpdateProfilePayload {
+  nickname: string;
+  birth_date: string;
+  new_password?: string;
+}
+
+export async function updateProfileAction(
+  payload: UpdateProfilePayload,
+  token: string
+): Promise<boolean> {
+  try {
+    const { status } = await axios.patch(
+      `${apiBaseURL}/api/v1/users/me/`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    // Usually a successful PATCH returns 200 OK or 204 No Content
+    return status === 200 || status === 204;
+  } catch (error) {
+    console.error("Profile update error in Server Action:", error);
+    return false;
+  }
+}
