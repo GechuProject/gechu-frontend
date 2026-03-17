@@ -71,3 +71,34 @@ authApiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   }
   return config;
 });
+
+// authApiClient에도 401 시 refresh 후 재시도 (GET /users/me/ 등)
+authApiClient.interceptors.response.use(
+  (res) => res,
+  async (err) => {
+    const originalConfig = err.config;
+
+    // refresh 요청 자체가 401이면 재시도 안 함 (리프레시 토큰 만료)
+    if (originalConfig?.url?.includes?.("auth/refresh")) {
+      removeAccessToken();
+      return Promise.reject(err);
+    }
+
+    if (err.response?.status === 401 && !originalConfig._retry) {
+      originalConfig._retry = true;
+
+      try {
+        const { refreshToken } = await import("@/src/api/auth");
+        const { access_token } = await refreshToken();
+        setAccessToken(access_token);
+        originalConfig.headers.Authorization = `Bearer ${access_token}`;
+        return authApiClient(originalConfig);
+      } catch (refreshErr) {
+        removeAccessToken();
+        return Promise.reject(refreshErr);
+      }
+    }
+
+    return Promise.reject(err);
+  }
+);
