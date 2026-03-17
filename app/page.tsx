@@ -1,6 +1,5 @@
 "use client";
 
-import { Header as Navigation } from "@/app/components/common/Header";
 import { GameCard } from "@/app/components/common/GameCard";
 import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight, Zap, Trophy } from "lucide-react";
@@ -113,7 +112,6 @@ export default function HomePage() {
 
   return (
     <div className={styles.page}>
-      <Navigation />
       <section className={styles.hero}>
         <div className={styles.heroInner}>
           <motion.h1

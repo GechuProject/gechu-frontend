@@ -558,5 +558,3 @@ export function Header() {
     </nav>
   );
 }
-
-export { Header as Navigation };
