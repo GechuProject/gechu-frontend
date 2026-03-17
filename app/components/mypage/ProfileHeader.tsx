@@ -3,6 +3,8 @@
 import { motion } from "motion/react";
 import { User, Mail, Settings, LogOut } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { logout, getAccessToken, removeAccessToken } from "@/src/api/auth";
 import styles from "./ProfileHeader.module.scss";
 
 interface ProfileHeaderProps {
@@ -12,6 +14,20 @@ interface ProfileHeaderProps {
 }
 
 export function ProfileHeader({ nickname, email, bio }: ProfileHeaderProps) {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const token = getAccessToken();
+    try {
+      if (token) await logout(token);
+    } catch {
+      // API 실패해도 로컬 로그아웃 진행
+    } finally {
+      removeAccessToken();
+      router.push("/");
+    }
+  };
+
   return (
     <div className={styles.header}>
       <div className={styles.inner}>
@@ -46,6 +62,7 @@ export function ProfileHeader({ nickname, email, bio }: ProfileHeaderProps) {
 
             <motion.button
               className={styles.logoutBtn}
+              onClick={handleLogout}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
