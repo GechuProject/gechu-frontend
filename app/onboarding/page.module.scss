@@ -1,0 +1,122 @@
+@use "../styles/variables" as *;
+@use "../styles/mixins" as *;
+
+.page {
+  position: relative;
+  min-height: 100vh;
+  background: $black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: $pt-header;
+  padding-bottom: 5rem;
+}
+
+.bgPattern {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 56rem;
+  padding: 1.5rem;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: $white;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: $white-50;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.section {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  @include flex-center(0.5rem);
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: $white;
+}
+
+.tagWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.tagBtn {
+  cursor: pointer;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.tagBtnDefault {
+  @extend .tagBtn;
+  @include glass-card;
+  color: $white;
+
+  &:hover {
+    background: $white-10;
+  }
+}
+
+.tagBtnSelected {
+  @extend .tagBtn;
+  background: $accent;
+  color: $black;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.saveBtn {
+  @include btn-primary;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.skipBtn {
+  background: transparent;
+  border: none;
+  color: $white-50;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+
+  &:hover {
+    color: $white;
+  }
+}
