@@ -1,13 +1,14 @@
 import { authApiClient, apiClient } from "@/src/lib/api";
 
+/** GET /api/v1/users/me/ - API 명세 UserMeResponse와 동일 */
 export interface UserProfile {
   id: number;
   email: string;
   nickname: string;
   birth_date: string;
-  profile_img_url: string;
+  profile_img_url: string | null;
   is_adult_verified: boolean;
-  adult_verified_at: string;
+  adult_verified_at: string | null;
   is_active: boolean;
   created_at: string;
 }

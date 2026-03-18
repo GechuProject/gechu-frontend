@@ -4,7 +4,8 @@ import { motion } from "motion/react";
 import { User, Mail, Settings, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { logout, getAccessToken, removeAccessToken } from "@/src/api/auth";
+import { logout } from "@/src/api/auth";
+import { getAccessToken, removeAccessToken } from "@/src/constants/auth";
 import styles from "./ProfileHeader.module.scss";
 
 interface ProfileHeaderProps {

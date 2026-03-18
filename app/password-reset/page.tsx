@@ -3,32 +3,25 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthBackground } from "@/app/components/common/AuthBackground";
-import { SignupLogo } from "@/app/components/signup/SignupLogo";
-import { SignupForm } from "@/app/components/signup/SignupForm";
+import { LoginLogo } from "@/app/components/login/LoginLogo";
+import { PasswordResetForm } from "@/app/components/password-reset/PasswordResetForm";
 import {
   sendEmailVerificationCode,
-  signup,
-  login,
-  setAccessToken,
+  requestPasswordReset,
 } from "@/src/api/auth";
 import { AxiosError } from "axios";
 import styles from "./page.module.scss";
 
-export default function SignupPage() {
+export default function PasswordResetPage() {
   const router = useRouter();
-  const [step, setStep] = useState<"email" | "code" | "form">("email");
+  const [step, setStep] = useState<"email" | "form">("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
-  const [formData, setFormData] = useState({
-    nickname: "",
-    password: "",
-    confirmPassword: "",
-    birth_date: "",
-    agreeTerms: false,
-  });
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [sendCodeError, setSendCodeError] = useState("");
   const [sendCodeSuccess, setSendCodeSuccess] = useState("");
-  const [signupError, setSignupError] = useState("");
+  const [resetError, setResetError] = useState("");
   const [isSendingCode, setIsSendingCode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -42,15 +35,15 @@ export default function SignupPage() {
     }
     setIsSendingCode(true);
     try {
-      await sendEmailVerificationCode(email.trim());
+      await sendEmailVerificationCode(email.trim(), "password_reset");
       setSendCodeSuccess("인증 코드가 발송되었습니다. 이메일을 확인해 주세요.");
-      setStep("code");
+      setStep("form");
     } catch (err) {
       const axiosErr = err as AxiosError<{ message?: string; code?: string }>;
       const message =
         axiosErr.response?.data?.message ??
-        (axiosErr.response?.data?.code === "EMAIL_ALREADY_EXISTS"
-          ? "이미 가입된 이메일입니다."
+        (axiosErr.response?.data?.code === "USER_NOT_FOUND"
+          ? "등록되지 않은 이메일입니다."
           : "인증 코드 발송에 실패했습니다. 다시 시도해 주세요.");
       setSendCodeError(message);
     } finally {
@@ -58,39 +51,31 @@ export default function SignupPage() {
     }
   };
 
-  const handleNextToForm = () => {
-    setStep("form");
-  };
-
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSignupError("");
+    setResetError("");
 
-    if (formData.password.length < 8) {
-      setSignupError("비밀번호는 8자 이상이어야 합니다.");
+    if (newPassword.length < 8) {
+      setResetError("비밀번호는 8자 이상이어야 합니다.");
       return;
     }
-    if (formData.password !== formData.confirmPassword) {
-      setSignupError("비밀번호가 일치하지 않습니다.");
+    if (newPassword !== confirmPassword) {
+      setResetError("비밀번호가 일치하지 않습니다.");
       return;
     }
-    if (!formData.agreeTerms) {
-      setSignupError("이용약관 및 개인정보 처리방침에 동의해주세요.");
+    if (code.length < 6) {
+      setResetError("인증 코드 6자리를 입력해주세요.");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await signup({
+      await requestPasswordReset({
         email: email.trim(),
         code: code.trim(),
-        password: formData.password,
-        nickname: formData.nickname.trim(),
-        birth_date: formData.birth_date,
+        new_password: newPassword,
       });
-      const { access_token } = await login(email.trim(), formData.password);
-      setAccessToken(access_token);
-      router.push("/onboarding");
+      router.push("/login?reset=success");
     } catch (err) {
       const axiosErr = err as AxiosError<{ message?: string; code?: string }>;
       const message =
@@ -99,8 +84,8 @@ export default function SignupPage() {
           ? "인증 코드가 올바르지 않거나 만료되었습니다. 다시 발송해 주세요."
           : axiosErr.response?.data?.code === "CODE_EXPIRED"
             ? "인증 코드가 만료되었습니다. 다시 발송해 주세요."
-            : "회원가입에 실패했습니다. 다시 시도해 주세요.");
-      setSignupError(message);
+            : "비밀번호 재설정에 실패했습니다. 다시 시도해 주세요.");
+      setResetError(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -113,40 +98,23 @@ export default function SignupPage() {
       </div>
 
       <div className={styles.inner}>
-        <SignupLogo />
-        <SignupForm
+        <LoginLogo />
+        <PasswordResetForm
           step={step}
           email={email}
           code={code}
-          nickname={formData.nickname}
-          password={formData.password}
-          confirmPassword={formData.confirmPassword}
-          birth_date={formData.birth_date}
-          agreeTerms={formData.agreeTerms}
+          newPassword={newPassword}
+          confirmPassword={confirmPassword}
           onEmailChange={setEmail}
           onCodeChange={setCode}
-          onNicknameChange={(v) =>
-            setFormData((prev) => ({ ...prev, nickname: v }))
-          }
-          onPasswordChange={(v) =>
-            setFormData((prev) => ({ ...prev, password: v }))
-          }
-          onConfirmPasswordChange={(v) =>
-            setFormData((prev) => ({ ...prev, confirmPassword: v }))
-          }
-          onBirthDateChange={(v) =>
-            setFormData((prev) => ({ ...prev, birth_date: v }))
-          }
-          onAgreeTermsChange={(v) =>
-            setFormData((prev) => ({ ...prev, agreeTerms: v }))
-          }
+          onNewPasswordChange={setNewPassword}
+          onConfirmPasswordChange={setConfirmPassword}
           onSendCode={handleSendCode}
-          onNextToForm={handleNextToForm}
-          onSubmit={handleSignup}
+          onSubmit={handleReset}
           sendCodeError={sendCodeError}
           sendCodeSuccess={sendCodeSuccess}
+          resetError={resetError}
           isSendingCode={isSendingCode}
-          signupError={signupError}
           isSubmitting={isSubmitting}
         />
       </div>

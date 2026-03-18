@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import { Lock, User } from "lucide-react";
 import Link from "next/link";
+import { KakaoIcon, DiscordIcon } from "@/app/components/common/SocialIcons";
 import styles from "./LoginForm.module.scss";
 
 interface LoginFormProps {
@@ -73,9 +74,9 @@ export function LoginForm({
             <input type="checkbox" className={styles.checkbox} />
             로그인 상태 유지
           </label>
-          <a href="#" className={styles.forgotLink}>
+          <Link href="/password-reset" className={styles.forgotLink}>
             비밀번호 찾기
-          </a>
+          </Link>
         </div>
 
         {error && (
@@ -107,22 +108,35 @@ export function LoginForm({
           </div>
         </div>
 
-        <div className={styles.fields}>
+        <div className={styles.socialWrap}>
           <motion.button
             type="button"
-            className={styles.socialBtn}
+            className={`${styles.socialBtn} ${styles.socialKakao}`}
+            onClick={() => {
+              const base = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+              const redirectUri = encodeURIComponent(
+                typeof window !== "undefined"
+                  ? `${window.location.origin}/auth/callback`
+                  : "/auth/callback"
+              );
+              window.location.href = `${base}/api/v1/auth/kakao/login/?redirect_uri=${redirectUri}`;
+            }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            Google로 계속하기
+            <KakaoIcon />
+            Kakao로 계속하기
           </motion.button>
           <motion.button
             type="button"
-            className={styles.socialBtn}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            className={`${styles.socialBtn} ${styles.socialDiscord}`}
+            disabled
+            title="준비 중"
+            whileHover={undefined}
+            whileTap={undefined}
           >
-            Steam으로 계속하기
+            <DiscordIcon />
+            Discord로 계속하기
           </motion.button>
         </div>
       </form>

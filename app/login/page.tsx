@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { AuthBackground } from "@/app/components/common/AuthBackground";
 import { LoginLogo } from "@/app/components/login/LoginLogo";
 import { LoginForm } from "@/app/components/login/LoginForm";
-import { login, setAccessToken } from "@/src/api/auth";
+import { login } from "@/src/api/auth";
+import { setAccessToken } from "@/src/constants/auth";
 import { AxiosError } from "axios";
 import styles from "./page.module.scss";
 

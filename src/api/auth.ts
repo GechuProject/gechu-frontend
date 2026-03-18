@@ -65,3 +65,66 @@ export async function refreshToken(): Promise<RefreshResponse> {
   );
   return data;
 }
+
+/** 이메일 인증 코드 발송 - 201 Created */
+export interface EmailCodeResponse {
+  message: string;
+  expires_in: number;
+}
+
+export async function sendEmailVerificationCode(
+  email: string,
+  purpose: "signup" | "password_reset" = "signup"
+): Promise<EmailCodeResponse> {
+  const { data } = await authApiClient.post<EmailCodeResponse>(
+    "/api/v1/auth/email/code/",
+    { email, purpose }
+  );
+  return data;
+}
+
+/** 회원가입 - 201 Created */
+export interface SignupRequest {
+  email: string;
+  code: string;
+  password: string;
+  nickname: string;
+  birth_date: string; // YYYY-MM-DD
+}
+
+export interface SignupResponse {
+  id: number;
+  email: string;
+  nickname: string;
+  birth_date: string;
+  created_at: string;
+}
+
+export async function signup(payload: SignupRequest): Promise<SignupResponse> {
+  const { data } = await authApiClient.post<SignupResponse>(
+    "/api/v1/auth/signup/",
+    payload
+  );
+  return data;
+}
+
+/** 비밀번호 재설정 - 200 OK */
+export interface PasswordResetRequest {
+  email: string;
+  code: string;
+  new_password: string;
+}
+
+export interface PasswordResetResponse {
+  message: string;
+}
+
+export async function requestPasswordReset(
+  payload: PasswordResetRequest
+): Promise<PasswordResetResponse> {
+  const { data } = await authApiClient.post<PasswordResetResponse>(
+    "/api/v1/auth/password/reset/",
+    payload
+  );
+  return data;
+}
