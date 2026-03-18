@@ -4,20 +4,12 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, Star, ChevronRight } from "lucide-react";
+import { SavedGame } from "@/src/api/mypage";
 import styles from "./StatsGrid.module.scss";
-
-interface WishlistItem {
-  id: number;
-  name: string;
-  slug: string;
-  thumbnail_img_url: string;
-  rawg_rating: number;
-  saved_at: string;
-}
 
 interface StatsGridProps {
   wishlistCount: number;
-  wishlistItems: WishlistItem[];
+  wishlistItems: SavedGame[];
 }
 
 export function StatsGrid({ wishlistCount, wishlistItems }: StatsGridProps) {
