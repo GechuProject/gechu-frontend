@@ -85,3 +85,31 @@ export async function fetchRecommendedGames(): Promise<RecommendedGamesResponse 
     return null;
   }
 }
+
+/** GET /api/v1/preferences/me/saved-games/ - 위시리스트(찜한 게임) 목록 */
+export interface SavedGame {
+  id: number;
+  name: string;
+  slug: string;
+  thumbnail_img_url: string;
+  rawg_rating: number;
+  saved_at: string;
+}
+
+export interface SavedGamesResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: SavedGame[];
+}
+
+export async function fetchSavedGames(): Promise<SavedGamesResponse | null> {
+  try {
+    const { data } = await authApiClient.get<SavedGamesResponse>(
+      "/api/v1/preferences/me/saved-games/"
+    );
+    return data;
+  } catch {
+    return null;
+  }
+}

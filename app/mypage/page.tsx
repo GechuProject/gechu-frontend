@@ -13,8 +13,10 @@ import {
   fetchUserProfile,
   fetchPreferences,
   fetchRecommendedGames,
+  fetchSavedGames,
   UserProfile,
   RecommendedGame,
+  SavedGamesResponse,
 } from "@/src/api/mypage";
 import {
   availableGenres,
@@ -34,22 +36,6 @@ interface Preferences {
   tags: PreferenceItem[];
 }
 
-interface WishlistItem {
-  id: number;
-  name: string;
-  slug: string;
-  thumbnail_img_url: string;
-  rawg_rating: number;
-  saved_at: string;
-}
-
-interface Wishlist {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: WishlistItem[];
-}
-
 export default function MyPage() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -59,7 +45,7 @@ export default function MyPage() {
     tags: [],
   });
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [wishlist, setWishlist] = useState<Wishlist>({
+  const [wishlist, setWishlist] = useState<SavedGamesResponse>({
     count: 0,
     next: null,
     previous: null,
@@ -96,12 +82,9 @@ export default function MyPage() {
           setSelectedThemes(data.tags.map((t) => t.name));
         }
       }),
-      fetch("/api/mypage/wishlist")
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data: Wishlist | null) => {
-          if (data) setWishlist(data);
-        })
-        .catch(() => {}),
+      fetchSavedGames().then((data) => {
+        if (data) setWishlist(data);
+      }),
       fetchRecommendedGames().then((data) => {
         if (data) setRecommendedGames(data.results);
       }),
