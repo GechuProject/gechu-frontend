@@ -2,10 +2,13 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Star, Heart } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import styles from "./GameCard.module.scss";
+import { toggleLike } from "@/src/api/interactions";
+import { getAccessToken } from "@/src/constants/auth";
 
 interface GameCardProps {
   game: {
@@ -21,7 +24,44 @@ interface GameCardProps {
 }
 
 export function GameCard({ game, index }: GameCardProps) {
+  const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [isLiking, setIsLiking] = useState(false);
+
+  // 첫 호버 시 이미지 스케일 애니메이션만 처리
+  const handleMouseEnter = useCallback(() => {
+    setIsHovered(true);
+  }, []);
+
+  const handleLikeClick = useCallback(
+    async (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // 비로그인 → 로그인 페이지로 이동
+      if (!getAccessToken()) {
+        router.push("/login");
+        return;
+      }
+
+      if (isLiking) return;
+      setIsLiking(true);
+
+      // 낙관적 업데이트
+      const prevLiked = liked;
+      setLiked(!prevLiked);
+
+      const result = await toggleLike(game.id, prevLiked);
+      if (result !== null) {
+        setLiked(result);
+      } else {
+        setLiked(prevLiked); // 실패 시 롤백
+      }
+      setIsLiking(false);
+    },
+    [isLiking, liked, game.id, router]
+  );
 
   return (
     <Link href={`/game/${game.id}`}>
@@ -30,7 +70,7 @@ export function GameCard({ game, index }: GameCardProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: index * 0.05 }}
-        onMouseEnter={() => setIsHovered(true)}
+        onMouseEnter={handleMouseEnter}
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className={styles.imageWrap}>
@@ -53,17 +93,29 @@ export function GameCard({ game, index }: GameCardProps) {
             <div className={styles.discountBadge}>{game.discount}</div>
           )}
 
+          {/* 좋아요 버튼 (호버 시 표시) */}
           <motion.button
-            className={styles.wishlistBtn}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={(e) => {
-              e.preventDefault();
-            }}
+            className={`${styles.likeBtn} ${liked ? styles.likeBtnActive : ""}`}
+            whileHover={{ scale: 1.2 }}
+            whileTap={{ scale: 0.85 }}
+            onClick={handleLikeClick}
+            aria-label={liked ? "좋아요 취소" : "좋아요"}
           >
-            <Heart
-              style={{ width: "1.25rem", height: "1.25rem", color: "#fff" }}
-            />
+            <motion.span
+              animate={liked ? { scale: [1, 1.5, 1] } : { scale: 1 }}
+              transition={{ duration: 0.25 }}
+              className={styles.heartIcon}
+            >
+              <Heart
+                style={{
+                  width: "1.25rem",
+                  height: "1.25rem",
+                  fill: liked ? "#ff4d6d" : "transparent",
+                  color: liked ? "#ff4d6d" : "#fff",
+                  transition: "fill 0.2s, color 0.2s",
+                }}
+              />
+            </motion.span>
           </motion.button>
 
           <motion.div className={styles.hoverInfo} initial={false}>

@@ -1,5 +1,43 @@
 import { apiClient } from "@/src/lib/api";
 
+// ────────────────────────────────────────────────────────────
+// 좋아요 관련
+// PATCH /api/v1/preferences/games/{game_id}/
+// reaction: "like" | "dislike" | "neutral"
+// ────────────────────────────────────────────────────────────
+
+interface PreferenceResponse {
+  game_id: number;
+  is_saved: boolean;
+  reaction: string;
+  updated_at: string;
+}
+
+/**
+ * 게임 좋아요 토글
+ * PATCH /api/v1/preferences/games/{gameId}/
+ * - 현재 liked → reaction: "neutral" (취소)
+ * - 현재 not liked → reaction: "like"
+ */
+export async function toggleLike(
+  gameId: number,
+  currentlyLiked: boolean
+): Promise<boolean | null> {
+  try {
+    const { data } = await apiClient.patch<PreferenceResponse>(
+      `/api/v1/preferences/games/${gameId}/`,
+      {
+        reaction: currentlyLiked ? "neutral" : "like",
+        is_saved: !currentlyLiked,
+      }
+    );
+    return data.reaction === "like";
+  } catch {
+    return null;
+  }
+}
+
+// ────────────────────────────────────────────────────────────
 // 게임 조회 행동 기록 요청 타입
 interface RecordViewParams {
   game_id: number;

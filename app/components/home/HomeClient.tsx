@@ -3,18 +3,21 @@
 import { GameCard } from "@/app/components/common/GameCard";
 import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight, Zap, Trophy } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { GameCardItem } from "@/src/mocks/data/games";
 import styles from "@/app/page.module.scss";
+import { fetchGenres, fetchActionGames, fetchRpgGames } from "@/src/api/home";
 
 function GameSection({
   title,
   games,
   icon: Icon,
+  loading,
 }: {
   title: string;
   games: GameCardItem[];
   icon: typeof Zap;
+  loading?: boolean;
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 5;
@@ -54,17 +57,21 @@ function GameSection({
       </div>
 
       <div className={styles.carouselTrack}>
-        <motion.div
-          className={styles.carouselInner}
-          animate={{ x: `${-currentIndex * (100 / itemsPerPage)}%` }}
-          transition={{ duration: 0.3 }}
-        >
-          {games.map((game, index) => (
-            <div key={game.id} className={styles.carouselItem}>
-              <GameCard game={game} index={index} />
-            </div>
-          ))}
-        </motion.div>
+        {loading ? (
+          <p className={styles.loading}>불러오는 중...</p>
+        ) : (
+          <motion.div
+            className={styles.carouselInner}
+            animate={{ x: `${-currentIndex * (100 / itemsPerPage)}%` }}
+            transition={{ duration: 0.3 }}
+          >
+            {games.map((game, index) => (
+              <div key={game.id} className={styles.carouselItem}>
+                <GameCard game={game} index={index} />
+              </div>
+            ))}
+          </motion.div>
+        )}
       </div>
 
       <div className={styles.sectionDivider} />
@@ -72,12 +79,40 @@ function GameSection({
   );
 }
 
-interface HomeClientProps {
-  actionGames: GameCardItem[];
-  rpgGames: GameCardItem[];
-}
+export function HomeClient() {
+  const [actionGames, setActionGames] = useState<GameCardItem[]>([]);
+  const [rpgGames, setRpgGames] = useState<GameCardItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export function HomeClient({ actionGames, rpgGames }: HomeClientProps) {
+  useEffect(() => {
+    async function loadGames() {
+      try {
+        const genres = await fetchGenres();
+        const actionGenre = genres.find((g) =>
+          g.name.toLowerCase().includes("action")
+        );
+        const rpgGenre = genres.find(
+          (g) =>
+            g.name.toLowerCase().includes("rpg") ||
+            g.name.toLowerCase().includes("role")
+        );
+
+        const [action, rpg] = await Promise.all([
+          fetchActionGames(actionGenre?.id ?? 0),
+          fetchRpgGames(rpgGenre?.id ?? 0),
+        ]);
+        setActionGames(action);
+        setRpgGames(rpg);
+      } catch (error) {
+        console.error("게임 데이터를 불러오는데 실패했습니다:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadGames();
+  }, []);
+
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
@@ -94,8 +129,18 @@ export function HomeClient({ actionGames, rpgGames }: HomeClientProps) {
         <div className={styles.heroDivider} />
       </section>
 
-      <GameSection title="액션 Top 10" games={actionGames} icon={Zap} />
-      <GameSection title="RPG Top 10" games={rpgGames} icon={Trophy} />
+      <GameSection
+        title="액션 Top 10"
+        games={actionGames}
+        icon={Zap}
+        loading={loading}
+      />
+      <GameSection
+        title="RPG Top 10"
+        games={rpgGames}
+        icon={Trophy}
+        loading={loading}
+      />
     </div>
   );
 }
