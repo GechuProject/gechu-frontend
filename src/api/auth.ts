@@ -128,3 +128,13 @@ export async function requestPasswordReset(
   );
   return data;
 }
+
+/** 소셜 로그인(카카오/디스코드) 리다이렉트 URL */
+export function getOAuthLoginUrl(provider: "kakao" | "discord"): string {
+  const base = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+  const redirectUri =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/auth/callback`
+      : "/auth/callback";
+  return `${base}/api/v1/auth/${provider}/login/?redirect_uri=${encodeURIComponent(redirectUri)}`;
+}

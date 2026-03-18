@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import { Lock, User } from "lucide-react";
 import Link from "next/link";
+import { getOAuthLoginUrl } from "@/src/api/auth";
 import { KakaoIcon, DiscordIcon } from "@/app/components/common/SocialIcons";
 import styles from "./LoginForm.module.scss";
 
@@ -113,13 +114,7 @@ export function LoginForm({
             type="button"
             className={`${styles.socialBtn} ${styles.socialKakao}`}
             onClick={() => {
-              const base = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-              const redirectUri = encodeURIComponent(
-                typeof window !== "undefined"
-                  ? `${window.location.origin}/auth/callback`
-                  : "/auth/callback"
-              );
-              window.location.href = `${base}/api/v1/auth/kakao/login/?redirect_uri=${redirectUri}`;
+              window.location.href = getOAuthLoginUrl("kakao");
             }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -130,10 +125,11 @@ export function LoginForm({
           <motion.button
             type="button"
             className={`${styles.socialBtn} ${styles.socialDiscord}`}
-            disabled
-            title="준비 중"
-            whileHover={undefined}
-            whileTap={undefined}
+            onClick={() => {
+              window.location.href = getOAuthLoginUrl("discord");
+            }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             <DiscordIcon />
             Discord로 계속하기

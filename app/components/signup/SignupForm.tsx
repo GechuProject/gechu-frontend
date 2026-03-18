@@ -34,7 +34,7 @@ interface SignupFormProps {
   isSubmitting: boolean;
 }
 
-const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+import { getOAuthLoginUrl } from "@/src/api/auth";
 
 export function SignupForm({
   step,
@@ -62,12 +62,11 @@ export function SignupForm({
   isSubmitting,
 }: SignupFormProps) {
   const handleSocialKakao = () => {
-    const redirectUri = encodeURIComponent(
-      typeof window !== "undefined"
-        ? `${window.location.origin}/auth/callback`
-        : "/auth/callback"
-    );
-    window.location.href = `${apiBase}/api/v1/auth/kakao/login/?redirect_uri=${redirectUri}`;
+    window.location.href = getOAuthLoginUrl("kakao");
+  };
+
+  const handleSocialDiscord = () => {
+    window.location.href = getOAuthLoginUrl("discord");
   };
 
   return (
@@ -296,10 +295,9 @@ export function SignupForm({
         <motion.button
           type="button"
           className={`${styles.socialBtn} ${styles.socialDiscord}`}
-          disabled
-          title="준비 중"
-          whileHover={undefined}
-          whileTap={undefined}
+          onClick={handleSocialDiscord}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
           <DiscordIcon />
           Discord로 가입하기
