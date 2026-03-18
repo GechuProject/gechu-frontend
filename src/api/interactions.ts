@@ -62,9 +62,21 @@ export async function recordGameView(
   params: RecordViewParams
 ): Promise<InteractionViewResponse | null> {
   try {
+    const formData = new FormData();
+    formData.append("game_id", String(params.game_id));
+    formData.append("source", params.source);
+    if (params.metadata) {
+      formData.append("metadata", JSON.stringify(params.metadata));
+    }
+
     const { data } = await apiClient.post<InteractionViewResponse>(
       "/api/v1/interactions/view/",
-      params
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     return data;
   } catch (error: unknown) {
