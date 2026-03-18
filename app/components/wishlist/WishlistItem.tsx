@@ -4,19 +4,11 @@ import { motion } from "motion/react";
 import Image from "next/image";
 import { Star, X } from "lucide-react";
 import Link from "next/link";
+import { SavedGame } from "@/src/api/mypage";
 import styles from "./WishlistItem.module.scss";
 
-interface WishlistGame {
-  id: number;
-  name: string;
-  slug: string;
-  thumbnail_img_url: string;
-  rawg_rating: number;
-  saved_at: string;
-}
-
 interface WishlistItemProps {
-  game: WishlistGame;
+  game: SavedGame;
   index: number;
   onRemove: (id: number) => void;
 }
