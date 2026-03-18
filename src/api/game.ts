@@ -96,8 +96,8 @@ export async function fetchGameDetail(id: number): Promise<GameDetailData> {
   return mapToGameDetailData(data);
 }
 
-// 백엔드 게임 목록 응답 타입 (페이지네이션)
-interface BackendGameListResponse {
+// 백엔드 유사 게임 응답 타입
+interface BackendSimilarGameResponse {
   count: number;
   next: string | null;
   previous: string | null;
@@ -105,10 +105,9 @@ interface BackendGameListResponse {
     id: number;
     slug: string;
     name: string;
-    released: string;
     thumbnail_img_url: string;
     rawg_rating: number;
-    genres: { id: number; name: string }[];
+    similarity_score: number;
   }[];
 }
 
@@ -119,7 +118,7 @@ export async function fetchSimilarGames(
   id: number,
   limit = 10
 ): Promise<GameCardItem[]> {
-  const { data } = await apiClient.get<BackendGameListResponse>(
+  const { data } = await apiClient.get<BackendSimilarGameResponse>(
     `/api/v1/games/${id}/similar/`,
     { params: { limit } }
   );
@@ -130,6 +129,22 @@ export async function fetchSimilarGames(
     image: item.thumbnail_img_url ?? "",
     price: "정보 없음",
     rating: item.rawg_rating ?? 0,
-    genre: item.genres?.map((g) => g.name).join(", ") ?? "",
+    genre: "", // 백엔드 명세에 장르 없음
   }));
+}
+
+// 플랫폼 데이터 타입
+export interface PlatformItem {
+  id: number;
+  name: string;
+  slug: string;
+  icon_url: string;
+}
+
+// 전체 플랫폼 목록 조회
+export async function fetchPlatforms(): Promise<PlatformItem[]> {
+  const { data } = await apiClient.get<{ results: PlatformItem[] }>(
+    "/api/v1/games/platforms/"
+  );
+  return data.results || [];
 }

@@ -1,0 +1,100 @@
+  /api/v1/interactions/view/:
+    post:
+      operationId: v1_interactions_view_create
+      description: |-
+        게임 조회(view) 행동을 기록합니다.
+
+        - 최초 기록 시: `201`
+        - 동일 source에서 쿨다운 내 중복 요청 시: 로그를 추가 생성하지 않고 `200`으로 기존 최근 로그를 반환합니다.
+        - 가중치는 `interaction_weight_rules`(type=view)와 `interaction_context_rules`(source) 조합으로 계산됩니다.
+      summary: 게임 조회 행동 기록
+      tags:
+      - Interactions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InteractionViewLogRequestRequest'
+            examples:
+              요청예시:
+                value:
+                  game_id: 1
+                  source: recommendation
+                  metadata:
+                    page: 1
+                    section: home_reco
+                summary: 요청 예시
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/InteractionViewLogRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InteractionViewLogRequestRequest'
+      security:
+      - jwtAuth: []
+      - BearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InteractionViewLogResponse'
+              examples:
+                쿨다운무시응답예시(200):
+                  value:
+                    id: 101
+                    type: view
+                    logged_at: '2026-03-11T08:30:00Z'
+                  summary: 쿨다운 무시 응답 예시 (200)
+          description: ''
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InteractionViewLogResponse'
+              examples:
+                생성응답예시(201):
+                  value:
+                    id: 101
+                    type: view
+                    logged_at: '2026-03-11T08:30:00Z'
+                  summary: 생성 응답 예시 (201)
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                필수값누락:
+                  value:
+                    status_code: 400
+                    code: GAME_ID_OR_SOURCE_MISSING
+                    message: game_id 또는 source가 누락되었습니다.
+                  summary: 필수값 누락
+                Source값오류:
+                  value:
+                    status_code: 400
+                    code: INVALID_SOURCE
+                    message: 유효하지 않은 source 값입니다.
+                  summary: source 값 오류
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                인증필요:
+                  value:
+                    status_code: 401
+                    code: UNAUTHORIZED
+                    message: 인증이 필요합니다.
+                  summary: 인증 필요
+          description: Unauthorized
+        '404':
+          content:
+            application/json:
