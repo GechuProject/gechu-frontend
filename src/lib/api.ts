@@ -46,7 +46,7 @@ apiClient.interceptors.response.use(
         return apiClient(originalConfig);
       } catch (refreshErr) {
         removeAccessToken();
-        return Promise.reject(refreshErr);
+        return Promise.reject(err);
       }
     }
 
@@ -95,7 +95,7 @@ authApiClient.interceptors.response.use(
         return authApiClient(originalConfig);
       } catch (refreshErr) {
         removeAccessToken();
-        return Promise.reject(refreshErr);
+        return Promise.reject(err);
       }
     }
 
