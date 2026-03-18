@@ -33,7 +33,7 @@ export default function GameDetailPage() {
         setGame(detailData);
         setSimilarGames(similarData);
         // 게임 조회 행동 기록 (비로그인 시 자동 무시)
-        recordGameView({ game_id: id, source: "direct" });
+        recordGameView({ game_id: id, source: "detail_page" });
       } catch (err) {
         console.error("게임 상세 데이터 로드 실패:", err);
       } finally {

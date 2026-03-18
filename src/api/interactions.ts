@@ -2,8 +2,6 @@ import { apiClient } from "@/src/lib/api";
 
 // ────────────────────────────────────────────────────────────
 // 좋아요 관련
-// PATCH /api/v1/preferences/games/{game_id}/
-// reaction: "like" | "dislike" | "neutral"
 // ────────────────────────────────────────────────────────────
 
 interface PreferenceResponse {
@@ -13,12 +11,6 @@ interface PreferenceResponse {
   updated_at: string;
 }
 
-/**
- * 게임 좋아요 토글
- * PATCH /api/v1/preferences/games/{gameId}/
- * - 현재 liked → reaction: "neutral" (취소)
- * - 현재 not liked → reaction: "like"
- */
 export async function toggleLike(
   gameId: number,
   currentlyLiked: boolean
@@ -38,14 +30,21 @@ export async function toggleLike(
 }
 
 // ────────────────────────────────────────────────────────────
-// 게임 조회 행동 기록 요청 타입
+// 게임 조회 행동 기록
+// ────────────────────────────────────────────────────────────
+
 interface RecordViewParams {
   game_id: number;
-  source: "direct" | "recommendation" | "search" | "similar" | "home" | string;
+  source:
+    | "detail_page"
+    | "recommendation"
+    | "search_result"
+    | "saved_page"
+    | "home"
+    | string;
   metadata?: Record<string, unknown>;
 }
 
-// 게임 조회 행동 기록 응답 타입
 interface InteractionViewResponse {
   id: number;
   type: string;
@@ -53,11 +52,17 @@ interface InteractionViewResponse {
 }
 
 /**
- * 게임 조회(view) 행동을 기록합니다.
- * - 최초 기록 시: 201 (새 로그 생성)
- * - 같은 source에서 중복 조회 시: 200 (기존 로그 갱신)
- * - 401: 비로그인 사용자 (오류 무시)
+ * Axios 에러 타입 가드
  */
+function isAxiosError(error: unknown): error is {
+  response?: {
+    status?: number;
+    data?: unknown;
+  };
+} {
+  return typeof error === "object" && error !== null && "response" in error;
+}
+
 export async function recordGameView(
   params: RecordViewParams
 ): Promise<InteractionViewResponse | null> {
@@ -65,6 +70,7 @@ export async function recordGameView(
     const formData = new FormData();
     formData.append("game_id", String(params.game_id));
     formData.append("source", params.source);
+
     if (params.metadata) {
       formData.append("metadata", JSON.stringify(params.metadata));
     }
@@ -78,18 +84,23 @@ export async function recordGameView(
         },
       }
     );
+
     return data;
   } catch (error: unknown) {
-    // 401 (비로그인) 등은 조용히 무시
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "response" in error &&
-      (error as { response?: { status?: number } }).response?.status === 401
-    ) {
-      return null;
+    // 타입 가드 사용 (any 제거)
+    if (isAxiosError(error)) {
+      if (error.response?.status === 401) {
+        return null;
+      }
+
+      console.error("게임 조회 기록 실패:", error);
+      if (error.response?.data) {
+        console.error("백엔드 상세 에러:", error.response.data);
+      }
+    } else {
+      console.error("알 수 없는 에러:", error);
     }
-    console.error("게임 조회 기록 실패:", error);
+
     return null;
   }
 }

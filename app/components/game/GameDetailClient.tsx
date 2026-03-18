@@ -23,7 +23,7 @@ export function GameDetailClient({
   similarGames,
 }: GameDetailClientProps) {
   useEffect(() => {
-    recordGameView({ game_id: game.id, source: "direct" });
+    recordGameView({ game_id: game.id, source: "detail_page" });
   }, [game.id]);
 
   return (
