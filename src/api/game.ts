@@ -177,3 +177,43 @@ export async function fetchTags(): Promise<TagItem[]> {
   );
   return data.results || [];
 }
+
+// 게임 검색 결과 타입
+export interface SearchGameItem {
+  id: number;
+  title: string;
+  image: string;
+  rating: number;
+  genre: string;
+}
+
+// 백엔드 검색 응답 타입
+interface BackendSearchResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: {
+    id: number;
+    slug: string;
+    name: string;
+    thumbnail_img_url: string | null;
+    rawg_rating: number;
+    genres: { id: number; name: string; slug: string }[];
+  }[];
+}
+
+// 게임 검색 API
+export async function searchGames(query: string): Promise<SearchGameItem[]> {
+  if (!query.trim()) return [];
+  const { data } = await apiClient.get<BackendSearchResponse>(
+    "/api/v1/games/",
+    { params: { search: query } }
+  );
+  return (data.results || []).map((item) => ({
+    id: item.id,
+    title: item.name,
+    image: item.thumbnail_img_url ?? "",
+    rating: item.rawg_rating ?? 0,
+    genre: item.genres?.map((g) => g.name).join(", ") ?? "",
+  }));
+}
