@@ -1,4 +1,4 @@
-import { authApiClient, apiClient } from "@/src/lib/api";
+import { authApiClient } from "@/src/lib/api";
 
 /** GET /api/v1/users/me/ - API 명세 UserMeResponse와 동일 */
 export interface UserProfile {
@@ -77,8 +77,8 @@ export interface RecommendedGamesResponse {
 
 export async function fetchRecommendedGames(): Promise<RecommendedGamesResponse | null> {
   try {
-    const { data } = await apiClient.get<RecommendedGamesResponse>(
-      "/api/v1/preferences/me/recommendations/"
+    const { data } = await authApiClient.get<RecommendedGamesResponse>(
+      "/api/v1/preferences/me/game-affinities/"
     );
     return data;
   } catch {
