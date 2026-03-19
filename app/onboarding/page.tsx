@@ -6,13 +6,12 @@ import { motion } from "motion/react";
 import { Check } from "lucide-react";
 import { getAccessToken } from "@/src/constants/auth";
 import { putPreferences, fetchPreferences } from "@/src/api/mypage";
+import { fetchGenres, fetchPlatforms, fetchTags } from "@/src/api/game";
+import type { GenreItem, PlatformItem, TagItem } from "@/src/api/game";
 import {
   getPreferenceSections,
   preferenceNamesToIds,
   togglePreferenceSelection,
-  availableGenres,
-  availablePlatforms,
-  availableThemes,
 } from "@/src/lib/preferences";
 import { AuthBackground } from "@/app/components/common/AuthBackground";
 import styles from "./page.module.scss";
@@ -25,18 +24,33 @@ export default function OnboardingPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isReady, setIsReady] = useState(false);
 
+  // API에서 가져온 전체 목록 (id 포함)
+  const [genreList, setGenreList] = useState<GenreItem[]>([]);
+  const [platformList, setPlatformList] = useState<PlatformItem[]>([]);
+  const [tagList, setTagList] = useState<TagItem[]>([]);
+
   useEffect(() => {
     const token = getAccessToken();
     if (!token) {
       router.replace("/login");
       return;
     }
-    fetchPreferences()
-      .then((data) => {
-        if (data) {
-          setSelectedGenres(data.genres.map((g) => g.name));
-          setSelectedPlatforms(data.platforms.map((p) => p.name));
-          setSelectedThemes(data.tags.map((t) => t.name));
+
+    Promise.all([
+      fetchGenres(),
+      fetchPlatforms(),
+      fetchTags(),
+      fetchPreferences(),
+    ])
+      .then(([genres, platforms, tags, prefs]) => {
+        setGenreList(genres);
+        setPlatformList(platforms);
+        setTagList(tags);
+
+        if (prefs) {
+          setSelectedGenres(prefs.genres.map((g) => g.name));
+          setSelectedPlatforms(prefs.platforms.map((p) => p.name));
+          setSelectedThemes(prefs.tags.map((t) => t.name));
         }
       })
       .finally(() => setIsReady(true));
@@ -46,12 +60,9 @@ export default function OnboardingPage() {
     setIsSaving(true);
     try {
       await putPreferences({
-        genre_ids: preferenceNamesToIds(selectedGenres, availableGenres),
-        platform_ids: preferenceNamesToIds(
-          selectedPlatforms,
-          availablePlatforms
-        ),
-        tag_ids: preferenceNamesToIds(selectedThemes, availableThemes),
+        genre_ids: preferenceNamesToIds(selectedGenres, genreList),
+        platform_ids: preferenceNamesToIds(selectedPlatforms, platformList),
+        tag_ids: preferenceNamesToIds(selectedThemes, tagList),
       });
       router.push("/");
     } catch (err) {
@@ -75,6 +86,9 @@ export default function OnboardingPage() {
     setSelectedGenres,
     setSelectedPlatforms,
     setSelectedThemes,
+    availableGenres: genreList.map((g) => g.name),
+    availablePlatforms: platformList.map((p) => p.name),
+    availableThemes: tagList.map((t) => t.name),
   });
 
   return (

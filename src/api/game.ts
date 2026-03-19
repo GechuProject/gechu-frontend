@@ -133,6 +133,21 @@ export async function fetchSimilarGames(
   }));
 }
 
+// 장르 데이터 타입
+export interface GenreItem {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+// 전체 장르 목록 조회
+export async function fetchGenres(): Promise<GenreItem[]> {
+  const { data } = await apiClient.get<{ results: GenreItem[] }>(
+    "/api/v1/games/genres/"
+  );
+  return data.results || [];
+}
+
 // 플랫폼 데이터 타입
 export interface PlatformItem {
   id: number;
@@ -145,6 +160,20 @@ export interface PlatformItem {
 export async function fetchPlatforms(): Promise<PlatformItem[]> {
   const { data } = await apiClient.get<{ results: PlatformItem[] }>(
     "/api/v1/games/platforms/"
+  );
+  return data.results || [];
+}
+
+// 태그 데이터 타입
+export interface TagItem {
+  id: number;
+  name: string;
+}
+
+// 전체 태그 목록 조회
+export async function fetchTags(): Promise<TagItem[]> {
+  const { data } = await apiClient.get<{ results: TagItem[] }>(
+    "/api/v1/games/tags/"
   );
   return data.results || [];
 }

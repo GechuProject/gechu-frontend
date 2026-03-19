@@ -1,12 +1,9 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Check, Gamepad2, Settings, Tag } from "lucide-react";
-import {
-  availableGenres,
-  availablePlatforms,
-  availableThemes,
-} from "@/src/mocks/data/preferences";
+import { X, Check, Gamepad2, Settings, Tag, Loader2 } from "lucide-react";
+import { fetchGenres, fetchPlatforms, fetchTags } from "@/src/api/game";
 import styles from "./PreferencesModal.module.scss";
 
 interface PreferencesModalProps {
@@ -38,6 +35,37 @@ export function PreferencesModal({
   setSelectedPlatforms,
   setSelectedThemes,
 }: PreferencesModalProps) {
+  const [availableGenres, setAvailableGenres] = useState<string[]>([]);
+  const [availablePlatforms, setAvailablePlatforms] = useState<string[]>([]);
+  const [availableThemes, setAvailableThemes] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasFetched, setHasFetched] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen || hasFetched) return;
+
+    let cancelled = false;
+
+    Promise.all([fetchGenres(), fetchPlatforms(), fetchTags()])
+      .then(([genres, platforms, tags]) => {
+        if (cancelled) return;
+        setAvailableGenres(genres.map((g) => g.name));
+        setAvailablePlatforms(platforms.map((p) => p.name));
+        setAvailableThemes(tags.map((t) => t.name));
+        setHasFetched(true);
+      })
+      .catch((err) => {
+        console.error("취향 목록 불러오기 실패:", err);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, hasFetched]);
+
   const sections = [
     {
       title: "선호 장르",
@@ -97,52 +125,72 @@ export function PreferencesModal({
               </div>
 
               <div className={styles.body}>
-                {sections.map(
-                  ({ title, icon: Icon, items, selected, setSelected }) => (
-                    <div key={title}>
-                      <h3 className={styles.sectionTitle}>
-                        <Icon
-                          style={{
-                            width: "1.25rem",
-                            height: "1.25rem",
-                            color: "#E4FF30",
-                          }}
-                        />
-                        {title}
-                      </h3>
-                      <div className={styles.tagWrap}>
-                        {items.map((item) => {
-                          const isSelected = selected.includes(item);
-                          return (
-                            <motion.button
-                              key={item}
-                              onClick={() =>
-                                onToggle(item, selected, setSelected)
-                              }
-                              className={
-                                isSelected
-                                  ? styles.tagBtnSelected
-                                  : styles.tagBtnDefault
-                              }
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              {isSelected && (
-                                <Check
-                                  style={{
-                                    display: "inline",
-                                    width: "1rem",
-                                    height: "1rem",
-                                    marginRight: "0.25rem",
-                                  }}
-                                />
-                              )}
-                              {item}
-                            </motion.button>
-                          );
-                        })}
+                {isLoading ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "3rem 0",
+                    }}
+                  >
+                    <Loader2
+                      style={{
+                        width: "2rem",
+                        height: "2rem",
+                        color: "#E4FF30",
+                        animation: "spin 1s linear infinite",
+                      }}
+                    />
+                  </div>
+                ) : (
+                  sections.map(
+                    ({ title, icon: Icon, items, selected, setSelected }) => (
+                      <div key={title}>
+                        <h3 className={styles.sectionTitle}>
+                          <Icon
+                            style={{
+                              width: "1.25rem",
+                              height: "1.25rem",
+                              color: "#E4FF30",
+                            }}
+                          />
+                          {title}
+                        </h3>
+                        <div className={styles.tagWrap}>
+                          {items.map((item) => {
+                            const isSelected = selected.includes(item);
+                            return (
+                              <motion.button
+                                key={item}
+                                onClick={() =>
+                                  onToggle(item, selected, setSelected)
+                                }
+                                className={
+                                  isSelected
+                                    ? styles.tagBtnSelected
+                                    : styles.tagBtnDefault
+                                }
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                              >
+                                {isSelected && (
+                                  <Check
+                                    style={{
+                                      display: "inline",
+                                      width: "1rem",
+                                      height: "1rem",
+                                      marginRight: "0.25rem",
+                                    }}
+                                  />
+                                )}
+                                {item}
+                              </motion.button>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
+                    )
                   )
                 )}
               </div>
