@@ -7,14 +7,12 @@ import {
   Gamepad2,
   X,
   Star,
-  TrendingUp,
-  Sparkles,
   Heart,
   UserCircle,
   LogOut,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -23,15 +21,17 @@ import { logout } from "@/src/api/auth";
 import { getAccessToken, removeAccessToken } from "@/src/constants/auth";
 import { fetchUserProfile } from "@/src/api/mypage";
 import type { UserProfile } from "@/src/api/mypage";
-import { headerSearchGames } from "@/src/mocks/data/games";
+import { searchGames } from "@/src/api/game";
+import type { SearchGameItem } from "@/src/api/game";
 import styles from "./Header.module.scss";
-
-const allGames = headerSearchGames;
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
+  const [searchResults, setSearchResults] = useState<SearchGameItem[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -87,6 +87,35 @@ export function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // 검색어가 변경될 때 디바운스 API 호출
+  const handleSearch = useCallback(async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+    setIsSearching(true);
+    try {
+      const results = await searchGames(query);
+      setSearchResults(results);
+    } catch (err) {
+      console.error("검색 오류:", err);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      handleSearch(searchQuery);
+    }, 300);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [searchQuery, handleSearch]);
+
   const handleLogout = async () => {
     const token = getAccessToken();
     try {
@@ -100,21 +129,6 @@ export function Header() {
       router.push("/");
     }
   };
-
-  const filteredGames = searchQuery.trim()
-    ? allGames.filter(
-        (game) =>
-          game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          game.genre.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
-
-  const trendingGames = allGames
-    .filter((g) => g.category === "trending")
-    .slice(0, 4);
-  const popularGames = allGames
-    .filter((g) => g.category === "popular")
-    .slice(0, 4);
 
   return (
     <nav className={styles.nav}>
@@ -320,15 +334,19 @@ export function Header() {
                   exit={{ opacity: 0, y: -10 }}
                 >
                   {searchQuery.trim() ? (
-                    filteredGames.length > 0 ? (
+                    isSearching ? (
+                      <div className={styles.noResult}>
+                        <p className={styles.noResultText}>검색 중...</p>
+                      </div>
+                    ) : searchResults.length > 0 ? (
                       <div className={styles.resultScroll}>
                         <div className={styles.resultHeader}>
                           <p className={styles.resultCount}>
-                            {filteredGames.length}개의 검색 결과
+                            {searchResults.length}개의 검색 결과
                           </p>
                         </div>
                         <div className={styles.resultGrid}>
-                          {filteredGames.map((game, index) => (
+                          {searchResults.map((game, index) => (
                             <Link
                               key={game.id}
                               href={`/game/${game.id}`}
@@ -344,15 +362,17 @@ export function Header() {
                                 transition={{ delay: index * 0.05 }}
                                 whileHover={{ scale: 1.02, x: 4 }}
                               >
-                                <div className={styles.resultImg}>
-                                  <Image
-                                    src={game.image}
-                                    alt={game.title}
-                                    fill
-                                    sizes="128px"
-                                  />
-                                  <div className={styles.resultImgOverlay} />
-                                </div>
+                                {game.image && (
+                                  <div className={styles.resultImg}>
+                                    <Image
+                                      src={game.image}
+                                      alt={game.title}
+                                      fill
+                                      sizes="128px"
+                                    />
+                                    <div className={styles.resultImgOverlay} />
+                                  </div>
+                                )}
                                 <div className={styles.resultInfo}>
                                   <h4 className={styles.resultTitle}>
                                     {game.title}
@@ -376,9 +396,6 @@ export function Header() {
                                     </span>
                                   </div>
                                 </div>
-                                <p className={styles.resultPrice}>
-                                  {game.price}
-                                </p>
                               </motion.div>
                             </Link>
                           ))}
@@ -404,126 +421,20 @@ export function Header() {
                       </div>
                     )
                   ) : (
-                    <div className={styles.resultScroll}>
-                      <div className={styles.suggestHeader}>
-                        <p className={styles.suggestTitle}>
-                          <Sparkles
-                            style={{
-                              width: "1.25rem",
-                              height: "1.25rem",
-                              color: "#E4FF30",
-                            }}
-                          />
-                          추천 게임
-                        </p>
-                      </div>
-                      <div className={styles.suggestGrid}>
-                        {/* 인기 급상승 */}
-                        <div className={styles.suggestCategory}>
-                          <div className={styles.suggestCategoryTitle}>
-                            <TrendingUp
-                              style={{
-                                width: "1.25rem",
-                                height: "1.25rem",
-                                color: "#E4FF30",
-                              }}
-                            />
-                            인기 급상승
-                          </div>
-                          <div className={styles.suggestList}>
-                            {trendingGames.map((game, index) => (
-                              <Link
-                                key={game.id}
-                                href={`/game/${game.id}`}
-                                onClick={() => setShowResults(false)}
-                              >
-                                <motion.div
-                                  className={styles.suggestItem}
-                                  initial={{ opacity: 0, x: -20 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ delay: index * 0.05 }}
-                                  whileHover={{ scale: 1.02, x: 4 }}
-                                >
-                                  <div className={styles.suggestImg}>
-                                    <Image
-                                      src={game.image}
-                                      alt={game.title}
-                                      fill
-                                      sizes="96px"
-                                    />
-                                  </div>
-                                  <div className={styles.suggestInfo}>
-                                    <h4 className={styles.suggestTitle2}>
-                                      {game.title}
-                                    </h4>
-                                    <p className={styles.suggestGenre}>
-                                      {game.genre}
-                                    </p>
-                                  </div>
-                                  <p className={styles.suggestPrice}>
-                                    {game.price}
-                                  </p>
-                                </motion.div>
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* 인기 게임 */}
-                        <div className={styles.suggestCategory}>
-                          <div className={styles.suggestCategoryTitle}>
-                            <Star
-                              style={{
-                                width: "1.25rem",
-                                height: "1.25rem",
-                                fill: "#E4FF30",
-                                color: "#E4FF30",
-                              }}
-                            />
-                            인기 게임
-                          </div>
-                          <div className={styles.suggestList}>
-                            {popularGames.map((game, index) => (
-                              <Link
-                                key={game.id}
-                                href={`/game/${game.id}`}
-                                onClick={() => setShowResults(false)}
-                              >
-                                <motion.div
-                                  className={styles.suggestItem}
-                                  initial={{ opacity: 0, x: -20 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{
-                                    delay:
-                                      (trendingGames.length + index) * 0.05,
-                                  }}
-                                  whileHover={{ scale: 1.02, x: 4 }}
-                                >
-                                  <div className={styles.suggestImg}>
-                                    <Image
-                                      src={game.image}
-                                      alt={game.title}
-                                      fill
-                                      sizes="96px"
-                                    />
-                                  </div>
-                                  <div className={styles.suggestInfo}>
-                                    <h4 className={styles.suggestTitle2}>
-                                      {game.title}
-                                    </h4>
-                                    <p className={styles.suggestGenre}>
-                                      {game.genre}
-                                    </p>
-                                  </div>
-                                  <p className={styles.suggestPrice}>
-                                    {game.price}
-                                  </p>
-                                </motion.div>
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
+                    <div className={styles.noResult}>
+                      <Search
+                        style={{
+                          display: "block",
+                          margin: "0 auto 1rem",
+                          width: "3rem",
+                          height: "3rem",
+                          color: "rgba(255,255,255,0.2)",
+                        }}
+                      />
+                      <p className={styles.noResultText}>게임을 검색해보세요</p>
+                      <p className={styles.noResultSub}>
+                        제목으로 검색할 수 있어요
+                      </p>
                     </div>
                   )}
                 </motion.div>
