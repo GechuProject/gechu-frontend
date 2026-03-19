@@ -113,3 +113,45 @@ export async function fetchSavedGames(): Promise<SavedGamesResponse | null> {
     return null;
   }
 }
+
+// 프로필 이미지 업로드 URL 발급
+export interface ProfileImageUploadRequest {
+  file_name: string;
+  content_type: string;
+  file_size: number;
+}
+
+export interface ProfileImageUploadResponse {
+  upload_url: string;
+  profile_img_url: string;
+}
+
+export async function requestProfileImageUpload(
+  body: ProfileImageUploadRequest
+): Promise<ProfileImageUploadResponse> {
+  const { data } = await authApiClient.put<ProfileImageUploadResponse>(
+    "/api/v1/users/me/profile-image/",
+    body
+  );
+  return data;
+}
+
+// presigned URL로 이미지 파일 업로드
+export async function uploadImageToPresignedUrl(
+  uploadUrl: string,
+  file: File
+): Promise<void> {
+  const res = await fetch(uploadUrl, {
+    method: "PUT",
+    headers: {
+      "Content-Type": file.type,
+    },
+    body: file,
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error("S3 Upload Error:", res.status, errText);
+    throw new Error(`S3 업로드 실패 (${res.status}): ${errText}`);
+  }
+}

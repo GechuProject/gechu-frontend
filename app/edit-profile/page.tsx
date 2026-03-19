@@ -14,7 +14,11 @@ import {
   updateProfileAction,
   UpdateProfilePayload,
 } from "@/src/actions/mypage";
-import { fetchUserProfile } from "@/src/api/mypage";
+import {
+  fetchUserProfile,
+  requestProfileImageUpload,
+  uploadImageToPresignedUrl,
+} from "@/src/api/mypage";
 import styles from "./page.module.scss";
 
 export default function EditProfilePage() {
@@ -25,6 +29,8 @@ export default function EditProfilePage() {
   const [formData, setFormData] = useState(editProfileFormInitial);
   const [verifyError, setVerifyError] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
+  const [profileImgUrl, setProfileImgUrl] = useState<string | null>(null);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     // getAccessToken()은 클라이언트 실행
@@ -43,6 +49,7 @@ export default function EditProfilePage() {
           nickname: data.nickname || "",
           birth_date: data.birth_date || "",
         }));
+        setProfileImgUrl(data.profile_img_url || null);
       }
     });
   }, [router]);
@@ -99,6 +106,24 @@ export default function EditProfilePage() {
         payload.new_password = formData.newPassword;
       }
 
+      // 프로필 이미지가 선택된 경우 업로드 진행
+      if (selectedImageFile) {
+        try {
+          const { upload_url } = await requestProfileImageUpload({
+            file_name: selectedImageFile.name,
+            content_type: selectedImageFile.type,
+            file_size: selectedImageFile.size,
+          });
+
+          await uploadImageToPresignedUrl(upload_url, selectedImageFile);
+        } catch (imgErr) {
+          console.error("이미지 업로드 실패:", imgErr);
+          alert(
+            "프로필 이미지 업로드에 실패했습니다. 나머지 정보만 수정됩니다."
+          );
+        }
+      }
+
       const isSuccess = await updateProfileAction(payload, token);
 
       if (isSuccess) {
@@ -151,6 +176,8 @@ export default function EditProfilePage() {
             formData={formData}
             onChange={handleChange}
             onSubmit={handleSubmit}
+            profileImgUrl={profileImgUrl}
+            onImageChange={(file) => setSelectedImageFile(file)}
           />
         )}
       </div>

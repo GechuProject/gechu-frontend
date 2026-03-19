@@ -7,6 +7,16 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "images.unsplash.com", pathname: "/**" },
       { protocol: "https", hostname: "cdn.example.com", pathname: "/**" },
       { protocol: "https", hostname: "images.igdb.com", pathname: "/**" },
+      {
+        protocol: "https",
+        hostname: "ozbe15-yoon.s3.amazonaws.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "d2c8om11rax5nb.cloudfront.net",
+        pathname: "/**",
+      },
     ],
   },
   experimental: {
