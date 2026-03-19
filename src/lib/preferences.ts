@@ -1,18 +1,16 @@
 import type { LucideIcon } from "lucide-react";
 import { Gamepad2, Settings, Tag } from "lucide-react";
-import {
-  availableGenres,
-  availablePlatforms,
-  availableThemes,
-} from "@/src/mocks/data/preferences";
 
-/** 이름 배열 → id 배열 (available 목록 인덱스+1) */
+/** 이름 배열 → id 배열 (available 목록에서 이름이 일치하는 항목의 id 반환) */
 export function preferenceNamesToIds(
   names: string[],
-  availableList: string[]
+  availableList: { id: number; name: string }[]
 ): number[] {
   return names
-    .map((name) => availableList.indexOf(name) + 1)
+    .map((name) => {
+      const found = availableList.find((item) => item.name === name);
+      return found ? found.id : -1;
+    })
     .filter((id) => id > 0);
 }
 
@@ -45,30 +43,31 @@ export function getPreferenceSections(state: {
   setSelectedGenres: (v: string[]) => void;
   setSelectedPlatforms: (v: string[]) => void;
   setSelectedThemes: (v: string[]) => void;
+  availableGenres: string[];
+  availablePlatforms: string[];
+  availableThemes: string[];
 }): PreferenceSectionConfig[] {
   return [
     {
       title: "선호 장르",
       icon: Gamepad2,
-      items: availableGenres,
+      items: state.availableGenres,
       selected: state.selectedGenres,
       setSelected: state.setSelectedGenres,
     },
     {
       title: "선호 플랫폼",
       icon: Settings,
-      items: availablePlatforms,
+      items: state.availablePlatforms,
       selected: state.selectedPlatforms,
       setSelected: state.setSelectedPlatforms,
     },
     {
       title: "선호 테마",
       icon: Tag,
-      items: availableThemes,
+      items: state.availableThemes,
       selected: state.selectedThemes,
       setSelected: state.setSelectedThemes,
     },
   ];
 }
-
-export { availableGenres, availablePlatforms, availableThemes };

@@ -18,11 +18,9 @@ import {
   RecommendedGame,
   SavedGamesResponse,
 } from "@/src/api/mypage";
-import {
-  availableGenres,
-  availablePlatforms,
-  availableThemes,
-} from "@/src/mocks/data/preferences";
+import { fetchGenres, fetchPlatforms, fetchTags } from "@/src/api/game";
+import type { GenreItem, PlatformItem, TagItem } from "@/src/api/game";
+import { preferenceNamesToIds } from "@/src/lib/preferences";
 import styles from "./page.module.scss";
 
 interface PreferenceItem {
@@ -60,9 +58,13 @@ export default function MyPage() {
   const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
 
+  // API에서 가져온 전체 목록 (id 포함, 저장 시 id 변환에 사용)
+  const [genreList, setGenreList] = useState<GenreItem[]>([]);
+  const [platformList, setPlatformList] = useState<PlatformItem[]>([]);
+  const [tagList, setTagList] = useState<TagItem[]>([]);
+
   // 초기 상태 설정
   useEffect(() => {
-    // getAccessToken()은 클라이언트 사이드에서만 안전하게 실행되도록 구성되어 있다고 가정
     const token = getAccessToken();
     if (!token) {
       router.replace("/login");
@@ -88,15 +90,13 @@ export default function MyPage() {
       fetchRecommendedGames().then((data) => {
         if (data) setRecommendedGames(data.results);
       }),
+      fetchGenres().then((data) => setGenreList(data)),
+      fetchPlatforms().then((data) => setPlatformList(data)),
+      fetchTags().then((data) => setTagList(data)),
     ]).finally(() => {
-      // 모든 패치 완료 후 페이지 표출위해 설정
       setIsInitialized(true);
     });
   }, [router]);
-
-  // 이름 → id 변환: available 목록에서 인덱스+1로 id 찾기
-  const toIds = (names: string[], availableList: string[]) =>
-    names.map((name) => availableList.indexOf(name) + 1).filter((id) => id > 0);
 
   const toggleSelection = (
     item: string,
@@ -113,9 +113,9 @@ export default function MyPage() {
   const handleSave = async () => {
     try {
       const updated = await putPreferences({
-        genre_ids: toIds(selectedGenres, availableGenres),
-        platform_ids: toIds(selectedPlatforms, availablePlatforms),
-        tag_ids: toIds(selectedThemes, availableThemes),
+        genre_ids: preferenceNamesToIds(selectedGenres, genreList),
+        platform_ids: preferenceNamesToIds(selectedPlatforms, platformList),
+        tag_ids: preferenceNamesToIds(selectedThemes, tagList),
       });
       setPreferences(updated);
       setIsModalOpen(false);
