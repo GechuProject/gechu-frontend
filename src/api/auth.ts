@@ -129,12 +129,19 @@ export async function requestPasswordReset(
   return data;
 }
 
-/** 소셜 로그인(카카오/디스코드) 리다이렉트 URL */
+/**
+ * 소셜 로그인(카카오/디스코드) 리다이렉트 URL
+ * - 카카오: GET /api/v1/auth/kakao/login/ (v1_auth_kakao_login_retrieve)
+ * - 디스코드: GET /api/v1/auth/discord/login/ (v1_auth_discord_login_retrieve)
+ * 백엔드가 OAuth 후 프론트엔드 /auth/callback으로 리다이렉트하며,
+ * access_token/refresh_token은 HttpOnly 쿠키로 설정됨.
+ */
 export function getOAuthLoginUrl(provider: "kakao" | "discord"): string {
   const base = process.env.NEXT_PUBLIC_API_BASE_URL || "";
   const redirectUri =
     typeof window !== "undefined"
       ? `${window.location.origin}/auth/callback`
       : "/auth/callback";
-  return `${base}/api/v1/auth/${provider}/login/?redirect_uri=${encodeURIComponent(redirectUri)}`;
+  const params = new URLSearchParams({ redirect_uri: redirectUri });
+  return `${base}/api/v1/auth/${provider}/login/?${params.toString()}`;
 }
