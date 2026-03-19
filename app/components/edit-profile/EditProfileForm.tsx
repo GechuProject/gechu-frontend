@@ -1,7 +1,9 @@
 "use client";
 
+import { useRef, useState } from "react";
 import { motion } from "motion/react";
-import { Lock, User, Calendar } from "lucide-react";
+import { Lock, User, Calendar, Camera } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import styles from "./EditProfileForm.module.scss";
 
@@ -17,6 +19,8 @@ interface EditProfileFormProps {
   formData: EditFormData;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent) => void;
+  profileImgUrl?: string | null;
+  onImageChange?: (file: File) => void;
 }
 
 const passwordFields = [
@@ -36,7 +40,30 @@ export function EditProfileForm({
   formData,
   onChange,
   onSubmit,
+  profileImgUrl,
+  onImageChange,
 }: EditProfileFormProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [imgError, setImgError] = useState(false);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // 미리보기 생성
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+    setImgError(false);
+
+    if (onImageChange) {
+      onImageChange(file);
+    }
+  };
+
+  const displayUrl =
+    previewUrl || (profileImgUrl && !imgError ? profileImgUrl : null);
+
   return (
     <motion.div
       className={styles.form}
@@ -48,6 +75,54 @@ export function EditProfileForm({
         <p className={styles.subtitle}>
           회원정보를 안전하게 변경할 수 있습니다
         </p>
+      </div>
+
+      {/* 프로필 이미지 수정 */}
+      <div className={styles.avatarSection}>
+        <div
+          className={styles.avatarWrap}
+          onClick={() => fileInputRef.current?.click()}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ")
+              fileInputRef.current?.click();
+          }}
+        >
+          {displayUrl ? (
+            <Image
+              src={displayUrl}
+              alt="프로필 이미지"
+              fill
+              sizes="128px"
+              className={styles.avatarImg}
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className={styles.avatarPlaceholder}>
+              <User
+                style={{
+                  width: "3rem",
+                  height: "3rem",
+                  color: "rgba(255,255,255,0.4)",
+                }}
+              />
+            </div>
+          )}
+          <div className={styles.avatarOverlay}>
+            <Camera
+              style={{ width: "1.5rem", height: "1.5rem", color: "#fff" }}
+            />
+          </div>
+        </div>
+        <p className={styles.avatarHint}>클릭하여 프로필 사진 변경</p>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileSelect}
+          className={styles.fileInput}
+        />
       </div>
 
       <form onSubmit={onSubmit} className={styles.fields}>
