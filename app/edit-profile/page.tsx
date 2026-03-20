@@ -14,11 +14,7 @@ import {
   updateProfileAction,
   UpdateProfilePayload,
 } from "@/src/actions/mypage";
-import {
-  fetchUserProfile,
-  requestProfileImageUpload,
-  uploadImageToPresignedUrl,
-} from "@/src/api/mypage";
+import { fetchUserProfile, uploadProfileImage } from "@/src/api/mypage";
 import styles from "./page.module.scss";
 
 export default function EditProfilePage() {
@@ -115,13 +111,7 @@ export default function EditProfilePage() {
       // 프로필 이미지가 선택된 경우 업로드 진행
       if (selectedImageFile) {
         try {
-          const { upload_url } = await requestProfileImageUpload({
-            file_name: selectedImageFile.name,
-            content_type: selectedImageFile.type,
-            file_size: selectedImageFile.size,
-          });
-
-          await uploadImageToPresignedUrl(upload_url, selectedImageFile);
+          await uploadProfileImage(selectedImageFile);
         } catch (imgErr) {
           console.error("이미지 업로드 실패:", imgErr);
           alert(

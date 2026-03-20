@@ -31,6 +31,8 @@
 }
 
 .avatarCircle {
+  position: relative;
+  overflow: hidden;
   width: 6rem;
   height: 6rem;
   border-radius: 9999px;

@@ -3,6 +3,8 @@
 import { motion } from "motion/react";
 import { User, Mail, Settings, LogOut } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { logout } from "@/src/api/auth";
 import { getAccessToken, removeAccessToken } from "@/src/constants/auth";
@@ -12,10 +14,17 @@ interface ProfileHeaderProps {
   nickname: string;
   email: string;
   bio: string;
+  profileImgUrl?: string | null;
 }
 
-export function ProfileHeader({ nickname, email, bio }: ProfileHeaderProps) {
+export function ProfileHeader({
+  nickname,
+  email,
+  bio,
+  profileImgUrl,
+}: ProfileHeaderProps) {
   const router = useRouter();
+  const [imgError, setImgError] = useState(false);
 
   const handleLogout = async () => {
     const token = getAccessToken();
@@ -37,7 +46,18 @@ export function ProfileHeader({ nickname, email, bio }: ProfileHeaderProps) {
             className={styles.avatarCircle}
             whileHover={{ scale: 1.05 }}
           >
-            <User style={{ width: "4rem", height: "4rem", color: "#000" }} />
+            {profileImgUrl && !imgError ? (
+              <Image
+                src={profileImgUrl}
+                alt={nickname}
+                fill
+                style={{ objectFit: "cover", borderRadius: "50%" }}
+                sizes="(max-width: 768px) 80px, 128px"
+                onError={() => setImgError(true)}
+              />
+            ) : (
+              <User style={{ width: "4rem", height: "4rem", color: "#000" }} />
+            )}
           </motion.div>
         </div>
 

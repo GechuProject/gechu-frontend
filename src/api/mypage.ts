@@ -114,44 +114,14 @@ export async function fetchSavedGames(): Promise<SavedGamesResponse | null> {
   }
 }
 
-// 프로필 이미지 업로드 URL 발급
-export interface ProfileImageUploadRequest {
-  file_name: string;
-  content_type: string;
-  file_size: number;
-}
+// 프로필 이미지 업로드 (multipart/form-data)
+export async function uploadProfileImage(file: File): Promise<void> {
+  const formData = new FormData();
+  formData.append("image", file);
 
-export interface ProfileImageUploadResponse {
-  upload_url: string;
-  profile_img_url: string;
-}
-
-export async function requestProfileImageUpload(
-  body: ProfileImageUploadRequest
-): Promise<ProfileImageUploadResponse> {
-  const { data } = await authApiClient.put<ProfileImageUploadResponse>(
-    "/api/v1/users/me/profile-image/",
-    body
-  );
-  return data;
-}
-
-// presigned URL로 이미지 파일 업로드
-export async function uploadImageToPresignedUrl(
-  uploadUrl: string,
-  file: File
-): Promise<void> {
-  const res = await fetch(uploadUrl, {
-    method: "PUT",
+  await authApiClient.put("/api/v1/users/me/profile-image/", formData, {
     headers: {
-      "Content-Type": file.type,
+      "Content-Type": "multipart/form-data",
     },
-    body: file,
   });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    console.error("S3 Upload Error:", res.status, errText);
-    throw new Error(`S3 업로드 실패 (${res.status}): ${errText}`);
-  }
 }

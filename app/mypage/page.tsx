@@ -134,6 +134,7 @@ export default function MyPage() {
           nickname={profile?.nickname ?? ""}
           email={profile?.email ?? ""}
           bio=""
+          profileImgUrl={profile?.profile_img_url}
         />
         <StatsGrid
           wishlistCount={wishlist.count}
