@@ -2,32 +2,35 @@
 
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { setAccessToken } from "@/src/constants/auth";
 
 /**
- * OAuth 콜백 페이지 (카카오 등)
- * 백엔드가 인증 후 이 URL로 리다이렉트하며 access_token 또는 error를 쿼리로 전달
+ * OAuth 콜백 페이지 (카카오, 디스코드)
+ * - 백엔드 콜백: v1_auth_kakao_callback_retrieve, v1_auth_discord_callback_retrieve
+ * - 성공 시: is_new_user=true → /onboarding, is_new_user=false → /
+ * - 실패 시: error, error_description 쿼리
+ * - access_token/refresh_token은 HttpOnly 쿠키로 설정 (JS에서 접근 불가)
  */
 export default function AuthCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const accessToken =
-    searchParams.get("access_token") ?? searchParams.get("token");
+  const isNewUser = searchParams.get("is_new_user");
   const error = searchParams.get("error");
   const errorDesc = searchParams.get("error_description");
-  const nextUrl = searchParams.get("next") ?? "/";
 
   const errorMessage = error
     ? (errorDesc ?? error ?? "로그인에 실패했습니다. 다시 시도해 주세요.")
     : "유효하지 않은 접근입니다. 로그인 페이지로 이동합니다.";
 
-  const isError = !!error || !accessToken;
+  const isError = !!error || (isNewUser !== "true" && isNewUser !== "false");
 
   useEffect(() => {
-    if (accessToken) {
-      setAccessToken(accessToken);
-      router.replace(nextUrl);
+    if (isNewUser === "true") {
+      router.replace("/onboarding");
+      return;
+    }
+    if (isNewUser === "false") {
+      router.replace("/");
       return;
     }
 
@@ -35,7 +38,7 @@ export default function AuthCallbackPage() {
       const t = setTimeout(() => router.replace("/login"), 2000);
       return () => clearTimeout(t);
     }
-  }, [accessToken, error, nextUrl, router]);
+  }, [isNewUser, error, router]);
 
   if (!isError) {
     return (

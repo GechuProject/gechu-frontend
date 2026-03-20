@@ -4,8 +4,11 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { Check } from "lucide-react";
-import { getAccessToken } from "@/src/constants/auth";
-import { putPreferences, fetchPreferences } from "@/src/api/mypage";
+import {
+  putPreferences,
+  fetchPreferences,
+  fetchUserProfile,
+} from "@/src/api/mypage";
 import { fetchGenres, fetchPlatforms, fetchTags } from "@/src/api/game";
 import type { GenreItem, PlatformItem, TagItem } from "@/src/api/game";
 import {
@@ -30,30 +33,33 @@ export default function OnboardingPage() {
   const [tagList, setTagList] = useState<TagItem[]>([]);
 
   useEffect(() => {
-    const token = getAccessToken();
-    if (!token) {
-      router.replace("/login");
-      return;
-    }
+    const init = async () => {
+      const profile = await fetchUserProfile();
+      if (!profile) {
+        router.replace("/login");
+        return;
+      }
 
-    Promise.all([
-      fetchGenres(),
-      fetchPlatforms(),
-      fetchTags(),
-      fetchPreferences(),
-    ])
-      .then(([genres, platforms, tags, prefs]) => {
-        setGenreList(genres);
-        setPlatformList(platforms);
-        setTagList(tags);
+      const [genres, platforms, tags, prefs] = await Promise.all([
+        fetchGenres(),
+        fetchPlatforms(),
+        fetchTags(),
+        fetchPreferences(),
+      ]);
 
-        if (prefs) {
-          setSelectedGenres(prefs.genres.map((g) => g.name));
-          setSelectedPlatforms(prefs.platforms.map((p) => p.name));
-          setSelectedThemes(prefs.tags.map((t) => t.name));
-        }
-      })
-      .finally(() => setIsReady(true));
+      setGenreList(genres);
+      setPlatformList(platforms);
+      setTagList(tags);
+
+      if (prefs) {
+        setSelectedGenres(prefs.genres.map((g) => g.name));
+        setSelectedPlatforms(prefs.platforms.map((p) => p.name));
+        setSelectedThemes(prefs.tags.map((t) => t.name));
+      }
+      setIsReady(true);
+    };
+
+    init();
   }, [router]);
 
   const handleSave = async () => {
