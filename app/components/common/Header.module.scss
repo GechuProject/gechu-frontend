@@ -401,6 +401,114 @@
   text-align: right;
 }
 
+/* ─── 최근 검색어 ────────────────────────────────────────────── */
+.recentHeader {
+  @include flex-center(0);
+  justify-content: space-between;
+  border-bottom: 1px solid $white-10;
+  padding: 1rem 1.25rem;
+}
+
+.recentTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: $white-70;
+}
+
+.recentFooter {
+  @include flex-center(0);
+  justify-content: flex-end;
+  border-top: 1px solid $white-10;
+  padding: 0.75rem 1.25rem;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.recentClearAll {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.875rem;
+  color: $white-50;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $white;
+  }
+}
+
+.recentList {
+  display: flex;
+  flex-direction: column;
+}
+
+.recentItem {
+  @include flex-center(0);
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid $white-5;
+  transition: background 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: $white-5;
+  }
+}
+
+.recentKeywordWrap {
+  @include flex-center(0.75rem);
+  flex: 1;
+  min-width: 0;
+}
+
+.recentIcon {
+  color: $white-30;
+  flex-shrink: 0;
+}
+
+.recentKeyword {
+  @include truncate-1;
+  font-size: 1rem;
+  color: $white;
+  transition: color 0.2s ease;
+
+  .recentItem:hover & {
+    color: $accent;
+  }
+}
+
+.recentRight {
+  @include flex-center(0.75rem);
+  flex-shrink: 0;
+}
+
+.recentDate {
+  font-size: 0.75rem;
+  color: $white-30;
+}
+
+.recentDeleteBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  color: $white-30;
+  border-radius: 0.25rem;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+
+  &:hover {
+    color: $white;
+    background: $white-10;
+  }
+}
+
 /* ─── 검색 결과 없음 ─────────────────────────────────────────── */
 .noResult {
   padding: 3rem;

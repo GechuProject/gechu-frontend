@@ -10,6 +10,7 @@ import {
   Heart,
   UserCircle,
   LogOut,
+  Clock,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -23,6 +24,11 @@ import { fetchUserProfile } from "@/src/api/mypage";
 import type { UserProfile } from "@/src/api/mypage";
 import { searchGames } from "@/src/api/game";
 import type { SearchGameItem } from "@/src/api/game";
+import {
+  fetchRecentSearches,
+  deleteRecentSearch,
+  deleteAllRecentSearches,
+} from "@/src/api/search";
 import styles from "./Header.module.scss";
 
 export function Header() {
@@ -32,6 +38,7 @@ export function Header() {
   const [searchResults, setSearchResults] = useState<SearchGameItem[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -97,6 +104,24 @@ export function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const loadRecentSearches = useCallback(async () => {
+    try {
+      const data = await fetchRecentSearches();
+      setRecentSearches(data);
+    } catch (err) {
+      console.error(err);
+      setRecentSearches([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      loadRecentSearches();
+    } else {
+      setRecentSearches([]);
+    }
+  }, [isLoggedIn, loadRecentSearches]);
+
   // 검색어가 변경될 때 디바운스 API 호출
   const handleSearch = useCallback(async (query: string) => {
     if (!query.trim()) {
@@ -125,6 +150,28 @@ export function Header() {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [searchQuery, handleSearch]);
+
+  const handleDeleteRecent = async (e: React.MouseEvent, keyword: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await deleteRecentSearch(keyword);
+      setRecentSearches((prev) => prev.filter((item) => item !== keyword));
+    } catch (err) {
+      console.error("최근 검색어 삭제 실패", err);
+    }
+  };
+
+  const handleDeleteAllRecent = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await deleteAllRecentSearches();
+      setRecentSearches([]);
+    } catch (err) {
+      console.error("최근 검색어 전체 삭제 실패", err);
+    }
+  };
 
   const handleLogout = async () => {
     const token = getAccessToken();
@@ -319,7 +366,12 @@ export function Header() {
                   setSearchQuery(e.target.value);
                   setShowResults(true);
                 }}
-                onFocus={() => setShowResults(true)}
+                onFocus={() => {
+                  setShowResults(true);
+                  if (isLoggedIn) {
+                    loadRecentSearches();
+                  }
+                }}
                 className={styles.searchInput}
               />
               {searchQuery && (
@@ -364,6 +416,8 @@ export function Header() {
                               onClick={() => {
                                 setSearchQuery("");
                                 setShowResults(false);
+                                // 검색 실행 (옵션: 페이지 이동 후 최근 검색어 갱신)
+                                // loadRecentSearches(); // 나중에 게임 상세 이동 시에 백엔드에서 추가되면 다음 번에 반영됨
                               }}
                             >
                               <motion.div
@@ -431,6 +485,57 @@ export function Header() {
                         </p>
                       </div>
                     )
+                  ) : recentSearches.length > 0 ? (
+                    <div className={styles.resultScroll}>
+                      <div className={styles.recentHeader}>
+                        <span className={styles.recentTitle}>최근 검색어</span>
+                      </div>
+                      <div className={styles.recentList}>
+                        {recentSearches.map((keyword, index) => {
+                          return (
+                            <div
+                              key={`${keyword}-${index}`}
+                              className={styles.recentItem}
+                              onClick={() => {
+                                setSearchQuery(keyword);
+                                // handleClick Outside나 검색 실행 시 닫힘 처리
+                              }}
+                            >
+                              <div className={styles.recentKeywordWrap}>
+                                <Clock
+                                  style={{ width: "1rem", height: "1rem" }}
+                                  className={styles.recentIcon}
+                                />
+                                <span className={styles.recentKeyword}>
+                                  {keyword}
+                                </span>
+                              </div>
+                              <div className={styles.recentRight}>
+                                <button
+                                  onClick={(e) =>
+                                    handleDeleteRecent(e, keyword)
+                                  }
+                                  className={styles.recentDeleteBtn}
+                                  aria-label="삭제"
+                                >
+                                  <X
+                                    style={{ width: "1rem", height: "1rem" }}
+                                  />
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className={styles.recentFooter}>
+                        <button
+                          onClick={handleDeleteAllRecent}
+                          className={styles.recentClearAll}
+                        >
+                          최근 검색어 전체 삭제
+                        </button>
+                      </div>
+                    </div>
                   ) : (
                     <div className={styles.noResult}>
                       <Search
