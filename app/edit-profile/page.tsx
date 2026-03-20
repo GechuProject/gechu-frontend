@@ -14,7 +14,11 @@ import {
   updateProfileAction,
   UpdateProfilePayload,
 } from "@/src/actions/mypage";
-import { fetchUserProfile, uploadProfileImage } from "@/src/api/mypage";
+import {
+  fetchUserProfile,
+  uploadProfileImage,
+  deleteProfileImage,
+} from "@/src/api/mypage";
 import styles from "./page.module.scss";
 
 export default function EditProfilePage() {
@@ -33,6 +37,7 @@ export default function EditProfilePage() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [profileImgUrl, setProfileImgUrl] = useState<string | null>(null);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [isImageDeleted, setIsImageDeleted] = useState(false);
 
   useEffect(() => {
     // getAccessToken()은 클라이언트 실행
@@ -118,6 +123,14 @@ export default function EditProfilePage() {
             "프로필 이미지 업로드에 실패했습니다. 나머지 정보만 수정됩니다."
           );
         }
+      } else if (isImageDeleted) {
+        // 이미지가 삭제된 경우 삭제 API 호출
+        try {
+          await deleteProfileImage();
+        } catch (imgErr) {
+          console.error("이미지 삭제 실패:", imgErr);
+          alert("프로필 이미지 삭제에 실패했습니다. 나머지 정보만 수정됩니다.");
+        }
       }
 
       const isSuccess = await updateProfileAction(payload, token);
@@ -173,7 +186,15 @@ export default function EditProfilePage() {
             onChange={handleChange}
             onSubmit={handleSubmit}
             profileImgUrl={profileImgUrl}
-            onImageChange={(file) => setSelectedImageFile(file)}
+            onImageChange={(file) => {
+              setSelectedImageFile(file);
+              setIsImageDeleted(false);
+            }}
+            onImageDelete={() => {
+              setSelectedImageFile(null);
+              setProfileImgUrl(null);
+              setIsImageDeleted(true);
+            }}
           />
         )}
       </div>

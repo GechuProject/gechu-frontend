@@ -125,3 +125,8 @@ export async function uploadProfileImage(file: File): Promise<void> {
     },
   });
 }
+
+// 프로필 이미지 삭제
+export async function deleteProfileImage(): Promise<void> {
+  await authApiClient.delete("/api/v1/users/me/profile-image/");
+}
