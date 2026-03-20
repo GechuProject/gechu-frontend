@@ -54,19 +54,29 @@ export function Header() {
       removeAccessToken();
       window.history.replaceState({}, "", window.location.pathname);
     }
-    const hasToken = !!getAccessToken();
-    queueMicrotask(() => setIsLoggedIn(hasToken));
-  }, [pathname]);
 
-  useEffect(() => {
-    if (!isLoggedIn) {
+    let cancelled = false;
+    // 이메일 로그인: Bearer(sessionStorage) + OAuth: HttpOnly 쿠키만 — 둘 다 fetchUserProfile로 판별
+    void (async () => {
+      const profile = await fetchUserProfile();
+      if (cancelled) return;
+      if (profile) {
+        setIsLoggedIn(true);
+        setUserProfile(profile);
+        setProfileImgError(false);
+        return;
+      }
+      const token = getAccessToken();
+      if (token) removeAccessToken();
+      setIsLoggedIn(false);
       setUserProfile(null);
       setProfileImgError(false);
-      return;
-    }
-    setProfileImgError(false);
-    fetchUserProfile().then((profile) => setUserProfile(profile));
-  }, [isLoggedIn]);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -119,12 +129,13 @@ export function Header() {
   const handleLogout = async () => {
     const token = getAccessToken();
     try {
-      if (token) await logout(token);
+      await logout(token ?? undefined);
     } catch {
       // API 실패해도 로컬 로그아웃 진행
     } finally {
       removeAccessToken();
       setIsLoggedIn(false);
+      setUserProfile(null);
       setShowProfileMenu(false);
       router.push("/");
     }
