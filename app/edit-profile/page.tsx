@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { PasswordVerifyStep } from "@/app/components/edit-profile/PasswordVerifyStep";
 import { EditProfileForm } from "@/app/components/edit-profile/EditProfileForm";
 import { getAccessToken } from "@/src/constants/auth";
-import { editProfileFormInitial } from "@/src/mocks/data/user";
+
 import {
   verifyPasswordAction,
   updateProfileAction,
@@ -26,7 +26,13 @@ export default function EditProfilePage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [step, setStep] = useState<"password" | "edit">("password");
   const [currentPassword, setCurrentPassword] = useState("");
-  const [formData, setFormData] = useState(editProfileFormInitial);
+  const [formData, setFormData] = useState({
+    currentPasswordEdit: "",
+    newPassword: "",
+    confirmPassword: "",
+    nickname: "",
+    birth_date: "",
+  });
   const [verifyError, setVerifyError] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const [profileImgUrl, setProfileImgUrl] = useState<string | null>(null);

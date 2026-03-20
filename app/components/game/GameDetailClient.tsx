@@ -10,7 +10,7 @@ import { GameSidebar } from "@/app/components/game/GameSidebar";
 import { GameCard } from "@/app/components/common/GameCard";
 import { recordGameView } from "@/src/api/interactions";
 import type { GameDetailData } from "@/src/api/game";
-import type { GameCardItem } from "@/src/mocks/data/games";
+import type { GameCardItem } from "@/src/types/game";
 import styles from "../game/[id]/page.module.scss";
 
 interface GameDetailClientProps {

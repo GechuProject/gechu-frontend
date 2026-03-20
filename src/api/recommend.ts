@@ -1,5 +1,5 @@
 import { apiClient } from "@/src/lib/api";
-import type { GameCardItem } from "@/src/mocks/data/games";
+import type { GameCardItem } from "@/src/types/game";
 
 // 추천 게임 아이템 (GET /api/v1/recommendations/ results 배열 요소)
 export interface RecommendationItem {

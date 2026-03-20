@@ -111,7 +111,7 @@ interface BackendSimilarGameResponse {
   }[];
 }
 
-import type { GameCardItem } from "@/src/mocks/data/games";
+import type { GameCardItem } from "@/src/types/game";
 
 // 유사 게임 목록 조회
 export async function fetchSimilarGames(

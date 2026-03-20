@@ -9,7 +9,7 @@ import {
   fetchPreferenceGames,
   fetchSimilarityGames,
 } from "@/src/api/recommend";
-import type { GameCardItem } from "@/src/mocks/data/games";
+import type { GameCardItem } from "@/src/types/game";
 import styles from "./page.module.scss";
 
 interface Section {

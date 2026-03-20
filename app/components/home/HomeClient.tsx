@@ -4,7 +4,7 @@ import { GameCard } from "@/app/components/common/GameCard";
 import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight, Zap, Trophy } from "lucide-react";
 import { useState, useEffect } from "react";
-import type { GameCardItem } from "@/src/mocks/data/games";
+import type { GameCardItem } from "@/src/types/game";
 import styles from "@/app/page.module.scss";
 import { fetchGenres, fetchActionGames, fetchRpgGames } from "@/src/api/home";
 
