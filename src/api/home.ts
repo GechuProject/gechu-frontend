@@ -1,5 +1,5 @@
 import { apiClient } from "@/src/lib/api";
-import type { GameCardItem } from "@/src/mocks/data/games";
+import type { GameCardItem } from "@/src/types/game";
 
 // 백엔드 게임 목록 아이템 타입 (GET /api/v1/games/ 응답)
 interface BackendGameListItem {
@@ -123,20 +123,28 @@ export async function fetchPlatforms(): Promise<Platform[]> {
   return data.results || [];
 }
 
-// 액션 게임 Top 10
-// NOTE: genre_ids 파라미터가 백엔드 버그로 500 에러 발생 → 임시 제거
+// 액션 게임 Top 10 (genre_ids=51, 평점 높은 순)
 export async function fetchActionGames(
-  _actionGenreId: number
+  actionGenreId: number
 ): Promise<GameCardItem[]> {
-  const { results } = await fetchGames({ page_size: 10 });
+  const genreId = actionGenreId || 51; // 액션 장르 ID 기본값
+  const { results } = await fetchGames({
+    genre_ids: String(genreId),
+    ordering: "-rawg_rating",
+    page_size: 10,
+  });
   return results;
 }
 
-// RPG 게임 Top 10
-// NOTE: genre_ids 파라미터가 백엔드 버그로 500 에러 발생 → 임시 제거
+// RPG 게임 Top 10 (genre_ids=50, 평점 높은 순)
 export async function fetchRpgGames(
-  _rpgGenreId: number
+  rpgGenreId: number
 ): Promise<GameCardItem[]> {
-  const { results } = await fetchGames({ page_size: 10 });
+  const genreId = rpgGenreId || 50; // RPG 장르 ID 기본값
+  const { results } = await fetchGames({
+    genre_ids: String(genreId),
+    ordering: "-rawg_rating",
+    page_size: 10,
+  });
   return results;
 }

@@ -11,7 +11,7 @@ import { GameSidebar } from "@/app/components/game/GameSidebar";
 import { fetchGameDetail, fetchSimilarGames } from "@/src/api/game";
 import type { GameDetailData } from "@/src/api/game";
 import { recordGameView } from "@/src/api/interactions";
-import type { GameCardItem } from "@/src/mocks/data/games";
+import type { GameCardItem } from "@/src/types/game";
 import { GameCard } from "@/app/components/common/GameCard";
 import styles from "./page.module.scss";
 
