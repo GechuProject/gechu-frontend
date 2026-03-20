@@ -21,6 +21,7 @@ interface EditProfileFormProps {
   onSubmit: (e: React.FormEvent) => void;
   profileImgUrl?: string | null;
   onImageChange?: (file: File) => void;
+  onImageDelete?: () => void;
 }
 
 const passwordFields = [
@@ -42,6 +43,7 @@ export function EditProfileForm({
   onSubmit,
   profileImgUrl,
   onImageChange,
+  onImageDelete,
 }: EditProfileFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -116,6 +118,18 @@ export function EditProfileForm({
           </div>
         </div>
         <p className={styles.avatarHint}>클릭하여 프로필 사진 변경</p>
+        {displayUrl && (
+          <button
+            type="button"
+            className={styles.deleteAvatarBtn}
+            onClick={() => {
+              if (onImageDelete) onImageDelete();
+              setPreviewUrl(null);
+            }}
+          >
+            기본 이미지로 변경
+          </button>
+        )}
         <input
           ref={fileInputRef}
           type="file"
