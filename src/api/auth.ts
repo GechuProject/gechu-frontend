@@ -46,15 +46,20 @@ export async function login(
   return data;
 }
 
-export async function logout(accessToken: string): Promise<LogoutResponse> {
+/** Bearer(이메일 로그인) 또는 HttpOnly 쿠키(OAuth)로 세션 종료 */
+export async function logout(
+  accessToken?: string | null
+): Promise<LogoutResponse> {
   const { data } = await authApiClient.post<LogoutResponse>(
     "/api/v1/auth/logout/",
     undefined,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
+    accessToken
+      ? {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      : undefined
   );
   return data;
 }

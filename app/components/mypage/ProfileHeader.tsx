@@ -20,7 +20,7 @@ export function ProfileHeader({ nickname, email, bio }: ProfileHeaderProps) {
   const handleLogout = async () => {
     const token = getAccessToken();
     try {
-      if (token) await logout(token);
+      await logout(token ?? undefined);
     } catch {
       // API 실패해도 로컬 로그아웃 진행
     } finally {

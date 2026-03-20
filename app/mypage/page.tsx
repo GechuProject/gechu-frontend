@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getAccessToken } from "@/src/constants/auth";
 import { ProfileHeader } from "@/app/components/mypage/ProfileHeader";
 import { StatsGrid } from "@/app/components/mypage/StatsGrid";
 import { GamePreferences } from "@/app/components/mypage/GamePreferences";
@@ -63,39 +62,39 @@ export default function MyPage() {
   const [platformList, setPlatformList] = useState<PlatformItem[]>([]);
   const [tagList, setTagList] = useState<TagItem[]>([]);
 
-  // 초기 상태 설정
+  // 초기 상태 설정 (이메일 Bearer + OAuth HttpOnly 쿠키 모두 fetchUserProfile로 판별)
   useEffect(() => {
-    const token = getAccessToken();
-    if (!token) {
-      router.replace("/login");
-      return;
-    }
+    const init = async () => {
+      const profileData = await fetchUserProfile();
+      if (!profileData) {
+        router.replace("/login");
+        return;
+      }
+      setProfile(profileData);
 
-    // 데이터 모두 로드
-    Promise.all([
-      fetchUserProfile().then((data) => {
-        if (data) setProfile(data);
-      }),
-      fetchPreferences().then((data) => {
-        if (data) {
-          setPreferences(data);
-          setSelectedGenres(data.genres.map((g) => g.name));
-          setSelectedPlatforms(data.platforms.map((p) => p.name));
-          setSelectedThemes(data.tags.map((t) => t.name));
-        }
-      }),
-      fetchSavedGames().then((data) => {
-        if (data) setWishlist(data);
-      }),
-      fetchRecommendedGames().then((data) => {
-        if (data) setRecommendedGames(data.results);
-      }),
-      fetchGenres().then((data) => setGenreList(data)),
-      fetchPlatforms().then((data) => setPlatformList(data)),
-      fetchTags().then((data) => setTagList(data)),
-    ]).finally(() => {
+      await Promise.all([
+        fetchPreferences().then((data) => {
+          if (data) {
+            setPreferences(data);
+            setSelectedGenres(data.genres.map((g) => g.name));
+            setSelectedPlatforms(data.platforms.map((p) => p.name));
+            setSelectedThemes(data.tags.map((t) => t.name));
+          }
+        }),
+        fetchSavedGames().then((data) => {
+          if (data) setWishlist(data);
+        }),
+        fetchRecommendedGames().then((data) => {
+          if (data) setRecommendedGames(data.results);
+        }),
+        fetchGenres().then((data) => setGenreList(data)),
+        fetchPlatforms().then((data) => setPlatformList(data)),
+        fetchTags().then((data) => setTagList(data)),
+      ]);
       setIsInitialized(true);
-    });
+    };
+
+    void init();
   }, [router]);
 
   const toggleSelection = (
