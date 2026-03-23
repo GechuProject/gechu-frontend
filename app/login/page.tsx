@@ -6,12 +6,13 @@ import { AuthBackground } from "@/app/components/common/AuthBackground";
 import { LoginLogo } from "@/app/components/login/LoginLogo";
 import { LoginForm } from "@/app/components/login/LoginForm";
 import { login } from "@/src/api/auth";
-import { setAccessToken } from "@/src/constants/auth";
+import { useAuth } from "@/src/contexts/AuthContext";
 import { AxiosError } from "axios";
 import styles from "./page.module.scss";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { refreshAuth } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,8 +24,8 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const { access_token } = await login(email, password);
-      setAccessToken(access_token);
+      await login(email, password);
+      await refreshAuth();
       router.push("/");
     } catch (err) {
       const axiosError = err as AxiosError<{ message?: string }>;

@@ -5,17 +5,14 @@ import { useRouter } from "next/navigation";
 import { AuthBackground } from "@/app/components/common/AuthBackground";
 import { SignupLogo } from "@/app/components/signup/SignupLogo";
 import { SignupForm } from "@/app/components/signup/SignupForm";
-import {
-  sendEmailVerificationCode,
-  signup,
-  login,
-  setAccessToken,
-} from "@/src/api/auth";
+import { sendEmailVerificationCode, signup, login } from "@/src/api/auth";
+import { useAuth } from "@/src/contexts/AuthContext";
 import { AxiosError } from "axios";
 import styles from "./page.module.scss";
 
 export default function SignupPage() {
   const router = useRouter();
+  const { refreshAuth } = useAuth();
   const [step, setStep] = useState<"email" | "code" | "form">("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -88,8 +85,8 @@ export default function SignupPage() {
         nickname: formData.nickname.trim(),
         birth_date: formData.birth_date,
       });
-      const { access_token } = await login(email.trim(), formData.password);
-      setAccessToken(access_token);
+      await login(email.trim(), formData.password);
+      await refreshAuth();
       router.push("/onboarding");
     } catch (err) {
       const axiosErr = err as AxiosError<{ message?: string; code?: string }>;

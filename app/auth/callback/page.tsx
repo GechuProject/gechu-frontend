@@ -2,17 +2,15 @@
 
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/src/contexts/AuthContext";
 
 /**
- * OAuth 콜백 페이지 (카카오, 디스코드)
- * - 백엔드 콜백: v1_auth_kakao_callback_retrieve, v1_auth_discord_callback_retrieve
- * - 성공 시: is_new_user=true → /onboarding, is_new_user=false → /
- * - 실패 시: error, error_description 쿼리
- * - access_token/refresh_token은 HttpOnly 쿠키로 설정 (JS에서 접근 불가)
+ * OAuth 콜백 — 쿠키는 백엔드가 설정. 프론트는 auth/me로 세션 복원 후 이동.
  */
 export default function AuthCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { refreshAuth } = useAuth();
 
   const isNewUser = searchParams.get("is_new_user");
   const error = searchParams.get("error");
@@ -25,20 +23,25 @@ export default function AuthCallbackPage() {
   const isError = !!error || (isNewUser !== "true" && isNewUser !== "false");
 
   useEffect(() => {
-    if (isNewUser === "true") {
-      router.replace("/onboarding");
-      return;
-    }
-    if (isNewUser === "false") {
-      router.replace("/");
-      return;
-    }
+    const run = async () => {
+      if (isNewUser === "true") {
+        await refreshAuth();
+        router.replace("/onboarding");
+        return;
+      }
+      if (isNewUser === "false") {
+        await refreshAuth();
+        router.replace("/");
+        return;
+      }
 
-    if (!error) {
-      const t = setTimeout(() => router.replace("/login"), 2000);
-      return () => clearTimeout(t);
-    }
-  }, [isNewUser, error, router]);
+      if (!error) {
+        const t = setTimeout(() => router.replace("/login"), 2000);
+        return () => clearTimeout(t);
+      }
+    };
+    void run();
+  }, [isNewUser, error, router, refreshAuth]);
 
   if (!isError) {
     return (
