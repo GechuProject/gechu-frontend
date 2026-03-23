@@ -1,22 +1,21 @@
 import { authApiClient } from "@/src/lib/api";
-import {
-  ACCESS_TOKEN_KEY,
-  getAccessToken,
-  removeAccessToken,
-  setAccessToken,
-} from "@/src/constants/auth";
 
-export { ACCESS_TOKEN_KEY, getAccessToken, removeAccessToken, setAccessToken };
+/** Swagger: v1_auth_csrf_retrieve — CSRF 쿠키 선발급 (인터셉터에서도 자동 호출) */
+export { fetchCsrfToken } from "@/src/lib/api";
 
 export interface LoginRequest {
   email: string;
   password: string;
 }
 
+/**
+ * Swagger: TokenResponse (access_token 등, 쿠키 세션 시 바디 없을 수 있음)
+ * operationId: v1_auth_login_create — POST /api/v1/auth/login/
+ */
 export interface LoginSuccessResponse {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
+  access_token?: string;
+  token_type?: string;
+  expires_in?: number;
 }
 
 export interface LoginErrorResponse {
@@ -25,20 +24,39 @@ export interface LoginErrorResponse {
   message: string;
 }
 
+/** v1_auth_logout_create — POST /api/v1/auth/logout/ */
 export interface LogoutResponse {
   message: string;
 }
 
-export interface RefreshResponse {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
+/**
+ * v1_auth_me_retrieve — GET /api/v1/auth/me/
+ */
+export interface AuthMeResponse {
+  id: number;
+  email: string;
+  is_active: boolean;
+  is_adult_verified: boolean;
 }
 
+export async function fetchAuthMe(): Promise<AuthMeResponse | null> {
+  try {
+    const { data } =
+      await authApiClient.get<AuthMeResponse>("/api/v1/auth/me/");
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * v1_auth_login_create — POST /api/v1/auth/login/
+ * 서버가 Set-Cookie, 프론트는 access_token 저장 안 함
+ */
 export async function login(
   email: string,
   password: string
-): Promise<LoginSuccessResponse> {
+): Promise<LoginSuccessResponse | void> {
   const { data } = await authApiClient.post<LoginSuccessResponse>(
     "/api/v1/auth/login/",
     { email, password }
@@ -46,32 +64,23 @@ export async function login(
   return data;
 }
 
-/** Bearer(이메일 로그인) 또는 HttpOnly 쿠키(OAuth)로 세션 종료 */
-export async function logout(
-  accessToken?: string | null
-): Promise<LogoutResponse> {
+/** v1_auth_logout_create — POST /api/v1/auth/logout/ */
+export async function logout(): Promise<LogoutResponse> {
   const { data } = await authApiClient.post<LogoutResponse>(
-    "/api/v1/auth/logout/",
-    undefined,
-    accessToken
-      ? {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      : undefined
+    "/api/v1/auth/logout/"
   );
   return data;
 }
 
-export async function refreshToken(): Promise<RefreshResponse> {
-  const { data } = await authApiClient.post<RefreshResponse>(
-    "/api/v1/auth/refresh/"
-  );
-  return data;
+/**
+ * v1_auth_refresh_create — POST /api/v1/auth/refresh/
+ * 쿠키 기반, 응답 바디 토큰은 사용하지 않음
+ */
+export async function refreshToken(): Promise<void> {
+  await authApiClient.post("/api/v1/auth/refresh/");
 }
 
-/** 이메일 인증 코드 발송 - 201 Created */
+/** 이메일 인증 코드 — POST /api/v1/auth/email/code/ */
 export interface EmailCodeResponse {
   message: string;
   expires_in: number;
@@ -88,13 +97,13 @@ export async function sendEmailVerificationCode(
   return data;
 }
 
-/** 회원가입 - 201 Created */
+/** v1_auth_signup_create — POST /api/v1/auth/signup/ */
 export interface SignupRequest {
   email: string;
   code: string;
   password: string;
   nickname: string;
-  birth_date: string; // YYYY-MM-DD
+  birth_date: string;
 }
 
 export interface SignupResponse {
@@ -113,7 +122,7 @@ export async function signup(payload: SignupRequest): Promise<SignupResponse> {
   return data;
 }
 
-/** 비밀번호 재설정 - 200 OK */
+/** 비밀번호 재설정 — POST /api/v1/auth/password/reset/ */
 export interface PasswordResetRequest {
   email: string;
   code: string;
@@ -135,11 +144,9 @@ export async function requestPasswordReset(
 }
 
 /**
- * 소셜 로그인(카카오/디스코드) 리다이렉트 URL
- * - 카카오: GET /api/v1/auth/kakao/login/ (v1_auth_kakao_login_retrieve)
- * - 디스코드: GET /api/v1/auth/discord/login/ (v1_auth_discord_login_retrieve)
- * 백엔드가 OAuth 후 프론트엔드 /auth/callback으로 리다이렉트하며,
- * access_token/refresh_token은 HttpOnly 쿠키로 설정됨.
+ * 카카오: v1_auth_kakao_login_retrieve — GET /api/v1/auth/kakao/login/
+ * 디스코드: v1_auth_discord_login_retrieve — GET /api/v1/auth/discord/login/
+ * (콜백은 백엔드 /api/v1/auth/{provider}/callback/ — 프론트는 /auth/callback 으로 리다이렉트)
  */
 export function getOAuthLoginUrl(provider: "kakao" | "discord"): string {
   const base = process.env.NEXT_PUBLIC_API_BASE_URL || "";
