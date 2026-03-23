@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { logout } from "@/src/api/auth";
-import { getAccessToken, removeAccessToken } from "@/src/constants/auth";
+import { useAuth } from "@/src/contexts/AuthContext";
 import styles from "./ProfileHeader.module.scss";
 
 interface ProfileHeaderProps {
@@ -24,16 +24,16 @@ export function ProfileHeader({
   profileImgUrl,
 }: ProfileHeaderProps) {
   const router = useRouter();
+  const { clearAuth } = useAuth();
   const [imgError, setImgError] = useState(false);
 
   const handleLogout = async () => {
-    const token = getAccessToken();
     try {
-      await logout(token ?? undefined);
+      await logout();
     } catch {
       // API 실패해도 로컬 로그아웃 진행
     } finally {
-      removeAccessToken();
+      clearAuth();
       router.push("/");
     }
   };

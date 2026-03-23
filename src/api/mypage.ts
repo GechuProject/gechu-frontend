@@ -22,6 +22,38 @@ export async function fetchUserProfile(): Promise<UserProfile | null> {
   }
 }
 
+/** 비밀번호 확인 (쿠키 세션) */
+export async function verifyCurrentPassword(
+  password: string
+): Promise<boolean> {
+  try {
+    await authApiClient.post("/api/v1/users/me/verify-password/", {
+      password,
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export interface PatchUserProfilePayload {
+  nickname: string;
+  birth_date: string;
+  new_password?: string;
+}
+
+/** 내 정보 수정 PATCH /api/v1/users/me/ */
+export async function patchUserProfile(
+  payload: PatchUserProfilePayload
+): Promise<boolean> {
+  try {
+    const { status } = await authApiClient.patch("/api/v1/users/me/", payload);
+    return status === 200 || status === 204;
+  } catch {
+    return false;
+  }
+}
+
 export interface PreferencesBody {
   genre_ids: number[];
   platform_ids: number[];
@@ -119,11 +151,7 @@ export async function uploadProfileImage(file: File): Promise<void> {
   const formData = new FormData();
   formData.append("image", file);
 
-  await authApiClient.put("/api/v1/users/me/profile-image/", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  await authApiClient.put("/api/v1/users/me/profile-image/", formData);
 }
 
 // 프로필 이미지 삭제

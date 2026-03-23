@@ -7,23 +7,20 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PasswordVerifyStep } from "@/app/components/edit-profile/PasswordVerifyStep";
 import { EditProfileForm } from "@/app/components/edit-profile/EditProfileForm";
-import { getAccessToken } from "@/src/constants/auth";
-
-import {
-  verifyPasswordAction,
-  updateProfileAction,
-  UpdateProfilePayload,
-} from "@/src/actions/mypage";
 import {
   fetchUserProfile,
   uploadProfileImage,
   deleteProfileImage,
+  verifyCurrentPassword,
+  patchUserProfile,
 } from "@/src/api/mypage";
+import { useAuth } from "@/src/contexts/AuthContext";
 import styles from "./page.module.scss";
 
 export default function EditProfilePage() {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const { isLoggedIn, isAuthLoading, refreshAuth } = useAuth();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [step, setStep] = useState<"password" | "edit">("password");
   const [currentPassword, setCurrentPassword] = useState("");
   const [formData, setFormData] = useState({
@@ -40,9 +37,8 @@ export default function EditProfilePage() {
   const [isImageDeleted, setIsImageDeleted] = useState(false);
 
   useEffect(() => {
-    // getAccessToken()은 클라이언트 실행
-    const token = getAccessToken();
-    if (!token) {
+    if (isAuthLoading) return;
+    if (!isLoggedIn) {
       router.replace("/login");
       return;
     }
@@ -59,7 +55,7 @@ export default function EditProfilePage() {
         setProfileImgUrl(data.profile_img_url || null);
       }
     });
-  }, [router]);
+  }, [router, isLoggedIn, isAuthLoading]);
 
   const handlePasswordVerify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,8 +63,7 @@ export default function EditProfilePage() {
     setIsVerifying(true);
 
     try {
-      const token = getAccessToken() || "";
-      const isValid = await verifyPasswordAction(currentPassword, token);
+      const isValid = await verifyCurrentPassword(currentPassword);
       if (isValid) {
         setStep("edit");
       } else {
@@ -89,31 +84,30 @@ export default function EditProfilePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 새비밀번호가 8자 미만인지 검사 (입력한 경우에만)
     if (formData.newPassword && formData.newPassword.length < 8) {
       alert("새 비밀번호는 8자 이상 입력해야 합니다.");
       return;
     }
 
-    // 새비밀번호와 새비밀번호 확인이 일치하는지 검사
     if (formData.newPassword !== formData.confirmPassword) {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
 
     try {
-      const token = getAccessToken() || "";
-      const payload: UpdateProfilePayload = {
+      const payload: {
+        nickname: string;
+        birth_date: string;
+        new_password?: string;
+      } = {
         nickname: formData.nickname,
         birth_date: formData.birth_date,
       };
 
-      // 비밀번호를 입력한 경우에만 객체에 추가
       if (formData.newPassword) {
         payload.new_password = formData.newPassword;
       }
 
-      // 프로필 이미지가 선택된 경우 업로드 진행
       if (selectedImageFile) {
         try {
           await uploadProfileImage(selectedImageFile);
@@ -124,7 +118,6 @@ export default function EditProfilePage() {
           );
         }
       } else if (isImageDeleted) {
-        // 이미지가 삭제된 경우 삭제 API 호출
         try {
           await deleteProfileImage();
         } catch (imgErr) {
@@ -133,9 +126,10 @@ export default function EditProfilePage() {
         }
       }
 
-      const isSuccess = await updateProfileAction(payload, token);
+      const isSuccess = await patchUserProfile(payload);
 
       if (isSuccess) {
+        await refreshAuth();
         alert("회원정보가 성공적으로 수정되었습니다.");
         router.push("/mypage");
       } else {

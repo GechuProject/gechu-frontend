@@ -17,6 +17,7 @@ import {
   RecommendedGame,
   SavedGamesResponse,
 } from "@/src/api/mypage";
+import { useAuth } from "@/src/contexts/AuthContext";
 import { fetchGenres, fetchPlatforms, fetchTags } from "@/src/api/game";
 import type { GenreItem, PlatformItem, TagItem } from "@/src/api/game";
 import { preferenceNamesToIds } from "@/src/lib/preferences";
@@ -35,6 +36,7 @@ interface Preferences {
 
 export default function MyPage() {
   const router = useRouter();
+  const { isLoggedIn, isAuthLoading } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [preferences, setPreferences] = useState<Preferences>({
     genres: [],
@@ -62,8 +64,13 @@ export default function MyPage() {
   const [platformList, setPlatformList] = useState<PlatformItem[]>([]);
   const [tagList, setTagList] = useState<TagItem[]>([]);
 
-  // 초기 상태 설정 (이메일 Bearer + OAuth HttpOnly 쿠키 모두 fetchUserProfile로 판별)
   useEffect(() => {
+    if (isAuthLoading) return;
+    if (!isLoggedIn) {
+      router.replace("/login");
+      return;
+    }
+
     const init = async () => {
       const profileData = await fetchUserProfile();
       if (!profileData) {
@@ -95,7 +102,7 @@ export default function MyPage() {
     };
 
     void init();
-  }, [router]);
+  }, [router, isLoggedIn, isAuthLoading]);
 
   const toggleSelection = (
     item: string,
