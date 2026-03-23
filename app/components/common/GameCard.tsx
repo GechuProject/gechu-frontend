@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./GameCard.module.scss";
 import { toggleLike } from "@/src/api/interactions";
-import { getAccessToken } from "@/src/constants/auth";
+import { useAuth } from "@/src/contexts/AuthContext";
 
 interface GameCardProps {
   game: {
@@ -25,6 +25,7 @@ interface GameCardProps {
 
 export function GameCard({ game, index }: GameCardProps) {
   const router = useRouter();
+  const { isLoggedIn } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
   const [liked, setLiked] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
@@ -40,7 +41,7 @@ export function GameCard({ game, index }: GameCardProps) {
       e.stopPropagation();
 
       // 비로그인 → 로그인 페이지로 이동
-      if (!getAccessToken()) {
+      if (!isLoggedIn) {
         router.push("/login");
         return;
       }
@@ -60,7 +61,7 @@ export function GameCard({ game, index }: GameCardProps) {
       }
       setIsLiking(false);
     },
-    [isLiking, liked, game.id, router]
+    [isLiking, liked, game.id, router, isLoggedIn]
   );
 
   return (

@@ -19,9 +19,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon3D } from "./Icon3D";
 import { logout } from "@/src/api/auth";
-import { getAccessToken, removeAccessToken } from "@/src/constants/auth";
-import { fetchUserProfile } from "@/src/api/mypage";
-import type { UserProfile } from "@/src/api/mypage";
+import { useAuth } from "@/src/contexts/AuthContext";
 import { searchGames } from "@/src/api/game";
 import type { SearchGameItem } from "@/src/api/game";
 import {
@@ -40,10 +38,9 @@ export function Header() {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [profileImgError, setProfileImgError] = useState(false);
   const pathname = usePathname();
+  const { profile, authUser, isLoggedIn, isAuthLoading, clearAuth } = useAuth();
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -55,35 +52,19 @@ export function Header() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    // 개발 시 ?logout=1 쿼리로 로그아웃 상태 강제 (토큰 정리)
     const params = new URLSearchParams(window.location.search);
     if (params.get("logout") === "1") {
-      removeAccessToken();
       window.history.replaceState({}, "", window.location.pathname);
+      void (async () => {
+        try {
+          await logout();
+        } catch {
+          /* ignore */
+        }
+        clearAuth();
+      })();
     }
-
-    let cancelled = false;
-    // 이메일 로그인: Bearer(sessionStorage) + OAuth: HttpOnly 쿠키만 — 둘 다 fetchUserProfile로 판별
-    void (async () => {
-      const profile = await fetchUserProfile();
-      if (cancelled) return;
-      if (profile) {
-        setIsLoggedIn(true);
-        setUserProfile(profile);
-        setProfileImgError(false);
-        return;
-      }
-      const token = getAccessToken();
-      if (token) removeAccessToken();
-      setIsLoggedIn(false);
-      setUserProfile(null);
-      setProfileImgError(false);
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [pathname]);
+  }, [pathname, clearAuth]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -174,15 +155,12 @@ export function Header() {
   };
 
   const handleLogout = async () => {
-    const token = getAccessToken();
     try {
-      await logout(token ?? undefined);
+      await logout();
     } catch {
       // API 실패해도 로컬 로그아웃 진행
     } finally {
-      removeAccessToken();
-      setIsLoggedIn(false);
-      setUserProfile(null);
+      clearAuth();
       setShowProfileMenu(false);
       router.push("/");
     }
@@ -219,17 +197,23 @@ export function Header() {
 
           {/* 우측 아이콘 */}
           <div className={styles.actions}>
-            {isLoggedIn ? (
+            {isAuthLoading ? (
+              <div
+                className={styles.authButtons}
+                aria-hidden
+                style={{ minWidth: "8rem", opacity: 0.5 }}
+              />
+            ) : isLoggedIn ? (
               /* 프로필 드롭다운 */
               <div ref={profileRef} className={styles.profileWrap}>
                 <button
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
                   className={styles.profileBtn}
                 >
-                  {userProfile?.profile_img_url && !profileImgError ? (
+                  {profile?.profile_img_url && !profileImgError ? (
                     <Image
-                      src={userProfile.profile_img_url}
-                      alt={userProfile.nickname}
+                      src={profile.profile_img_url}
+                      alt={profile.nickname}
                       width={32}
                       height={32}
                       className={styles.profileAvatar}
@@ -247,7 +231,7 @@ export function Header() {
                     </Icon3D>
                   )}
                   <span className={styles.profileNickname}>
-                    {userProfile?.nickname ?? "..."}
+                    {profile?.nickname ?? authUser?.email ?? "..."}
                   </span>
                 </button>
 

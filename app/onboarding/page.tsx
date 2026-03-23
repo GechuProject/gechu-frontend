@@ -4,11 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { Check } from "lucide-react";
-import {
-  putPreferences,
-  fetchPreferences,
-  fetchUserProfile,
-} from "@/src/api/mypage";
+import { putPreferences, fetchPreferences } from "@/src/api/mypage";
+import { useAuth } from "@/src/contexts/AuthContext";
 import { fetchGenres, fetchPlatforms, fetchTags } from "@/src/api/game";
 import type { GenreItem, PlatformItem, TagItem } from "@/src/api/game";
 import {
@@ -21,6 +18,7 @@ import styles from "./page.module.scss";
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const { isLoggedIn, isAuthLoading } = useAuth();
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
@@ -33,13 +31,13 @@ export default function OnboardingPage() {
   const [tagList, setTagList] = useState<TagItem[]>([]);
 
   useEffect(() => {
-    const init = async () => {
-      const profile = await fetchUserProfile();
-      if (!profile) {
-        router.replace("/login");
-        return;
-      }
+    if (isAuthLoading) return;
+    if (!isLoggedIn) {
+      router.replace("/login");
+      return;
+    }
 
+    const init = async () => {
       const [genres, platforms, tags, prefs] = await Promise.all([
         fetchGenres(),
         fetchPlatforms(),
@@ -59,8 +57,8 @@ export default function OnboardingPage() {
       setIsReady(true);
     };
 
-    init();
-  }, [router]);
+    void init();
+  }, [router, isLoggedIn, isAuthLoading]);
 
   const handleSave = async () => {
     setIsSaving(true);

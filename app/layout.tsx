@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/app/components/common/Header";
 import { Footer } from "@/app/components/common/Footer";
+import { Providers } from "@/app/providers";
 import { MSWProvider } from "@/src/mocks/MSWProvider";
 
 export const metadata: Metadata = {
@@ -18,9 +19,11 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <MSWProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
+          <Providers>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </Providers>
         </MSWProvider>
       </body>
     </html>
