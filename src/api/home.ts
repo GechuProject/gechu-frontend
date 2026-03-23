@@ -98,7 +98,7 @@ export async function fetchGenres(): Promise<Genre[]> {
   const { data } = await apiClient.get<BackendGenreResponse>(
     "/api/v1/games/genres/"
   );
-  return data.results || [];
+  return (data.results || []).filter((g) => g.id >= 1 && g.id <= 10);
 }
 
 // 백엔드 플랫폼 응답 타입
@@ -123,11 +123,11 @@ export async function fetchPlatforms(): Promise<Platform[]> {
   return data.results || [];
 }
 
-// 액션 게임 Top 10 (genre_ids=51, 평점 높은 순)
-export async function fetchActionGames(
-  actionGenreId: number
+// 격투 게임 Top 10 (genre_ids=9, 평점 높은 순)
+export async function fetchFightingGames(
+  fightingGenreId: number
 ): Promise<GameCardItem[]> {
-  const genreId = actionGenreId || 51; // 액션 장르 ID 기본값
+  const genreId = fightingGenreId || 9; // 격투 장르 ID 기본값
   const { results } = await fetchGames({
     genre_ids: String(genreId),
     ordering: "-rawg_rating",
@@ -136,11 +136,37 @@ export async function fetchActionGames(
   return results;
 }
 
-// RPG 게임 Top 10 (genre_ids=50, 평점 높은 순)
+// 아케이드 게임 Top 10 (genre_ids=10, 평점 높은 순)
+export async function fetchArcadeGames(
+  arcadeGenreId: number
+): Promise<GameCardItem[]> {
+  const genreId = arcadeGenreId || 10; // 아케이드 장르 ID 기본값
+  const { results } = await fetchGames({
+    genre_ids: String(genreId),
+    ordering: "-rawg_rating",
+    page_size: 10,
+  });
+  return results;
+}
+
+// RPG 게임 Top 10 (genre_ids=1, 평점 높은 순)
 export async function fetchRpgGames(
   rpgGenreId: number
 ): Promise<GameCardItem[]> {
-  const genreId = rpgGenreId || 50; // RPG 장르 ID 기본값
+  const genreId = rpgGenreId || 1; // RPG 장르 ID 기본값
+  const { results } = await fetchGames({
+    genre_ids: String(genreId),
+    ordering: "-rawg_rating",
+    page_size: 10,
+  });
+  return results;
+}
+
+// 어드벤처 게임 Top 10 (genre_ids=2, 평점 높은 순)
+export async function fetchAdventureGames(
+  adventureGenreId: number
+): Promise<GameCardItem[]> {
+  const genreId = adventureGenreId || 2; // 어드벤처 장르 ID 기본값
   const { results } = await fetchGames({
     genre_ids: String(genreId),
     ordering: "-rawg_rating",

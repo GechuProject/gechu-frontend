@@ -2,11 +2,24 @@
 
 import { GameCard } from "@/app/components/common/GameCard";
 import { motion } from "motion/react";
-import { ChevronLeft, ChevronRight, Zap, Trophy } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Zap,
+  Trophy,
+  Sword,
+  Compass,
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import type { GameCardItem } from "@/src/types/game";
 import styles from "@/app/page.module.scss";
-import { fetchGenres, fetchActionGames, fetchRpgGames } from "@/src/api/home";
+import {
+  fetchGenres,
+  fetchFightingGames,
+  fetchArcadeGames,
+  fetchRpgGames,
+  fetchAdventureGames,
+} from "@/src/api/home";
 
 function GameSection({
   title,
@@ -80,29 +93,42 @@ function GameSection({
 }
 
 export function HomeClient() {
-  const [actionGames, setActionGames] = useState<GameCardItem[]>([]);
+  const [fightingGames, setFightingGames] = useState<GameCardItem[]>([]);
+  const [arcadeGames, setArcadeGames] = useState<GameCardItem[]>([]);
   const [rpgGames, setRpgGames] = useState<GameCardItem[]>([]);
+  const [adventureGames, setAdventureGames] = useState<GameCardItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadGames() {
       try {
         const genres = await fetchGenres();
-        const actionGenre = genres.find((g) =>
-          g.name.toLowerCase().includes("action")
+        // ID 9: 격투, ID 10: 아케이드
+        const fightingGenre = genres.find(
+          (g) => g.id === 9 || g.name.includes("격투") || g.slug === "fighting"
+        );
+        const arcadeGenre = genres.find(
+          (g) =>
+            g.id === 10 || g.name.includes("아케이드") || g.slug === "arcade"
         );
         const rpgGenre = genres.find(
+          (g) => g.id === 1 || g.name.includes("RPG") || g.slug === "rpg"
+        );
+        const adventureGenre = genres.find(
           (g) =>
-            g.name.toLowerCase().includes("rpg") ||
-            g.name.toLowerCase().includes("role")
+            g.id === 2 || g.name.includes("어드벤처") || g.slug === "adventure"
         );
 
-        const [action, rpg] = await Promise.all([
-          fetchActionGames(actionGenre?.id ?? 0),
-          fetchRpgGames(rpgGenre?.id ?? 0),
+        const [fighting, arcade, rpg, adventure] = await Promise.all([
+          fetchFightingGames(fightingGenre?.id ?? 9),
+          fetchArcadeGames(arcadeGenre?.id ?? 10),
+          fetchRpgGames(rpgGenre?.id ?? 1),
+          fetchAdventureGames(adventureGenre?.id ?? 2),
         ]);
-        setActionGames(action);
+        setFightingGames(fighting);
+        setArcadeGames(arcade);
         setRpgGames(rpg);
+        setAdventureGames(adventure);
       } catch (error) {
         console.error("게임 데이터를 불러오는데 실패했습니다:", error);
       } finally {
@@ -130,15 +156,27 @@ export function HomeClient() {
       </section>
 
       <GameSection
-        title="액션 Top 10"
-        games={actionGames}
+        title="격투 Top 10"
+        games={fightingGames}
         icon={Zap}
+        loading={loading}
+      />
+      <GameSection
+        title="아케이드 Top 10"
+        games={arcadeGames}
+        icon={Trophy}
         loading={loading}
       />
       <GameSection
         title="RPG Top 10"
         games={rpgGames}
-        icon={Trophy}
+        icon={Sword}
+        loading={loading}
+      />
+      <GameSection
+        title="어드벤처 Top 10"
+        games={adventureGames}
+        icon={Compass}
         loading={loading}
       />
     </div>
