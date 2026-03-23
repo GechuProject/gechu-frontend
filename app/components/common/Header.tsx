@@ -427,17 +427,27 @@ export function Header() {
                                 transition={{ delay: index * 0.05 }}
                                 whileHover={{ scale: 1.02, x: 4 }}
                               >
-                                {game.image && (
-                                  <div className={styles.resultImg}>
+                                <div className={styles.resultImg}>
+                                  {game.image ? (
                                     <Image
                                       src={game.image}
                                       alt={game.title}
                                       fill
                                       sizes="128px"
                                     />
-                                    <div className={styles.resultImgOverlay} />
-                                  </div>
-                                )}
+                                  ) : (
+                                    <div className={styles.dummyImg}>
+                                      <Gamepad2
+                                        style={{
+                                          width: "2rem",
+                                          height: "2rem",
+                                          color: "rgba(255,255,255,0.2)",
+                                        }}
+                                      />
+                                    </div>
+                                  )}
+                                  <div className={styles.resultImgOverlay} />
+                                </div>
                                 <div className={styles.resultInfo}>
                                   <h4 className={styles.resultTitle}>
                                     {game.title}
