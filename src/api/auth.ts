@@ -1,7 +1,21 @@
-import { authApiClient } from "@/src/lib/api";
+import {
+  authApiClient,
+  fetchCsrfToken,
+  getCsrfTokenForHeaders,
+} from "@/src/lib/api";
 
 /** Swagger: v1_auth_csrf_retrieve — CSRF 쿠키 선발급 (인터셉터에서도 자동 호출) */
 export { fetchCsrfToken } from "@/src/lib/api";
+
+async function requireCsrfBeforeUnsafeRequest(): Promise<void> {
+  await fetchCsrfToken();
+  const token = await getCsrfTokenForHeaders();
+  if (!token) {
+    throw new Error(
+      "보안 토큰(CSRF)을 받지 못했습니다. NEXT_PUBLIC_API_BASE_URL·MOCKING 설정과 네트워크를 확인해 주세요."
+    );
+  }
+}
 
 export interface LoginRequest {
   email: string;
@@ -57,6 +71,7 @@ export async function login(
   email: string,
   password: string
 ): Promise<LoginSuccessResponse | void> {
+  await requireCsrfBeforeUnsafeRequest();
   const { data } = await authApiClient.post<LoginSuccessResponse>(
     "/api/v1/auth/login/",
     { email, password }
@@ -66,6 +81,7 @@ export async function login(
 
 /** v1_auth_logout_create — POST /api/v1/auth/logout/ */
 export async function logout(): Promise<LogoutResponse> {
+  await requireCsrfBeforeUnsafeRequest();
   const { data } = await authApiClient.post<LogoutResponse>(
     "/api/v1/auth/logout/"
   );

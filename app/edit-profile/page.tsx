@@ -13,15 +13,20 @@ import {
   deleteProfileImage,
   verifyCurrentPassword,
   patchUserProfile,
+  shouldSkipPasswordVerification,
+  deleteAccount,
 } from "@/src/api/mypage";
+import { AccountDeletionSection } from "@/app/components/edit-profile/AccountDeletionSection";
 import { useAuth } from "@/src/contexts/AuthContext";
 import styles from "./page.module.scss";
 
 export default function EditProfilePage() {
   const router = useRouter();
-  const { isLoggedIn, isAuthLoading, refreshAuth } = useAuth();
+  const { isLoggedIn, isAuthLoading, refreshAuth, clearAuth } = useAuth();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [step, setStep] = useState<"password" | "edit">("password");
+  const [gateReady, setGateReady] = useState(false);
+  const [hidePasswordChange, setHidePasswordChange] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [formData, setFormData] = useState({
     currentPasswordEdit: "",
@@ -53,7 +58,13 @@ export default function EditProfilePage() {
           birth_date: data.birth_date || "",
         }));
         setProfileImgUrl(data.profile_img_url || null);
+        const skip = shouldSkipPasswordVerification(data);
+        setHidePasswordChange(skip);
+        if (skip) {
+          setStep("edit");
+        }
       }
+      setGateReady(true);
     });
   }, [router, isLoggedIn, isAuthLoading]);
 
@@ -141,7 +152,23 @@ export default function EditProfilePage() {
     }
   };
 
+  const handleAccountDelete = async () => {
+    await deleteAccount();
+    clearAuth();
+    router.push("/account-deleted");
+  };
+
   if (!isAuthenticated) return null;
+
+  if (!gateReady) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.inner}>
+          <p style={{ color: "rgba(255,255,255,0.75)" }}>불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>
@@ -175,21 +202,25 @@ export default function EditProfilePage() {
             isLoading={isVerifying}
           />
         ) : (
-          <EditProfileForm
-            formData={formData}
-            onChange={handleChange}
-            onSubmit={handleSubmit}
-            profileImgUrl={profileImgUrl}
-            onImageChange={(file) => {
-              setSelectedImageFile(file);
-              setIsImageDeleted(false);
-            }}
-            onImageDelete={() => {
-              setSelectedImageFile(null);
-              setProfileImgUrl(null);
-              setIsImageDeleted(true);
-            }}
-          />
+          <>
+            <EditProfileForm
+              formData={formData}
+              onChange={handleChange}
+              onSubmit={handleSubmit}
+              hidePasswordChange={hidePasswordChange}
+              profileImgUrl={profileImgUrl}
+              onImageChange={(file) => {
+                setSelectedImageFile(file);
+                setIsImageDeleted(false);
+              }}
+              onImageDelete={() => {
+                setSelectedImageFile(null);
+                setProfileImgUrl(null);
+                setIsImageDeleted(true);
+              }}
+            />
+            <AccountDeletionSection onDeleteConfirmed={handleAccountDelete} />
+          </>
         )}
       </div>
     </div>

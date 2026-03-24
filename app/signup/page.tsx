@@ -7,6 +7,7 @@ import { SignupLogo } from "@/app/components/signup/SignupLogo";
 import { SignupForm } from "@/app/components/signup/SignupForm";
 import { sendEmailVerificationCode, signup, login } from "@/src/api/auth";
 import { useAuth } from "@/src/contexts/AuthContext";
+import { setLoginMethod } from "@/src/lib/loginMethod";
 import { AxiosError } from "axios";
 import styles from "./page.module.scss";
 
@@ -86,6 +87,7 @@ export default function SignupPage() {
         birth_date: formData.birth_date,
       });
       await login(email.trim(), formData.password);
+      setLoginMethod("email");
       await refreshAuth();
       router.push("/onboarding");
     } catch (err) {

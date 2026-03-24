@@ -1,4 +1,4 @@
-import axios, { type InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosHeaders, type InternalAxiosRequestConfig } from "axios";
 import { getCsrfTokenFromCookie } from "@/src/lib/csrf";
 import { emitAuthInvalid } from "@/src/lib/authEvents";
 
@@ -35,6 +35,7 @@ function parseCsrfFromJson(data: unknown): string | null {
   return null;
 }
 
+/** 인터셉터용: 메모리(JSON) 또는 읽을 수 있는 쿠키 */
 function getEffectiveCsrfToken(): string | null {
   return csrfTokenFromResponse ?? getCsrfTokenFromCookie();
 }
@@ -45,24 +46,34 @@ export function clearCsrfTokenMemory(): void {
 }
 
 /**
- * GET CSRF — 응답 JSON의 csrf_token을 메모리에 두고 X-CSRFToken에 사용
- * (쿠키 없이 본문만 주는 백엔드 대응) fetch 사용: axios 인터셉터 순환 참조 방지
+ * GET /api/v1/auth/csrf/ 로 토큰 확보
+ * @param force true면 메모리만 비우고 쿠키로 조기 종료하지 않음 — 로그인/로그아웃 직전 갱신용
  */
-async function ensureCsrfToken(): Promise<void> {
+async function ensureCsrfToken(force = false): Promise<void> {
   if (typeof window === "undefined") return;
-  if (getEffectiveCsrfToken()) return;
+  if (!force && csrfTokenFromResponse) return;
 
   const path = getCsrfPath();
   const url = apiBaseURL ? `${apiBaseURL.replace(/\/+$/, "")}${path}` : path;
 
   try {
-    const res = await fetch(url, { method: "GET", credentials: "include" });
+    const res = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) {
+      return;
+    }
     const text = await res.text();
     if (text) {
       try {
         const json = JSON.parse(text) as unknown;
         const parsed = parseCsrfFromJson(json);
-        if (parsed) csrfTokenFromResponse = parsed;
+        if (parsed) {
+          csrfTokenFromResponse = parsed;
+          return;
+        }
       } catch {
         /* 본문이 JSON이 아닐 수 있음 */
       }
@@ -81,28 +92,45 @@ function isCsrfEndpointUrl(url: string): boolean {
   return url.includes("csrf") || url.endsWith(path) || url.includes(path);
 }
 
+function setCsrfHeader(
+  config: InternalAxiosRequestConfig,
+  token: string
+): void {
+  const h = AxiosHeaders.from(config.headers ?? {});
+  h.set("X-CSRFToken", token);
+  config.headers = h;
+}
+
 async function attachCsrf(config: InternalAxiosRequestConfig) {
   if (config.data instanceof FormData) {
-    config.headers.delete("Content-Type");
+    const h = AxiosHeaders.from(config.headers ?? {});
+    h.delete("Content-Type");
+    config.headers = h;
   }
   const method = config.method?.toLowerCase();
   if (method && unsafeMethods.has(method)) {
     const url = config.url ?? "";
     if (!isCsrfEndpointUrl(url)) {
-      await ensureCsrfToken();
+      await ensureCsrfToken(false);
     }
     const token = getEffectiveCsrfToken();
     if (token) {
-      config.headers.set("X-CSRFToken", token);
+      setCsrfHeader(config, token);
     }
   }
   return config;
 }
 
-/** 앱에서 필요 시 명시 호출 (선택) */
+/** 메모리 초기화 후 GET CSRF 강제 — 로그인/로그아웃 직전 */
 export async function fetchCsrfToken(): Promise<void> {
   csrfTokenFromResponse = null;
-  await ensureCsrfToken();
+  await ensureCsrfToken(true);
+}
+
+/** 인터셉터 외에서 직접 헤더를 붙일 때 토큰 문자열 */
+export async function getCsrfTokenForHeaders(): Promise<string | null> {
+  await ensureCsrfToken(false);
+  return getEffectiveCsrfToken();
 }
 
 /** 세션 없을 때 401이 정상인 요청 — refresh 시도하지 않음 */
