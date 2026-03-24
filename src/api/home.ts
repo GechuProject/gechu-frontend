@@ -14,6 +14,7 @@ interface BackendGameListItem {
   platforms: { id: number; name: string }[];
   esrb_rating: string;
   age_rating_min: number;
+  is_saved?: boolean;
 }
 
 // 백엔드 게임 목록 응답 타입 (페이지네이션)
@@ -39,6 +40,7 @@ function mapToGameCardItem(item: BackendGameListItem): GameCardItem {
     price: "",
     rating: parseFloat(item.rawg_rating) || 0,
     genre: item.genres?.map((g) => g.name).join(", ") ?? "",
+    is_saved: item.is_saved ?? false,
   };
 }
 

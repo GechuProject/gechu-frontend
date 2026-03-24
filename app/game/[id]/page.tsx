@@ -57,11 +57,13 @@ export default function GameDetailPage() {
   return (
     <div className={styles.page}>
       <GameHero
+        id={game.id}
         image={game.image}
         title={game.title}
         subtitle={game.subtitle}
         genre={game.genre}
         rating={game.rating}
+        is_saved={game.is_saved}
       />
 
       <div className={styles.inner}>
