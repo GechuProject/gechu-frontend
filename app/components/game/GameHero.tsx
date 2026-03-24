@@ -111,7 +111,11 @@ export function GameHero({
                     color: "#E4FF30",
                   }}
                 />
-                <span className={styles.ratingText}>{rating}</span>
+                <span className={styles.ratingText}>
+                  {!isNaN(Number(rating))
+                    ? Number(Number(rating).toFixed(2))
+                    : 0}
+                </span>
               </div>
             </div>
 
