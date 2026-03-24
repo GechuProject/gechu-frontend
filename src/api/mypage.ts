@@ -158,3 +158,22 @@ export async function uploadProfileImage(file: File): Promise<void> {
 export async function deleteProfileImage(): Promise<void> {
   await authApiClient.delete("/api/v1/users/me/profile-image/");
 }
+
+// 성인인증 콜백 처리
+export async function callbackAdultVerification(
+  code: string,
+  state: string
+): Promise<boolean> {
+  try {
+    const { status } = await authApiClient.get(
+      "/api/v1/users/me/adult-verifications/callback/",
+      {
+        params: { code, state },
+      }
+    );
+    return status === 200 || status === 204;
+  } catch (error) {
+    console.error("Adult verification callback error:", error);
+    return false;
+  }
+}

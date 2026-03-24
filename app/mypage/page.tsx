@@ -142,6 +142,7 @@ export default function MyPage() {
           email={profile?.email ?? ""}
           bio=""
           profileImgUrl={profile?.profile_img_url}
+          isAdultVerified={profile?.is_adult_verified ?? false}
         />
         <StatsGrid
           wishlistCount={wishlist.count}
