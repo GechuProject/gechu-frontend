@@ -65,6 +65,22 @@ export function GameHero({
     [isLiking, liked, id, router, isLoggedIn]
   );
 
+  const handleShareClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const url = window.location.href;
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        alert("링크가 복사되었습니다.");
+      })
+      .catch((err) => {
+        console.error("링크 복사 실패:", err);
+        alert("링크 복사에 실패했습니다.");
+      });
+  }, []);
+
   return (
     <div className={styles.hero}>
       <motion.img
@@ -123,8 +139,10 @@ export function GameHero({
 
               <motion.button
                 className={styles.actionBtn}
+                onClick={handleShareClick}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                aria-label="공유하기"
               >
                 <Share2 style={{ width: "1.25rem", height: "1.25rem" }} />
               </motion.button>
