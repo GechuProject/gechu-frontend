@@ -15,11 +15,9 @@ export function GameScreenshots({
   fallbackImage,
   title,
 }: GameScreenshotsProps) {
-  // 스크린샷이 없으면 fallback 이미지를 4장 표시
+  // 스크린샷이 없으면 fallback 이미지를 1장 표시
   const images =
-    screenshots.length > 0
-      ? screenshots.slice(0, 8)
-      : [fallbackImage, fallbackImage, fallbackImage, fallbackImage];
+    screenshots.length > 0 ? screenshots.slice(0, 8) : [fallbackImage];
 
   return (
     <div>
