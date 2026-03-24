@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { initiateAdultVerification } from "@/src/api/mypage";
 import { logout } from "@/src/api/auth";
 import { useAuth } from "@/src/contexts/AuthContext";
 import styles from "./ProfileHeader.module.scss";
@@ -15,6 +16,7 @@ interface ProfileHeaderProps {
   email: string;
   bio: string;
   profileImgUrl?: string | null;
+  isAdultVerified?: boolean;
 }
 
 export function ProfileHeader({
@@ -22,6 +24,7 @@ export function ProfileHeader({
   email,
   bio,
   profileImgUrl,
+  isAdultVerified = false,
 }: ProfileHeaderProps) {
   const router = useRouter();
   const { clearAuth } = useAuth();
@@ -36,6 +39,11 @@ export function ProfileHeader({
       clearAuth();
       router.push("/");
     }
+  };
+
+  const handleAdultVerification = () => {
+    // 직접 브라우저 이동 (CORS 에러 방지)
+    initiateAdultVerification();
   };
 
   return (
@@ -62,7 +70,24 @@ export function ProfileHeader({
         </div>
 
         <div className={styles.userInfo}>
-          <h1 className={styles.nickname}>{nickname}</h1>
+          <div className={styles.nicknameWrapper}>
+            <h1 className={styles.nickname}>{nickname}</h1>
+            <div className={styles.adultVerification}>
+              {isAdultVerified ? (
+                <span className={styles.verifiedBadge}>성인인증 완료</span>
+              ) : (
+                <>
+                  <span className={styles.unverifiedBadge}>성인인증 미완</span>
+                  <button
+                    className={styles.verifyBtn}
+                    onClick={handleAdultVerification}
+                  >
+                    성인인증 하기
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
           <p className={styles.email}>
             <Mail style={{ width: "1rem", height: "1rem" }} />
             {email}

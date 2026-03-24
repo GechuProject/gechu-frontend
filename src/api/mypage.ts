@@ -158,3 +158,32 @@ export async function uploadProfileImage(file: File): Promise<void> {
 export async function deleteProfileImage(): Promise<void> {
   await authApiClient.delete("/api/v1/users/me/profile-image/");
 }
+
+// 성인인증 콜백 처리
+export async function callbackAdultVerification(
+  code: string,
+  state: string
+): Promise<boolean> {
+  try {
+    const { status } = await authApiClient.get(
+      "/api/v1/users/me/adult-verifications/callback/",
+      {
+        params: { code, state },
+      }
+    );
+    return status === 200 || status === 204;
+  } catch (error) {
+    console.error("Adult verification callback error:", error);
+    return false;
+  }
+}
+
+// 성인인증 시작 (리다이렉트 URL 반환 또는 Axios에 의해 리다이렉트 수행)
+export function initiateAdultVerification(): void {
+  // AJAX로 호출 시 CORS 에러(302 리다이렉트 추적 불가)가 발생하므로 직접 브라우저 이동
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+  window.location.href = `${baseUrl.replace(
+    /\/$/,
+    ""
+  )}/api/v1/users/me/adult-verifications/initiate/`;
+}
