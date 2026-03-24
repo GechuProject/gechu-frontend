@@ -1,4 +1,6 @@
+import type { AxiosError } from "axios";
 import { authApiClient } from "@/src/lib/api";
+import { getLoginMethod } from "@/src/lib/loginMethod";
 
 /** GET /api/v1/users/me/ - API 명세 UserMeResponse와 동일 */
 export interface UserProfile {
@@ -11,6 +13,27 @@ export interface UserProfile {
   adult_verified_at: string | null;
   is_active: boolean;
   created_at: string;
+  /** false면 소셜 전용 등 비밀번호 없음 — 프로필 수정 시 현재 비밀번호 확인 생략 */
+  has_usable_password?: boolean;
+  /** 예: kakao, discord, email — 백엔드 명세에 맞게 */
+  auth_provider?: string | null;
+}
+
+/**
+ * 소셜 전용(비밀번호 없음)이면 프로필 수정 전 비밀번호 확인 단계 생략
+ * - API: has_usable_password / auth_provider 우선
+ * - 없으면 마지막 로그인 방식(localStorage)으로 추정
+ */
+export function shouldSkipPasswordVerification(
+  profile: UserProfile | null
+): boolean {
+  if (!profile) return false;
+  if (profile.has_usable_password === true) return false;
+  if (profile.has_usable_password === false) return true;
+  const prov = profile.auth_provider?.toLowerCase();
+  if (prov === "kakao" || prov === "discord") return true;
+  if (getLoginMethod() === "oauth") return true;
+  return false;
 }
 
 export async function fetchUserProfile(): Promise<UserProfile | null> {
@@ -52,6 +75,45 @@ export async function patchUserProfile(
   } catch {
     return false;
   }
+}
+
+/**
+ * Swagger: `v1_users_me_destroy` — DELETE `/api/v1/users/me/`
+ * HttpOnly access_token 쿠키 + unsafe 요청 시 `X-CSRFToken` (authApiClient 인터셉터)
+ * @see https://d2c8om11rax5nb.cloudfront.net/api/schema/swagger-ui/#/Users/v1_users_me_destroy
+ */
+export interface DeleteAccountSuccessResponse {
+  message: string;
+}
+
+/** 401 UNAUTHORIZED / ACCOUNT_DEACTIVATED, 403 CSRF_FAILED 등 */
+export interface ApiStandardErrorBody {
+  status_code?: number;
+  code?: string;
+  message?: string;
+}
+
+export async function deleteAccount(): Promise<DeleteAccountSuccessResponse> {
+  const { data } =
+    await authApiClient.delete<DeleteAccountSuccessResponse>(
+      "/api/v1/users/me/"
+    );
+  return data ?? { message: "" };
+}
+
+/** Axios 응답 — `message`(명세) 또는 DRF `detail` */
+export function getApiErrorMessage(err: unknown): string {
+  const ax = err as AxiosError<
+    ApiStandardErrorBody & { detail?: string | string[] }
+  >;
+  const d = ax.response?.data;
+  if (d && typeof d === "object") {
+    if (typeof d.message === "string" && d.message.trim()) return d.message;
+    if (typeof d.detail === "string") return d.detail;
+    if (Array.isArray(d.detail)) return d.detail.map(String).join(" ");
+  }
+  if (ax.message) return ax.message;
+  return "요청에 실패했습니다.";
 }
 
 export interface PreferencesBody {
