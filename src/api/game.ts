@@ -56,6 +56,7 @@ export interface GameDetailData {
   stores: { name: string; url: string }[];
   tags: string[];
   is_saved?: boolean;
+  trailerUrl?: string | null;
 }
 
 // 백엔드 응답 → 프론트 타입 변환
@@ -68,6 +69,13 @@ function mapToGameDetailData(data: BackendGameDetail): GameDetailData {
     data.media
       ?.filter((m) => m.type === "screenshot")
       .map((m) => m.media_url) ?? [];
+
+  const trailer = data.media?.find(
+    (m) => m.type === "video" || m.type === "trailer"
+  );
+  const trailerUrl = trailer
+    ? trailer.video_url_max || trailer.video_url_480 || trailer.media_url
+    : null;
 
   return {
     id: data.id,
@@ -89,6 +97,7 @@ function mapToGameDetailData(data: BackendGameDetail): GameDetailData {
     stores: data.stores ?? [],
     tags: data.tags?.map((t) => t.name) ?? [],
     is_saved: data.is_saved ?? false,
+    trailerUrl,
   };
 }
 

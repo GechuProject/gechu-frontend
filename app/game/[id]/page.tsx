@@ -64,6 +64,7 @@ export default function GameDetailPage() {
         genre={game.genre}
         rating={game.rating}
         is_saved={game.is_saved}
+        trailerUrl={game.trailerUrl}
       />
 
       <div className={styles.inner}>
