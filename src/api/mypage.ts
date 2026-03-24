@@ -177,3 +177,31 @@ export async function callbackAdultVerification(
     return false;
   }
 }
+
+// 성인인증 시작 (리다이렉트 URL 반환 또는 Axios에 의해 리다이렉트 수행)
+export async function initiateAdultVerification(): Promise<void> {
+  try {
+    const { data, request } = await authApiClient.get(
+      "/api/v1/users/me/adult-verifications/initiate/"
+    );
+
+    // 백엔드가 JSON으로 줬을 경우 처리
+    if (data && typeof data.url === "string") {
+      window.location.href = data.url;
+    } else if (data && typeof data.redirect_url === "string") {
+      window.location.href = data.redirect_url;
+    } else if (request && request.responseURL) {
+      // Axios가 302를 따라간 URL이 있다면 거기로 화면 이동
+      window.location.href = request.responseURL;
+    } else {
+      // 그 외의 경우 (CORS에 안걸리고 HTML을 그대로 응답받았다면)
+      console.warn(
+        "Adult verification initiate returned unexpected data",
+        data
+      );
+    }
+  } catch (error) {
+    console.error("Adult verification initiate error:", error);
+    alert("성인인증 시작을 불러오는데 실패했습니다.");
+  }
+}

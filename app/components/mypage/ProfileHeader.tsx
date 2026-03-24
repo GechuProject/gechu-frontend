@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { initiateAdultVerification } from "@/src/api/mypage";
 import { logout } from "@/src/api/auth";
 import { useAuth } from "@/src/contexts/AuthContext";
 import styles from "./ProfileHeader.module.scss";
@@ -40,13 +41,9 @@ export function ProfileHeader({
     }
   };
 
-  const handleAdultVerification = () => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-    // 백엔드의 성인인증 시작 엔드포인트로 이동
-    window.location.href = `${baseUrl.replace(
-      /\/$/,
-      ""
-    )}/api/v1/users/me/adult-verifications/initiate/`;
+  const handleAdultVerification = async () => {
+    // API 클라이언트를 통해 인증 정보(토큰/쿠키)를 담아 GET 요청
+    await initiateAdultVerification();
   };
 
   return (
