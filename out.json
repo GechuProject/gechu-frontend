@@ -1,0 +1,147 @@
+{
+  "id": 1,
+  "slug": "thief-ii-the-metal-age",
+  "name": "Thief II: The Metal Age",
+  "description": "The ultimate thief is back! Tread softly as you make your way through 15 new complex, non-linear levels full of loot to steal and guards to outsmart. Improved enemy AI, new gadgets and a riveting story will draw you into the world of Thief II: The Metal Age, a place of powerful new technologies, fanatical religions and corruption.",
+  "released": "2000-03-21",
+  "tba": false,
+  "thumbnail_img_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co698n.jpg",
+  "website": "",
+  "rawg_rating": "4.36",
+  "rawg_ratings_count": 150,
+  "rawg_added": 0,
+  "esrb_rating": "mature",
+  "age_rating_min": 17,
+  "genres": [
+    {
+      "id": 5,
+      "name": "Shooter",
+      "slug": ""
+    },
+    {
+      "id": 13,
+      "name": "Simulator",
+      "slug": ""
+    },
+    {
+      "id": 31,
+      "name": "Adventure",
+      "slug": ""
+    }
+  ],
+  "platforms": [
+    {
+      "id": 6,
+      "name": "PC (Microsoft Windows)"
+    }
+  ],
+  "tags": [
+    {
+      "id": 16,
+      "name": "ghosts"
+    },
+    {
+      "id": 368,
+      "name": "thief"
+    },
+    {
+      "id": 558,
+      "name": "death"
+    },
+    {
+      "id": 705,
+      "name": "swordplay"
+    },
+    {
+      "id": 906,
+      "name": "steampunk"
+    },
+    {
+      "id": 1014,
+      "name": "blackjack"
+    },
+    {
+      "id": 1033,
+      "name": "action-adventure"
+    },
+    {
+      "id": 1669,
+      "name": "crime"
+    },
+    {
+      "id": 2324,
+      "name": "swimming"
+    },
+    {
+      "id": 3203,
+      "name": "darkness"
+    },
+    {
+      "id": 4138,
+      "name": "single-player only"
+    },
+    {
+      "id": 4359,
+      "name": "polygonal 3d"
+    },
+    {
+      "id": 4392,
+      "name": "bow and arrow"
+    },
+    {
+      "id": 4879,
+      "name": "potion"
+    },
+    {
+      "id": 4891,
+      "name": "melee"
+    },
+    {
+      "id": 4918,
+      "name": "real-time combat"
+    },
+    {
+      "id": 5029,
+      "name": "difficulty level"
+    },
+    {
+      "id": 5517,
+      "name": "theft"
+    },
+    {
+      "id": 5697,
+      "name": "pacifist playthrough"
+    },
+    {
+      "id": 5904,
+      "name": "particle system"
+    },
+    {
+      "id": 5999,
+      "name": "stealth kill"
+    },
+    {
+      "id": 6619,
+      "name": "invisibility"
+    },
+    {
+      "id": 6702,
+      "name": "pickpocketing"
+    },
+    {
+      "id": 7498,
+      "name": "moving bodies"
+    },
+    {
+      "id": 9376,
+      "name": "shadow stealth"
+    },
+    {
+      "id": 17092,
+      "name": "immersive"
+    }
+  ],
+  "media": [],
+  "stores": [],
+  "is_saved": false
+}

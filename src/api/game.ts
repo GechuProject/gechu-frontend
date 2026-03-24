@@ -32,6 +32,7 @@ export interface BackendGameDetail {
     video_url_max: string;
   }[];
   stores: { name: string; url: string }[];
+  is_saved?: boolean;
 }
 
 // 프론트에서 사용하는 게임 상세 타입
@@ -54,6 +55,7 @@ export interface GameDetailData {
   screenshots: string[];
   stores: { name: string; url: string }[];
   tags: string[];
+  is_saved?: boolean;
 }
 
 // 백엔드 응답 → 프론트 타입 변환
@@ -86,6 +88,7 @@ function mapToGameDetailData(data: BackendGameDetail): GameDetailData {
     screenshots,
     stores: data.stores ?? [],
     tags: data.tags?.map((t) => t.name) ?? [],
+    is_saved: data.is_saved ?? false,
   };
 }
 
@@ -93,6 +96,29 @@ export async function fetchGameDetail(id: number): Promise<GameDetailData> {
   const { data } = await apiClient.get<BackendGameDetail>(
     `/api/v1/games/${id}/`
   );
+
+  if (data.description) {
+    try {
+      const res = await fetch(
+        "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({ q: data.description }).toString(),
+        }
+      );
+      const translateData = await res.json();
+      if (translateData && translateData[0]) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        data.description = translateData[0].map((x: any) => x[0]).join("");
+      }
+    } catch (error) {
+      console.error("Failed to translate game description:", error);
+    }
+  }
+
   return mapToGameDetailData(data);
 }
 
@@ -108,6 +134,7 @@ interface BackendSimilarGameResponse {
     thumbnail_img_url: string;
     rawg_rating: number;
     similarity_score: number;
+    is_saved?: boolean;
   }[];
 }
 
@@ -130,6 +157,7 @@ export async function fetchSimilarGames(
     price: "정보 없음",
     rating: item.rawg_rating ?? 0,
     genre: "", // 백엔드 명세에 장르 없음
+    is_saved: item.is_saved ?? false,
   }));
 }
 

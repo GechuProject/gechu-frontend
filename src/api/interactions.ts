@@ -93,12 +93,13 @@ export async function recordGameView(
         return null;
       }
 
-      console.error("게임 조회 기록 실패:", error);
+      // Next.js 개발 모드에서 화면 전체를 가리는 빨간 에러 창이 뜨지 않도록 console.warn 으로 강등
+      console.warn("게임 조회 기록 실패:", error);
       if (error.response?.data) {
-        console.error("백엔드 상세 에러:", error.response.data);
+        console.warn("백엔드 상세 에러:", error.response.data);
       }
     } else {
-      console.error("알 수 없는 에러:", error);
+      console.warn("알 수 없는 에러:", error);
     }
 
     return null;

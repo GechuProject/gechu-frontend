@@ -19,6 +19,7 @@ interface GameCardProps {
     rating: number;
     discount?: string;
     genre: string;
+    is_saved?: boolean;
   };
   index: number;
 }
@@ -27,8 +28,16 @@ export function GameCard({ game, index }: GameCardProps) {
   const router = useRouter();
   const { isLoggedIn } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
-  const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState<boolean>(game.is_saved ?? false);
+  const [prevIsSaved, setPrevIsSaved] = useState(game.is_saved);
   const [isLiking, setIsLiking] = useState(false);
+
+  // 백엔드에서 받아온 is_saved 상태값이 변경(예: 페이지 이동 후 재진입 시 새 데이터 로드)되면
+  // 내부 state도 동기화합니다 (useEffect 대신 권장되는 Derived State 패턴)
+  if (game.is_saved !== prevIsSaved) {
+    setPrevIsSaved(game.is_saved);
+    setLiked(game.is_saved ?? false);
+  }
 
   // 첫 호버 시 이미지 스케일 애니메이션만 처리
   const handleMouseEnter = useCallback(() => {

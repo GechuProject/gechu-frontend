@@ -7,4 +7,5 @@ export interface GameCardItem {
   rating: number;
   genre: string;
   discount?: string;
+  is_saved?: boolean;
 }
