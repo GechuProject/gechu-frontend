@@ -179,29 +179,11 @@ export async function callbackAdultVerification(
 }
 
 // 성인인증 시작 (리다이렉트 URL 반환 또는 Axios에 의해 리다이렉트 수행)
-export async function initiateAdultVerification(): Promise<void> {
-  try {
-    const { data, request } = await authApiClient.get(
-      "/api/v1/users/me/adult-verifications/initiate/"
-    );
-
-    // 백엔드가 JSON으로 줬을 경우 처리
-    if (data && typeof data.url === "string") {
-      window.location.href = data.url;
-    } else if (data && typeof data.redirect_url === "string") {
-      window.location.href = data.redirect_url;
-    } else if (request && request.responseURL) {
-      // Axios가 302를 따라간 URL이 있다면 거기로 화면 이동
-      window.location.href = request.responseURL;
-    } else {
-      // 그 외의 경우 (CORS에 안걸리고 HTML을 그대로 응답받았다면)
-      console.warn(
-        "Adult verification initiate returned unexpected data",
-        data
-      );
-    }
-  } catch (error) {
-    console.error("Adult verification initiate error:", error);
-    alert("성인인증 시작을 불러오는데 실패했습니다.");
-  }
+export function initiateAdultVerification(): void {
+  // AJAX로 호출 시 CORS 에러(302 리다이렉트 추적 불가)가 발생하므로 직접 브라우저 이동
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+  window.location.href = `${baseUrl.replace(
+    /\/$/,
+    ""
+  )}/api/v1/users/me/adult-verifications/initiate/`;
 }

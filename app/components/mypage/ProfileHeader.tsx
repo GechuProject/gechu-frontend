@@ -41,9 +41,9 @@ export function ProfileHeader({
     }
   };
 
-  const handleAdultVerification = async () => {
-    // API 클라이언트를 통해 인증 정보(토큰/쿠키)를 담아 GET 요청
-    await initiateAdultVerification();
+  const handleAdultVerification = () => {
+    // 직접 브라우저 이동 (CORS 에러 방지)
+    initiateAdultVerification();
   };
 
   return (
