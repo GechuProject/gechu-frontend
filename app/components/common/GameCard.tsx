@@ -15,7 +15,7 @@ interface GameCardProps {
     id: number;
     title: string;
     image: string;
-    price: string;
+
     rating: number;
     discount?: string;
     genre: string;
@@ -168,7 +168,49 @@ export function GameCard({ game, index }: GameCardProps) {
 
         <div className={styles.info}>
           <h3 className={styles.title}>{game.title}</h3>
-          <p className={styles.price}>{game.price}</p>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              marginTop: "0.25rem",
+            }}
+          >
+            <div
+              style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}
+            >
+              <Star
+                style={{
+                  width: "0.875rem",
+                  height: "0.875rem",
+                  fill: "#E4FF30",
+                  color: "#E4FF30",
+                }}
+              />
+              <span
+                style={{ fontSize: "0.875rem", color: "#fff", fontWeight: 600 }}
+              >
+                {!isNaN(Number(game.rating))
+                  ? Number(Number(game.rating).toFixed(2))
+                  : 0}
+              </span>
+            </div>
+            {game.genre && (
+              <span
+                style={{
+                  fontSize: "0.8125rem",
+                  color: "rgba(255, 255, 255, 0.6)",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  maxWidth: "60%",
+                }}
+              >
+                {game.genre}
+              </span>
+            )}
+          </div>
         </div>
       </motion.div>
     </Link>

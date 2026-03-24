@@ -37,7 +37,7 @@ function mapToGameCardItem(item: BackendGameListItem): GameCardItem {
     id: item.id,
     title: item.name,
     image: item.thumbnail_img_url ?? "",
-    price: "",
+
     rating: parseFloat(item.rawg_rating) || 0,
     genre: item.genres?.map((g) => g.name).join(", ") ?? "",
     is_saved: item.is_saved ?? false,

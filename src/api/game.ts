@@ -135,6 +135,7 @@ interface BackendSimilarGameResponse {
     rawg_rating: number;
     similarity_score: number;
     is_saved?: boolean;
+    genres?: { id: number; name: string; slug?: string }[];
   }[];
 }
 
@@ -154,9 +155,9 @@ export async function fetchSimilarGames(
     id: item.id,
     title: item.name,
     image: item.thumbnail_img_url ?? "",
-    price: "정보 없음",
+
     rating: item.rawg_rating ?? 0,
-    genre: "", // 백엔드 명세에 장르 없음
+    genre: item.genres?.map((g) => g.name).join(", ") ?? "",
     is_saved: item.is_saved ?? false,
   }));
 }

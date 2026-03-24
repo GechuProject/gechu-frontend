@@ -47,7 +47,6 @@ function mapRecommendToGameCard(item: RecommendationItem): GameCardItem {
     image: item.game.thumbnail_img_url ?? "",
     rating: parseFloat(item.game.rawg_rating) || 0,
     genre: item.game.genres?.map((g) => g.name).join(", ") ?? "",
-    price: "",
   };
 }
 
