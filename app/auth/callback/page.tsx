@@ -10,20 +10,29 @@ import { useAuth } from "@/src/contexts/AuthContext";
 export default function AuthCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { refreshAuth } = useAuth();
+  const { refreshAuth, isLoggedIn } = useAuth();
 
   const isNewUser = searchParams.get("is_new_user");
   const error = searchParams.get("error");
   const errorDesc = searchParams.get("error_description");
 
-  const errorMessage = error
-    ? (errorDesc ?? error ?? "로그인에 실패했습니다. 다시 시도해 주세요.")
-    : "유효하지 않은 접근입니다. 로그인 페이지로 이동합니다.";
+  const isAdultVerificationError = error?.includes("VERIFICATION");
+  const fallbackMessage = isAdultVerificationError
+    ? "성인인증 처리에 실패했습니다. (이미 사용 중인 정보일 수 있습니다.)"
+    : "로그인에 실패했습니다. 다시 시도해 주세요.";
 
-  const isError = !!error || (isNewUser !== "true" && isNewUser !== "false");
+  const errorMessage = error
+    ? (errorDesc ?? error ?? fallbackMessage)
+    : isLoggedIn
+      ? "유효하지 않은 접근입니다. 마이페이지로 이동합니다."
+      : "유효하지 않은 접근입니다. 로그인 페이지로 이동합니다.";
+
+  const isError =
+    !!error || (!isLoggedIn && isNewUser !== "true" && isNewUser !== "false");
 
   useEffect(() => {
     const run = async () => {
+      // 1) 로그인 성공 시나리오 (소셜 가입/로그인)
       if (isNewUser === "true") {
         await refreshAuth();
         router.replace("/onboarding");
@@ -35,13 +44,21 @@ export default function AuthCallbackPage() {
         return;
       }
 
-      if (!error) {
+      // 2) 로그인 에러 없이 콜백 & 이미 로그인된 상태 = 성인인증(또는 연동) 성공!
+      if (!error && isLoggedIn) {
+        await refreshAuth();
+        const t = setTimeout(() => router.replace("/mypage"), 1500);
+        return () => clearTimeout(t);
+      }
+
+      // 3) 로그인 상태도 아닌데 파라미터도 없는 경우 예외 처리
+      if (!error && !isLoggedIn) {
         const t = setTimeout(() => router.replace("/login"), 2000);
         return () => clearTimeout(t);
       }
     };
     void run();
-  }, [isNewUser, error, router, refreshAuth]);
+  }, [isNewUser, error, router, refreshAuth, isLoggedIn]);
 
   if (!isError) {
     return (
@@ -67,7 +84,11 @@ export default function AuthCallbackPage() {
             animation: "spin 0.8s linear infinite",
           }}
         />
-        <p>로그인 처리 중...</p>
+        <p>
+          {isLoggedIn
+            ? "인증 성공! 마이페이지로 이동합니다..."
+            : "로그인 처리 중..."}
+        </p>
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
@@ -90,18 +111,18 @@ export default function AuthCallbackPage() {
       <p style={{ color: "rgb(248, 113, 113)" }}>{errorMessage}</p>
       <button
         type="button"
-        onClick={() => router.push("/login")}
+        onClick={() => router.push(isLoggedIn ? "/mypage" : "/login")}
         style={{
           padding: "0.75rem 1.5rem",
-          background: "#5865f2",
-          color: "#fff",
+          background: isLoggedIn ? "#e4ff30" : "#5865f2",
+          color: isLoggedIn ? "#000" : "#fff",
           border: "none",
           borderRadius: "0.5rem",
           cursor: "pointer",
-          fontWeight: 500,
+          fontWeight: 600,
         }}
       >
-        로그인 페이지로 이동
+        {isLoggedIn ? "마이페이지로 돌아가기" : "로그인 페이지로 이동"}
       </button>
     </div>
   );
