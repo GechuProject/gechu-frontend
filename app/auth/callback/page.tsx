@@ -10,7 +10,7 @@ import { useAuth } from "@/src/contexts/AuthContext";
 export default function AuthCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { refreshAuth, isLoggedIn } = useAuth();
+  const { refreshAuth, isLoggedIn, isAuthLoading } = useAuth();
 
   const isNewUser = searchParams.get("is_new_user");
   const error = searchParams.get("error");
@@ -28,9 +28,17 @@ export default function AuthCallbackPage() {
       : "유효하지 않은 접근입니다. 로그인 페이지로 이동합니다.";
 
   const isError =
-    !!error || (!isLoggedIn && isNewUser !== "true" && isNewUser !== "false");
+    !!error ||
+    (!isAuthLoading &&
+      !isLoggedIn &&
+      isNewUser !== "true" &&
+      isNewUser !== "false");
 
   useEffect(() => {
+    if (isAuthLoading) return;
+
+    let t: NodeJS.Timeout;
+
     const run = async () => {
       // 1) 로그인 성공 시나리오 (소셜 가입/로그인)
       if (isNewUser === "true") {
@@ -47,18 +55,22 @@ export default function AuthCallbackPage() {
       // 2) 로그인 에러 없이 콜백 & 이미 로그인된 상태 = 성인인증(또는 연동) 성공!
       if (!error && isLoggedIn) {
         await refreshAuth();
-        const t = setTimeout(() => router.replace("/mypage"), 1500);
-        return () => clearTimeout(t);
+        t = setTimeout(() => router.replace("/mypage"), 1500);
+        return;
       }
 
       // 3) 로그인 상태도 아닌데 파라미터도 없는 경우 예외 처리
       if (!error && !isLoggedIn) {
-        const t = setTimeout(() => router.replace("/login"), 2000);
-        return () => clearTimeout(t);
+        t = setTimeout(() => router.replace("/login"), 2000);
+        return;
       }
     };
     void run();
-  }, [isNewUser, error, router, refreshAuth, isLoggedIn]);
+
+    return () => {
+      if (t) clearTimeout(t);
+    };
+  }, [isNewUser, error, router, refreshAuth, isLoggedIn, isAuthLoading]);
 
   if (!isError) {
     return (
