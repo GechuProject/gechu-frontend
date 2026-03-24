@@ -51,7 +51,9 @@ export function WishlistItem({ game, index, onRemove }: WishlistItemProps) {
                     }}
                   />
                   <span className={styles.ratingText}>
-                    {game.rawg_rating.toFixed(2)}
+                    {!isNaN(Number(game.rawg_rating))
+                      ? Number(Number(game.rawg_rating).toFixed(2))
+                      : 0}
                   </span>
                 </div>
                 <span className={styles.releaseDate}>

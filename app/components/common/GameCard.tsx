@@ -89,13 +89,33 @@ export function GameCard({ game, index }: GameCardProps) {
             animate={{ scale: isHovered ? 1.1 : 1 }}
             transition={{ duration: 0.3 }}
           >
-            <Image
-              src={game.image}
-              alt={game.title}
-              fill
-              sizes="(max-width: 768px) 100vw, 20vw"
-              className={styles.image}
-            />
+            {game.image ? (
+              <Image
+                src={game.image}
+                alt={game.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 20vw"
+                className={styles.image}
+              />
+            ) : (
+              <div
+                className={styles.image}
+                style={{
+                  backgroundColor: "#2a2a2a",
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#888",
+                  fontSize: "0.875rem",
+                  position: "absolute",
+                  inset: 0,
+                }}
+              >
+                No Image
+              </div>
+            )}
           </motion.div>
           <div className={styles.hoverOverlay} />
 
@@ -137,7 +157,11 @@ export function GameCard({ game, index }: GameCardProps) {
                 color: "#E4FF30",
               }}
             />
-            <span className={styles.rating}>{game.rating}</span>
+            <span className={styles.rating}>
+              {!isNaN(Number(game.rating))
+                ? Number(Number(game.rating).toFixed(2))
+                : 0}
+            </span>
             <span className={styles.genre}>{game.genre}</span>
           </motion.div>
         </div>

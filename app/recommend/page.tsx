@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import { GameCard } from "@/app/components/common/GameCard";
 import { motion } from "motion/react";
-import { TrendingUp, Sparkles, Users } from "lucide-react";
+import { TrendingUp, Users } from "lucide-react";
 import {
-  fetchAiPickGames,
   fetchPreferenceGames,
   fetchSimilarityGames,
 } from "@/src/api/recommend";
@@ -28,41 +27,29 @@ export default function RecommendPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [hybrid, preference, similarity] = await Promise.all([
-          fetchAiPickGames(),
+        const [preference, similarity] = await Promise.all([
           fetchPreferenceGames(),
           fetchSimilarityGames(),
         ]);
 
-        // 세 가지 모두 빈 배열이면 데이터 준비 중
-        if (
-          hybrid.length === 0 &&
-          preference.length === 0 &&
-          similarity.length === 0
-        ) {
+        // 데이터가 빈 배열이면 데이터 준비 중
+        if (preference.length === 0 && similarity.length === 0) {
           setNotReady(true);
         } else {
           setSections([
-            {
-              id: "hybrid",
-              icon: Sparkles,
-              title: "AI 추천",
-              description: "취향 분석 기반 하이브리드 추천",
-              games: hybrid,
-            },
             {
               id: "preference",
               icon: TrendingUp,
               title: "취향 기반 추천",
               description: "선택한 장르·태그 기반 추천",
-              games: preference,
+              games: preference.slice(0, 10),
             },
             {
               id: "similarity",
               icon: Users,
               title: "유사 유저 추천",
               description: "비슷한 취향 유저들이 즐긴 게임",
-              games: similarity,
+              games: similarity.slice(0, 10),
             },
           ]);
         }
