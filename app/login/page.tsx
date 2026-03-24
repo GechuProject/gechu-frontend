@@ -7,7 +7,6 @@ import { LoginLogo } from "@/app/components/login/LoginLogo";
 import { LoginForm } from "@/app/components/login/LoginForm";
 import { login } from "@/src/api/auth";
 import { useAuth } from "@/src/contexts/AuthContext";
-import { setLoginMethod } from "@/src/lib/loginMethod";
 import { AxiosError } from "axios";
 import styles from "./page.module.scss";
 
@@ -26,7 +25,6 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      setLoginMethod("email");
       await refreshAuth();
       router.push("/");
     } catch (err) {

@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/src/contexts/AuthContext";
-import { setLoginMethod } from "@/src/lib/loginMethod";
 
 /**
  * OAuth 콜백 — 쿠키는 백엔드가 설정. 프론트는 auth/me로 세션 복원 후 이동.
@@ -26,13 +25,11 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const run = async () => {
       if (isNewUser === "true") {
-        setLoginMethod("oauth");
         await refreshAuth();
         router.replace("/onboarding");
         return;
       }
       if (isNewUser === "false") {
-        setLoginMethod("oauth");
         await refreshAuth();
         router.replace("/");
         return;

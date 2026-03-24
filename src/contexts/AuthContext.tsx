@@ -13,7 +13,6 @@ import { fetchAuthMe } from "@/src/api/auth";
 import { fetchUserProfile, type UserProfile } from "@/src/api/mypage";
 import { AUTH_INVALID_EVENT } from "@/src/lib/authEvents";
 import { clearCsrfTokenMemory } from "@/src/lib/api";
-import { clearLoginMethod } from "@/src/lib/loginMethod";
 
 type AuthContextValue = {
   /** GET /api/v1/auth/me/ 응답 */
@@ -66,7 +65,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const clearAuth = useCallback(() => {
     clearCsrfTokenMemory();
-    clearLoginMethod();
     setAuthUser(null);
     setProfile(null);
   }, []);

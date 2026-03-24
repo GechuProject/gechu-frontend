@@ -19,8 +19,6 @@ interface EditProfileFormProps {
   formData: EditFormData;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent) => void;
-  /** 소셜 로그인 등 비밀번호 없음 — 비밀번호 변경 블록 숨김 */
-  hidePasswordChange?: boolean;
   profileImgUrl?: string | null;
   onImageChange?: (file: File) => void;
   onImageDelete?: () => void;
@@ -43,7 +41,6 @@ export function EditProfileForm({
   formData,
   onChange,
   onSubmit,
-  hidePasswordChange = false,
   profileImgUrl,
   onImageChange,
   onImageDelete,
@@ -178,44 +175,33 @@ export function EditProfileForm({
           </div>
         </div>
 
-        {!hidePasswordChange && (
-          <>
-            <div className={styles.divider} />
+        <div className={styles.divider} />
 
-            <div className={styles.pwSection}>
-              <h2 className={styles.sectionTitle}>비밀번호 변경</h2>
-              <p className={styles.hint}>
-                비밀번호를 변경하지 않으려면 아래 필드를 비워두세요
-              </p>
-
-              {passwordFields.map(({ label, name, placeholder }) => (
-                <div key={name}>
-                  <label className={styles.label}>{label}</label>
-                  <div className={styles.inputWrap}>
-                    <div className={styles.inputIcon}>
-                      <Lock style={{ width: "1.25rem", height: "1.25rem" }} />
-                    </div>
-                    <input
-                      type="password"
-                      name={name}
-                      value={formData[name]}
-                      onChange={onChange}
-                      placeholder={placeholder}
-                      className={styles.input}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-
-        {hidePasswordChange && (
-          <p className={styles.hint} style={{ marginTop: "1rem" }}>
-            소셜 로그인으로 가입한 계정은 비밀번호가 없습니다.
-            닉네임·생일·프로필 사진만 수정할 수 있어요.
+        <div className={styles.pwSection}>
+          <h2 className={styles.sectionTitle}>비밀번호 변경</h2>
+          <p className={styles.hint}>
+            비밀번호를 변경하지 않으려면 아래 필드를 비워두세요
           </p>
-        )}
+
+          {passwordFields.map(({ label, name, placeholder }) => (
+            <div key={name}>
+              <label className={styles.label}>{label}</label>
+              <div className={styles.inputWrap}>
+                <div className={styles.inputIcon}>
+                  <Lock style={{ width: "1.25rem", height: "1.25rem" }} />
+                </div>
+                <input
+                  type="password"
+                  name={name}
+                  value={formData[name]}
+                  onChange={onChange}
+                  placeholder={placeholder}
+                  className={styles.input}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
 
         <div className={styles.actions}>
           <motion.button
