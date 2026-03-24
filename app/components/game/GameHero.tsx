@@ -2,10 +2,10 @@
 
 import { useState, useCallback } from "react";
 import { motion } from "motion/react";
-import { Heart, Share2, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { toggleLike } from "@/src/api/interactions";
+import { Play, X, Heart, Share2, Star } from "lucide-react";
 import styles from "./GameHero.module.scss";
 
 interface GameHeroProps {
@@ -16,6 +16,7 @@ interface GameHeroProps {
   genre: string;
   rating: number;
   is_saved?: boolean;
+  trailerUrl?: string | null;
 }
 
 export function GameHero({
@@ -26,12 +27,14 @@ export function GameHero({
   genre,
   rating,
   is_saved,
+  trailerUrl,
 }: GameHeroProps) {
   const router = useRouter();
   const { isLoggedIn } = useAuth();
   const [liked, setLiked] = useState<boolean>(is_saved ?? false);
   const [prevIsSaved, setPrevIsSaved] = useState(is_saved);
   const [isLiking, setIsLiking] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (is_saved !== prevIsSaved) {
     setPrevIsSaved(is_saved);
@@ -150,10 +153,69 @@ export function GameHero({
               >
                 <Share2 style={{ width: "1.25rem", height: "1.25rem" }} />
               </motion.button>
+
+              {trailerUrl && (
+                <button
+                  className={styles.trailerBtn}
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  <Play
+                    style={{ width: "1.25rem", height: "1.25rem" }}
+                    fill="currentColor"
+                  />
+                  트레일러 보기
+                </button>
+              )}
             </div>
           </motion.div>
         </div>
       </div>
+
+      {isModalOpen && trailerUrl && (
+        <div
+          className={styles.modalOverlay}
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className={styles.closeBtn}
+              onClick={() => setIsModalOpen(false)}
+            >
+              <X style={{ width: "2rem", height: "2rem" }} />
+            </button>
+            {trailerUrl.includes("youtube.com") ||
+            trailerUrl.includes("youtu.be") ? (
+              <iframe
+                src={(() => {
+                  let url = trailerUrl;
+                  if (url.includes("watch?v=")) {
+                    url = `https://www.youtube.com/embed/${url.split("v=")[1].split("&")[0]}`;
+                  } else if (url.includes("youtu.be/")) {
+                    url = `https://www.youtube.com/embed/${url.split("youtu.be/")[1].split("?")[0]}`;
+                  }
+                  return url.includes("?")
+                    ? `${url}&autoplay=1`
+                    : `${url}?autoplay=1`;
+                })()}
+                className={styles.videoPlayer}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="Trailer"
+              />
+            ) : (
+              <video
+                src={trailerUrl}
+                className={styles.videoPlayer}
+                controls
+                autoPlay
+              />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

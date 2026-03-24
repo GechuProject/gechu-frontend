@@ -69,6 +69,74 @@
   gap: 1rem;
 }
 
+.trailerBtn {
+  cursor: pointer;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(228, 255, 48, 0.5);
+  background: rgba(228, 255, 48, 0.1);
+  padding: 1rem 1.5rem;
+  color: #E4FF30;
+  font-weight: bold;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &:hover {
+    background: rgba(228, 255, 48, 0.2);
+    transform: scale(1.05); /* Slight scale on hover instead of generic background change */
+  }
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.modalContent {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 0.5rem;
+  overflow: visible;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.closeBtn {
+  position: absolute;
+  top: -3rem;
+  right: 0;
+  color: #fff;
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.1s;
+  
+  &:hover {
+    color: #E4FF30;
+  }
+}
+
+.videoPlayer {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
 .actionBtn {
   cursor: pointer;
   border-radius: 0.5rem;
