@@ -11,6 +11,7 @@ import {
   UserCircle,
   LogOut,
   Clock,
+  Shield,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -281,6 +282,27 @@ export function Header() {
                             <span>마이페이지</span>
                           </motion.div>
                         </Link>
+
+                        {(profile?.is_staff || authUser?.is_staff) && (
+                          <Link
+                            href="/admin"
+                            onClick={() => setShowProfileMenu(false)}
+                          >
+                            <motion.div
+                              className={styles.dropdownItem}
+                              whileHover={{ x: 4 }}
+                            >
+                              <Shield
+                                style={{
+                                  width: "1.25rem",
+                                  height: "1.25rem",
+                                  color: "#E4FF30",
+                                }}
+                              />
+                              <span>어드민 페이지</span>
+                            </motion.div>
+                          </Link>
+                        )}
 
                         <div className={styles.dropdownDivider} />
 

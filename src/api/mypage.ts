@@ -11,6 +11,7 @@ export interface UserProfile {
   adult_verified_at: string | null;
   is_active: boolean;
   created_at: string;
+  is_staff?: boolean;
 }
 
 export async function fetchUserProfile(): Promise<UserProfile | null> {

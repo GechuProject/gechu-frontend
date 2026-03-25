@@ -37,6 +37,7 @@ export interface AuthMeResponse {
   email: string;
   is_active: boolean;
   is_adult_verified: boolean;
+  is_staff?: boolean;
 }
 
 export async function fetchAuthMe(): Promise<AuthMeResponse | null> {
