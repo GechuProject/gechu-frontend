@@ -25,7 +25,6 @@ import {
   ChevronRight,
   Shield,
 } from "lucide-react";
-import Link from "next/link";
 import styles from "./admin.module.scss";
 
 export default function AdminPage() {
