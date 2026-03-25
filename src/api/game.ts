@@ -240,7 +240,7 @@ interface BackendSearchResponse {
   }[];
 }
 
-// 게임 검색 API
+// 게임 검색 API (기본 검색)
 export async function searchGames(query: string): Promise<SearchGameItem[]> {
   if (!query.trim()) return [];
   const { data } = await apiClient.get<BackendSearchResponse>(
@@ -254,4 +254,35 @@ export async function searchGames(query: string): Promise<SearchGameItem[]> {
     rating: item.rawg_rating ?? 0,
     genre: item.genres?.map((g) => g.name).join(", ") ?? "",
   }));
+}
+
+// 게임 자동완성 / 초성 검색 (프론트엔드 통합)
+// - 초성만 입력한 경우(ㅅㅍ, ㄱㄴ 등): 일반 검색으로 결과를 가져온 뒤 초성 필터 적용
+// - 일반 텍스트 입력: 그대로 searchGames 사용
+export async function autocompleteGames(
+  query: string
+): Promise<SearchGameItem[]> {
+  if (!query.trim()) return [];
+  const { isChosungOnly, matchesChosung } = await import("@/src/lib/korean");
+
+  if (isChosungOnly(query)) {
+    // 초성 검색: 백엔드에서 많은 결과를 가져와 프론트에서 필터링
+    // 초성만으로는 의미있는 搜 검색어를 만들 수 없으므로 빈 query로 전체 목록 중 일부를 가져와 필터
+    // 단, 결과 수를 제한하기 위해 page_size=100으로 요청
+    const { data } = await apiClient.get<BackendSearchResponse>(
+      "/api/v1/games/",
+      { params: { page_size: 100 } }
+    );
+    const all = (data.results || []).map((item) => ({
+      id: item.id,
+      title: item.name,
+      image: item.thumbnail_img_url ?? "",
+      rating: item.rawg_rating ?? 0,
+      genre: item.genres?.map((g) => g.name).join(", ") ?? "",
+    }));
+    return all.filter((item) => matchesChosung(item.title, query));
+  }
+
+  // 일반 텍스트: 기존 search 파라미터 사용
+  return searchGames(query);
 }

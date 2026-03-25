@@ -21,7 +21,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Icon3D } from "./Icon3D";
 import { logout } from "@/src/api/auth";
 import { useAuth } from "@/src/contexts/AuthContext";
-import { searchGames } from "@/src/api/game";
+import { searchGames, autocompleteGames } from "@/src/api/game";
 import type { SearchGameItem } from "@/src/api/game";
 import {
   fetchRecentSearches,
@@ -113,7 +113,7 @@ export function Header() {
     }
     setIsSearching(true);
     try {
-      const results = await searchGames(query);
+      const results = await autocompleteGames(query);
       setSearchResults(results);
     } catch (err) {
       console.error("검색 오류:", err);
