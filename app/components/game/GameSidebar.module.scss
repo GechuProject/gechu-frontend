@@ -2,8 +2,6 @@
 @use "../../styles/mixins" as *;
 .sidebar {
   @include glass-card;
-  position: sticky;
-  top: 6rem;
   padding: 1.5rem;
   border-radius: 0.5rem;
 }
